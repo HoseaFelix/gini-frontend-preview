@@ -169,6 +169,63 @@
   .root-layout {
     @apply w-full h-full 
   }
+
+  .slider {
+    
+    transition: all 0.3s;
+    section{
+      flex-basis: 100%;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      
+    }
+  }
+
+  .controls {
+    .arrow{
+      position: absolute;
+      top: 50%;
+      color: white;
+      cursor: pointer;
+
+
+      @apply w-[45px] h-[48px] bg-white/50 py-2 px-3 rounded-full flex items-center justify-center backdrop-blur-md backdrop-saturate-150 shadow-sm shadow-black/50 -translate-y-[50%];
+
+     
+    }
+    .left{
+      left:10px;
+    }
+    
+    .right{
+      right:10px;
+    }
+
+  }
+
+  ul{
+    left: 50%;
+    transform: translateX(-50%);
+    list-style: none;
+    display:flex;
+
+    .selected{
+      width: 15px;
+      height: 15px;
+      background-color:#295FCC ;
+
+
+    }
+  }
+
+  ul li{
+    width: 10px;
+    height: 10px;
+    animation: all 0.3s;
+  }
+
+
 }
 
 @utility flex-center {

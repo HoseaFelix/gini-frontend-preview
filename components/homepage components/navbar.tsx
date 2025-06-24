@@ -7,7 +7,7 @@ import Button from '../generalComponents/button'
 
 const Navbar = () => {
   return (
-    <nav className='z-100 absolute top-10 h-[72px] inset-x-10 bg-white/50 rounded-xl backdrop-blur-md backdrop-saturate-150 flex items-center justify-between px-10 py-5 font-bold '>
+    <nav className='z-100 fixed top-10 h-[72px] inset-x-4 md:inset-x-10 bg-white/50 rounded-xl backdrop-blur-md backdrop-saturate-150 flex items-center justify-between px-10 py-5 font-bold overflow-hidden'>
 
         <h1 className='text-white text-2xl font-bold hover:cursor-pointer '>
             AideGini

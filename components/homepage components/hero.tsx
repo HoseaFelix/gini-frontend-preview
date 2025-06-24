@@ -1,28 +1,31 @@
 import Image from 'next/image'
 import React from 'react'
 import Button from '../generalComponents/button'
+import Carousel from './carousel'
 
 const Hero = () => {
   return (
-    <section className='w-dvw h-dvh relative flex items-center justify-center'>
+    <section className=' w-screen min-h-screen relative flex items-center justify-center overflow-x-hidden '>
 
-        <Image 
-          src='/img/hero-background.jpg'
+    <div className="absolute inset-0 -z-10">
+        <Image
+          src="/img/hero-background.jpg"
+          alt="Hero Background"
           fill
-          className='object-cover'
-          alt='hero background'
-
+          className="object-cover"
         />
+        
+      </div>
 
-      <div className='w-full h-full absolute left-0 top-0'>
+      <div className='w-full min-h-screen'>
        
 
-        <div className='w-full h-full blue-gradient-dark backdrop-blur-sm flex items-center justify-center px-20'>
+        <div className='max-sm:h-max w-full min-h-screen blue-gradient-dark backdrop-blur-sm flex items-center justify-center pt-20 pb-10 px-4 md:px-20'>
 
           <div className='grid grid-cols-1 md:grid-cols-2 h-[70%] w-full gap-10 py-10 '>
 
             <div className='h-full w-full flex flex-col gap-5'>
-                <div className='text-white text-4xl capitalize flex gap-2 flex-col font-bold'>
+                <div className='text-white text-2xl md:text-4xl capitalize flex gap-2 flex-col font-bold'>
 
                   <p>the ultimate career</p> 
                   <p>companion for job</p>
@@ -69,7 +72,13 @@ const Hero = () => {
                 </div>
             </div>
 
+            <div className='h-full w-full min-h-[400px] rounded-3xl shadow-xl overflow-hidden'>
+              <Carousel/>
+            </div>
+
           </div>
+
+          
 
         </div>
 

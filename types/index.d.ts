@@ -7,3 +7,8 @@ interface ButtonProps {
 interface ActionButtons extends ButtonProps {
     onclick: ()=> void;
 }
+
+type DescriptionProps = {
+    header: String
+    subtext: string
+}
