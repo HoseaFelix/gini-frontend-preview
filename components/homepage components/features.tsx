@@ -1,6 +1,4 @@
 import React from 'react'
-import ImageFrame from './featuresPageComponents/image'
-import Description from './featuresPageComponents/description'
 import FeatureWrapper from './featuresPageComponents/featureWrapper'
 
 const Features = () => {

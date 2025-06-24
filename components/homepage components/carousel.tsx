@@ -22,7 +22,7 @@ const Carousel = () => {
     
     ]
 
-    let totalItems = carouselItems.length;
+    const totalItems = carouselItems.length;
 
     
 
