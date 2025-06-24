@@ -2,7 +2,7 @@
 
 
 import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 
 
@@ -27,20 +27,21 @@ const Carousel = () => {
     
 
   
+   
+
+    const startAutoSlide = useCallback(() => {
+        intervalId.current = setInterval(() => {
+          setCurrentSlide((prev) => (prev + 1) % totalItems);
+        }, 4000);
+      }, [totalItems]);
+
     useEffect(()=>{
         startAutoSlide()
 
         return () => {
             if (intervalId.current) clearInterval(intervalId.current)
           }
-    }, [totalItems])
-
-    const startAutoSlide = () => {
-        if (intervalId.current) clearInterval(intervalId.current) // Clear if already set
-        intervalId.current = setInterval(() => {
-          setCurrentSlide((prev) => (prev + 1) % totalItems)
-        }, 4000)
-      }
+    }, [startAutoSlide])
 
 
     const nextSlide=()=>{
