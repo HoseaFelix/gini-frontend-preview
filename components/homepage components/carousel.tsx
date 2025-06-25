@@ -97,12 +97,16 @@ const Carousel = () => {
 
                         {
                             text && (
-                                <div className='absolute bottom-15 h-max w-full '>
-                                    <div className='h-full w-full flex items-center justify-center flex-wrap font-bold max-sm:text-xl text-4xl px-5 md:px-15 leading-[133%]'>
-                                            {text}
-                                    </div>
 
+                                <div className='absolute top-0 left-0 h-full w-full  flex'>
+                                    <div className=' h-full w-full flex items-end pb-20'>
+                                        <div className='h-max w-full flex items-center justify-center flex-wrap font-bold max-sm:text-xl text-4xl px-5 md:px-15 leading-[133%]'>
+                                                {text}
+                                        </div>
+
+                                    </div>
                                 </div>
+                                
                             )
                         }
 
