@@ -20,22 +20,32 @@ const FeatureWrapper = () => {
                       imageUrl={`/img/feature${index+1}.png`}
                   />
 
-                  <div className='max-md:absolute max-md:inset-x-0  max-md:bg-[#295FCC]/50 max-md:bottom-0  max-md:pb-2 max-md:h-fit max-sm:top-0 max-sm:bottom-0  '>
-                    <Description
-                      header={header}
-                      subtext={subtext}
-                    />
+                  <div className='max-md:absolute z-10  max-md:top-0 max-md:bottom-0  max-md:inset-x-0'>
+
+                  <div className='h-full w-full  flex  items-end md:items-center '>
+                      <Description
+                        header={header}
+                        subtext={subtext}
+                      />
+
+                  </div>
+
                   </div>
               </>
              
             ) : (
 
               <>
-                  <div className='max-md:absolute z-10 max-md:bg-[#295FCC]/50 max-sm:top-0 max-sm:bottom-0 max-md:bottom-0  max-md:pb-2 max-md:h-fit max-md:inset-x-0'>
-                    <Description
-                      header={header}
-                      subtext={subtext}
-                    />
+                  <div className='max-md:absolute z-10  max-md:top-0 max-md:bottom-0  max-md:inset-x-0'>
+
+                    <div className='h-full w-full  flex items-end md:items-center  '>
+                        <Description
+                          header={header}
+                          subtext={subtext}
+                        />
+
+                    </div>
+                   
                   </div>
 
                   <ImageFrame
