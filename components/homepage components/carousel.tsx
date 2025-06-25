@@ -70,7 +70,7 @@ const Carousel = () => {
 
   return (
     <div className='w-full h-full '>
-        <div className='carousel b-2 h-full w-full overflow-hidden relative  '>
+        <div className='carousel b-2 h-full w-full overflow-hidden relative xl:min-h-[500px] '>
             <div 
                 ref={sliderRef}
                 className={`slider h-full flex  text-white`}
@@ -88,7 +88,7 @@ const Carousel = () => {
                                 <Image
                                     fill
                                     src={image}
-                                    className='object-cover'
+                                    className='object-cover object-top'
                                     alt={`section ${index + 1} image`}
                                 />
                         
@@ -98,7 +98,7 @@ const Carousel = () => {
                         {
                             text && (
                                 <div className='absolute bottom-15 h-max w-full '>
-                                    <div className='h-full w-full flex items-center justify-center flex-wrap font-bold text-4xl px-5 md:px-15 leading-[133%]'>
+                                    <div className='h-full w-full flex items-center justify-center flex-wrap font-bold max-sm:text-xl text-4xl px-5 md:px-15 leading-[133%]'>
                                             {text}
                                     </div>
 
@@ -133,7 +133,7 @@ const Carousel = () => {
                     />
                 </span>
 
-                <ul className='absolute bottom-5 gap-2 items-center '>
+                <ul className='absolute bottom-5 gap-2 items-center hero-control-ul '>
                     {carouselItems.map((items, index)=>(
                         <li key={index} className={`rounded-full hover:cursor-pointer  ${index == currentSlide ? 'selected bg-[#295FCC]': 'bg-white'} `
                         

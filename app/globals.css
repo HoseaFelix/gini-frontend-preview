@@ -180,6 +180,7 @@
       align-items: center;
       
     }
+
   }
 
   .controls {
@@ -202,9 +203,17 @@
       right:10px;
     }
 
+    
+
   }
 
-  ul{
+  
+  .nav-sidebar {
+    @apply fixed top-0 left-0 right-0 bottom-0 bg-foreground text-white backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden z-60;
+  }
+
+  
+  .hero-control-ul{
     left: 50%;
     transform: translateX(-50%);
     list-style: none;
@@ -219,11 +228,15 @@
     }
   }
 
-  ul li{
+  .hero-control-ul li{
     width: 10px;
     height: 10px;
     animation: all 0.3s;
   }
+  
+
+
+  
 
 
 }
