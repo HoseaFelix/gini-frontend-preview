@@ -5,12 +5,12 @@ import { features } from '@/constants'
 
 const FeatureWrapper = () => {
   return (
-    <div className='space-y-20'>
+    <div className='space-y-20 max-sm:rounded-2xl max-sm:overflow-hidden'>
       {
         features.map(({header, subtext}, index) => (
           <div
             key={index} 
-            className='grid grid-cols-1 md:grid-cols-2 h-[445px] gap-20 mt-15 relative mx-auto w-full justify-between md:px-10 lg:px-20 xl:px-30'
+            className='grid grid-cols-1 min-md:grid-cols-2 h-[445px] gap-20 mt-15 relative mx-auto w-full justify-between md:px-10 lg:px-20 xl:px-30 max-md:rounded-2xl max-md:overflow-hidden'
           >
             {
             
@@ -20,7 +20,7 @@ const FeatureWrapper = () => {
                       imageUrl={`/img/feature${index+1}.png`}
                   />
 
-                  <div className='max-sm:absolute sm:inset-0 '>
+                  <div className='max-md:absolute max-md:inset-x-0  max-md:bg-[#295FCC]/50 max-md:bottom-0  max-md:pb-2 max-md:h-fit '>
                     <Description
                       header={header}
                       subtext={subtext}
@@ -31,7 +31,7 @@ const FeatureWrapper = () => {
             ) : (
 
               <>
-                  <div className='max-sm:absolute sm:inset-0 z-10 '>
+                  <div className='max-md:absolute z-10 max-md:bg-[#295FCC]/50 max-md:bottom-0  max-md:pb-2 max-md:h-fit max-md:inset-x-0'>
                     <Description
                       header={header}
                       subtext={subtext}
