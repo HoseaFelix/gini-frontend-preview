@@ -20,7 +20,7 @@ const Navbar = () => {
     <>
            <nav className='z-100 fixed h-[72px] inset-x-0 top-0 bg-white/50  backdrop-blur-md backdrop-saturate-150 flex items-center justify-between px-4 md:px-10 py-5 font-bold overflow-hidden'>
 
-                <h1 className='text-white text-2xl font-bold hover:cursor-pointer '>
+                <h1 className='text-foreground text-2xl font-bold hover:cursor-pointer '>
                     AideGini
                 </h1>
 
