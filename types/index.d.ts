@@ -12,3 +12,12 @@ type DescriptionProps = {
     header: String
     subtext: string
 }
+
+type testimonialArray = {
+    imageUrl: string
+    name: string
+    workPosition: string
+    state: string
+    topic: string
+    subText: string
+}

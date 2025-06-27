@@ -31,9 +31,9 @@ const Carousel = () => {
 
     const startAutoSlide = useCallback(() => {
         intervalId.current = setInterval(() => {
-          setCurrentSlide((prev) => (prev + 1) % totalItems);
+            setCurrentSlide((prev) => (prev + 1) % totalItems);
         }, 4000);
-      }, [totalItems]);
+    }, [totalItems]);
 
     useEffect(()=>{
         startAutoSlide()

@@ -219,21 +219,22 @@
     list-style: none;
     display:flex;
 
-    .selected{
-      width: 15px;
-      height: 15px;
-      background-color:#295FCC ;
-
-
-    }
+  
   }
 
   .hero-control-ul li{
-    width: 10px;
-    height: 10px;
+    width: 16px;
+    height: 16px;
     animation: all 0.3s;
   }
   
+  .selected{
+    width: 32px;
+    height: 32px;
+    background-color:#295FCC ;
+
+
+  }
 
 
   

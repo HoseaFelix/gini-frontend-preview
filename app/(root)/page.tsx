@@ -2,6 +2,7 @@ import Features from '@/components/homepage components/features'
 import Hero from '@/components/homepage components/hero'
 import Navbar from '@/components/homepage components/navbar'
 import Pricing from '@/components/homepage components/pricing'
+import Testimonials from '@/components/homepage components/testimonials'
 import React from 'react'
 
 const Page = () => {
@@ -11,6 +12,7 @@ const Page = () => {
         <Hero/>
         <Features/>
         <Pricing/>
+        <Testimonials/>
 
       
     </div>
