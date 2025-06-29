@@ -36,7 +36,7 @@
   --headings: #01091A;
   --text:#1f1f21;
   --placeholder:#999999;
-  --muted-text:#b0b0b0;
+  --muted:#b0b0b0;
   --link:#295fcc;
  
 
@@ -48,7 +48,7 @@
   --color-headings: var(--headings);
   --color-text: var(--text);
   --color-placeholder: var(--placeholder);
-  --color-muted-text: var(--muted-text);
+  --color-muted: var(--muted-text);
   --color-link: var(--link);
   --font-sans: var(--font-Nunito-sans);
   --font-mono: var(--font-Nunito-sans);

@@ -16,6 +16,8 @@ const Navbar = () => {
         setIsOpen((prev) => !prev)
     }
 
+    const [toggleProducts, setToggleProducts] = useState(false)
+
   return (
     <>
            <nav className='z-100 fixed h-[72px] inset-x-0 top-0 bg-white/50  backdrop-blur-md backdrop-saturate-150 flex items-center justify-between px-4 md:px-10 py-5 font-bold overflow-hidden'>
@@ -26,10 +28,23 @@ const Navbar = () => {
 
                 <div className=' justify-between items-center text-foreground text-sm gap-5 hidden md:flex'>
 
-                    <div className='flex justify-between w-fit font-bold'>
-                        <p className='hover:cursor-pointer '>Products</p>
-                        <select name="" id="" className='hover:cursor-pointer'></select>
+                    <div className="relative inline-block w-fit">
+                        <select
+                            className="hover:cursor-pointer  bg-transparent border border-foreground rounded-md py-1 px-2 pr-6 text-sm"
+                        >
+                            <option>Products</option>
+                            <option><Link href=''>Resume Manager</Link></option>
+                            <option><Link href=''>Cover Letter Generatior</Link></option>
+                            <option><Link href=''>Application Assistant</Link></option>
+                            <option><Link href=''>Interview Assistant</Link></option>
+                            <option><Link href=''>Presentation Assistant</Link></option>
+                            <option><Link href=''>Exam Assistant</Link></option>
+                            <option><Link href=''>LinkedIn Optimizer</Link></option>
+                        </select>
+
+                       
                     </div>
+
 
                     <div className='flex justify-between w-fit font-bold gap-5'>
                         {navLinks.map(({href, name}, index)=>(
@@ -70,12 +85,24 @@ const Navbar = () => {
             </nav>  
             <div className={`nav-sidebar text-white overflow-y-auto ${isOpen ? 'max-h-screen' : 'max-h-0'} md:hidden `}>
                 <div className='h-full w-full pt-20'>
-                        <div className=' justify-between px-4 text-white text-lg gap-5 flex flex-col'>
+                    <div className=' justify-between px-4 text-white text-lg gap-5 flex flex-col'>
 
-                            <div className='flex justify-between w-fit font-bold'>
-                                <p className='hover:cursor-pointer '>Products</p>
-                                <select name="" id="" className='hover:cursor-pointer'></select>
-                            </div>
+                        <div className="relative inline-block w-fit">
+                            <select
+                                className="hover:cursor-pointer text-black  bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-white rounded-md py-1 px-2 pr-6 text-sm"
+                            >
+                                <option>Products</option>
+                                <option><Link href=''>Resume Manager</Link></option>
+                                <option><Link href=''>Cover Letter Generatior</Link></option>
+                                <option><Link href=''>Application Assistant</Link></option>
+                                <option><Link href=''>Interview Assistant</Link></option>
+                                <option><Link href=''>Presentation Assistant</Link></option>
+                                <option><Link href=''>Exam Assistant</Link></option>
+                                <option><Link href=''>LinkedIn Optimizer</Link></option>
+                            </select>
+
+                       
+                    </div>
 
                             <div className='flex flex-col justify-between w-fit font-bold gap-5'>
                                 {navLinks.map(({href, name}, index)=>(
