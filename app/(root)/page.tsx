@@ -1,4 +1,5 @@
 import Features from '@/components/homepage components/features'
+import Footer from '@/components/homepage components/footer'
 import Hero from '@/components/homepage components/hero'
 import Navbar from '@/components/homepage components/navbar'
 import Pricing from '@/components/homepage components/pricing'
@@ -13,6 +14,7 @@ const Page = () => {
         <Features/>
         <Pricing/>
         <Testimonials/>
+        <Footer/>
 
       
     </div>
