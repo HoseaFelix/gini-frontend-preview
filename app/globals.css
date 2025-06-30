@@ -36,7 +36,7 @@
   --headings: #01091A;
   --text:#1f1f21;
   --placeholder:#999999;
-  --muted-text:#b0b0b0;
+  --muted:#b0b0b0;
   --link:#295fcc;
  
 
@@ -48,7 +48,7 @@
   --color-headings: var(--headings);
   --color-text: var(--text);
   --color-placeholder: var(--placeholder);
-  --color-muted-text: var(--muted-text);
+  --color-muted: var(--muted-text);
   --color-link: var(--link);
   --font-sans: var(--font-Nunito-sans);
   --font-mono: var(--font-Nunito-sans);
@@ -169,6 +169,77 @@
   .root-layout {
     @apply w-full h-full 
   }
+
+  .slider {
+    
+    transition: all 0.3s;
+    section{
+      flex-basis: 100%;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      
+    }
+
+  }
+
+  .controls {
+    .arrow{
+      position: absolute;
+      top: 50%;
+      color: white;
+      cursor: pointer;
+
+
+      @apply w-[45px] h-[48px] bg-white/50 py-2 px-3 rounded-full flex items-center justify-center backdrop-blur-md backdrop-saturate-150 shadow-sm shadow-black/50 -translate-y-[50%];
+
+     
+    }
+    .left{
+      left:10px;
+    }
+    
+    .right{
+      right:10px;
+    }
+
+    
+
+  }
+
+  
+  .nav-sidebar {
+    @apply fixed top-0 left-0 right-0 bottom-0 bg-foreground text-white backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden z-60;
+  }
+
+  
+  .hero-control-ul{
+    left: 50%;
+    transform: translateX(-50%);
+    list-style: none;
+    display:flex;
+
+  
+  }
+
+  .hero-control-ul li{
+    width: 16px;
+    height: 16px;
+    animation: all 0.3s;
+  }
+  
+  .selected{
+    width: 32px;
+    height: 32px;
+    background-color:#295FCC ;
+
+
+  }
+
+
+  
+
+
 }
 
 @utility flex-center {
