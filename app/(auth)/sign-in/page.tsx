@@ -1,9 +1,10 @@
+import AuthForm from '@/components/homepage components/authform'
 import React from 'react'
 
 const SignInPage = () => {
   return (
-    <div>
-      
+    <div className='min-h-screen w-full flex items-center justify-center'>
+      <AuthForm type='sign-in'/>
     </div>
   )
 }
