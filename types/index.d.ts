@@ -21,3 +21,5 @@ type testimonialArray = {
     topic: string
     subText: string
 }
+
+type authType = 'sign-in' | 'sign-up'
