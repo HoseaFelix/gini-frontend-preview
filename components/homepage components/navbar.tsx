@@ -16,7 +16,7 @@ const Navbar = () => {
         setIsOpen((prev) => !prev)
     }
 
-    const [toggleProducts, setToggleProducts] = useState(false)
+
 
   return (
     <>

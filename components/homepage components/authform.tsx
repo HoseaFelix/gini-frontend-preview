@@ -12,9 +12,7 @@ const AuthForm = ({type}: {type:authType}) => {
 
     const isSignUp = type == 'sign-up'
 
-    const handleAuthPageSwitch = ()=>{
-        router.push(`${isSignUp ? '/sign-in' : '/sign-up'}`)
-    }
+    
 
   return (
     <div className='min-w-[300px] w-fit max-w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col' >
