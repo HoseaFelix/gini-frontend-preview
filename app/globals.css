@@ -237,7 +237,7 @@
   }
 
   .auth-form{
-    input{
+    input{ 
       @apply w-full py-2 px-4 border rounded-xl;
 
     }
