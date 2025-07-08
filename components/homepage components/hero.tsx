@@ -41,13 +41,13 @@ const Hero = () => {
 
                 <div className='flex w-fit gap-5 max-md:w-full max-md:justify-center max-sm:'>
                   <Button
-                    href=''
+                    href='/sign-up'
                     title='get started'
                     containerClass='bg-foreground text-white px-3 py-2 rounded-sm max-md:w-full '
 
                   />
                   <Button
-                    href=''
+                    href='/sign-in'
                     title='login'
                     containerClass='border-2 text-white px-3 py-2 rounded-sm max-md:w-full'
 
