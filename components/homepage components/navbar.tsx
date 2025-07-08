@@ -16,7 +16,6 @@ const Navbar = () => {
         setIsOpen((prev) => !prev)
     }
 
-    const [toggleProducts, setToggleProducts] = useState(false)
 
   return (
     <>
@@ -33,13 +32,13 @@ const Navbar = () => {
                             className="hover:cursor-pointer  bg-transparent border border-foreground rounded-md py-1 px-2 pr-6 text-sm"
                         >
                             <option>Products</option>
-                            <option><Link href=''>Resume Manager</Link></option>
-                            <option><Link href=''>Cover Letter Generatior</Link></option>
-                            <option><Link href=''>Application Assistant</Link></option>
-                            <option><Link href=''>Interview Assistant</Link></option>
-                            <option><Link href=''>Presentation Assistant</Link></option>
-                            <option><Link href=''>Exam Assistant</Link></option>
-                            <option><Link href=''>LinkedIn Optimizer</Link></option>
+                                <option>Resume Manager</option>
+                                <option>Cover Letter Generatior</option>
+                                <option>Application Assistant</option>
+                                <option>Interview Assistant</option>
+                                <option>Presentation Assistant</option>
+                                <option>Exam Assistant</option>
+                                <option>LinkedIn Optimizer</option>
                         </select>
 
                        
@@ -62,7 +61,7 @@ const Navbar = () => {
                     </div>
 
                     <Button
-                        href=''
+                        href='/sign-up'
                         title='get started'
                         containerClass='bg-foreground text-white px-3 py-2 rounded-sm '
                     
@@ -89,16 +88,16 @@ const Navbar = () => {
 
                         <div className="relative inline-block w-fit">
                             <select
-                                className="hover:cursor-pointer text-black  bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-white rounded-md py-1 px-2 pr-6 text-sm"
+                                className=" font-bold hover:cursor-pointer text-black  bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-white rounded-md py-1 px-2 pr-6 text-sm"
                             >
                                 <option>Products</option>
-                                <option><Link href=''>Resume Manager</Link></option>
-                                <option><Link href=''>Cover Letter Generatior</Link></option>
-                                <option><Link href=''>Application Assistant</Link></option>
-                                <option><Link href=''>Interview Assistant</Link></option>
-                                <option><Link href=''>Presentation Assistant</Link></option>
-                                <option><Link href=''>Exam Assistant</Link></option>
-                                <option><Link href=''>LinkedIn Optimizer</Link></option>
+                                <option>Resume Manager</option>
+                                <option>Cover Letter Generatior</option>
+                                <option>Application Assistant</option>
+                                <option>Interview Assistant</option>
+                                <option>Presentation Assistant</option>
+                                <option>Exam Assistant</option>
+                                <option>LinkedIn Optimizer</option>
                             </select>
 
                        
@@ -122,7 +121,7 @@ const Navbar = () => {
                             </div>
 
                             <Button
-                                href=''
+                                href='/sign-up'
                                 title='get started'
                                 containerClass='bg-white  text-foreground px-3 py-2 rounded-sm '
 

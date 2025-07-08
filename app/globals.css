@@ -236,6 +236,16 @@
 
   }
 
+  .auth-form{
+    input{ 
+      @apply w-full py-2 px-4 border rounded-xl;
+
+    }
+    label{
+      @apply font-bold text-sm;
+    }
+  }
+  
 
   
 
