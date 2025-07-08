@@ -17,7 +17,6 @@ const Navbar = () => {
     }
 
 
-
   return (
     <>
            <nav className='z-100 fixed h-[72px] inset-x-0 top-0 bg-white/50  backdrop-blur-md backdrop-saturate-150 flex items-center justify-between px-4 md:px-10 py-5 font-bold overflow-hidden'>

@@ -246,6 +246,17 @@
   .auth-input{
     @apply border rounded-md px-4 py-2 min-w-[300px];
   }
+  
+  .selected{
+    width: 32px;
+    height: 32px;
+    background-color:#295FCC ;
+
+
+  }
+
+
+  
 
   
 
