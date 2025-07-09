@@ -7,6 +7,7 @@ import Link from "next/link";
 const AuthForm = ({ type }: { type: authType }) => {
   const isSignUp = type === "sign-up";
 
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,6 +35,7 @@ const AuthForm = ({ type }: { type: authType }) => {
     setConfirmPasswordError(value !== password ? "Passwords do not match" : null);
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -46,18 +48,43 @@ const AuthForm = ({ type }: { type: authType }) => {
       return;
     }
 
+    const payload = isSignUp
+    ? { name, email, password }
+    : { email, password };
+
+    console.log("✅ Payload to send:", payload); 
+
     try {
-      const res = await fetch("BACKEND_URL", {
+
+     
+      
+      const res = await fetch(`https://aidgeny.onrender.com/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, ...(isSignUp && { confirmPassword }) })
+        body: JSON.stringify(payload),
       });
-
-      const data = await res.json();
-      console.log("Success:", data);
-    } catch (err) {
-      console.error("Error:", err);
+      
+      
+    
+      const text = await res.text();
+      console.log("🔵 Raw response text:", text);
+    
+      try {
+        const data = JSON.parse(text);
+        console.log("🟢 Parsed JSON:", data);
+    
+        if (res.ok) {
+          console.log(`${isSignUp ? "Signup" : "Login"} successful.`);
+        } else {
+          console.error("Server error:", data);
+        }
+      } catch (jsonError) {
+        console.error("Response is not valid JSON. Possibly HTML or text. Raw response:", text);
+      }
+    } catch (networkError) {
+      console.error("Network error:", networkError);
     }
+   
   };
 
   return (
@@ -69,8 +96,13 @@ const AuthForm = ({ type }: { type: authType }) => {
       <form onSubmit={handleSubmit} className="w-full mt-5 auth-form flex flex-col gap-3">
         {isSignUp && (
           <>
-            <label>First Name</label>
-            <input type="text" name="firstName" className="auth-input focus:outline-none" />
+            <label>First Name </label>
+            <input 
+                onChange={(e)=>{
+                  setName(e.target.value)
+                }}
+                type="text" name="firstName" 
+                className="auth-input focus:outline-none" />
           </>
         )}
 
