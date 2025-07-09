@@ -75,7 +75,7 @@ const AuthForm = ({ type }: { type: authType }) => {
       if(!data.success) {
 
           if(data.error == 'User already exists'){
-           toast.error('user already have an account, please sign in')
+           toast.error('user already have an account, redirecting to sign in')
             router.push('/sign-in')
             setLoading(false)
             return
