@@ -1,5 +1,5 @@
 
-import AuthForm from '@/components/AuthForm'
+import AuthForm from '@/components/authForm'
 import React from 'react'
 
 const SignInPage = () => {
