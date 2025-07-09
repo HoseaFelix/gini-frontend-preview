@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
+
 
 const Nunito = Nunito_Sans({
   variable: "--Nunito_Sans",
@@ -23,7 +25,9 @@ export default function RootLayout({
       <body
         className={`${Nunito.variable}  antialiased overflow-x-hidden `}
       >
-        {children}
+        <main>{children}</main>
+        <Toaster/>
+        
       </body>
     </html>
   );

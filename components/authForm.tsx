@@ -7,6 +7,7 @@ import Link from "next/link";
 const AuthForm = ({ type }: { type: authType }) => {
   const isSignUp = type === "sign-up";
 
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -46,11 +47,15 @@ const AuthForm = ({ type }: { type: authType }) => {
       return;
     }
 
+    const payload = isSignUp 
+      ? {name,email,password }
+      : {email, password}
+
     try {
-      const res = await fetch("BACKEND_URL", {
+      const res = await fetch(`https://aidgeny.onrender.com/api/auth/${isSignUp ? 'signup' : 'login'}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, ...(isSignUp && { confirmPassword }) })
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
@@ -65,12 +70,19 @@ const AuthForm = ({ type }: { type: authType }) => {
       <p className="font-bold text-xl md:text-xl">
         {isSignUp ? "Fill out the form below to sign up" : "Welcome back"}
       </p>
+      
 
       <form onSubmit={handleSubmit} className="w-full mt-5 auth-form flex flex-col gap-3">
         {isSignUp && (
           <>
             <label>First Name</label>
-            <input type="text" name="firstName" className="auth-input focus:outline-none" />
+            <input 
+              onChange={(e)=>{
+                setName(e.target.value)
+              }}
+              type="text" 
+              name="firstName" 
+              className="auth-input focus:outline-none" />
           </>
         )}
 

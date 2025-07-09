@@ -96,7 +96,7 @@ const AuthForm = ({ type }: { type: authType }) => {
       <form onSubmit={handleSubmit} className="w-full mt-5 auth-form flex flex-col gap-3">
         {isSignUp && (
           <>
-            <label>First Name </label>
+            <label>First Name</label>
             <input 
                 onChange={(e)=>{
                   setName(e.target.value)
