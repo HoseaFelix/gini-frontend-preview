@@ -1,7 +1,8 @@
-import AuthForm from '@/components/authform'
+
+import AuthForm from '@/components/AuthForm'
 import React from 'react'
 
-const SignUpPage = () => {
+const SignInPage = () => {
   return (
   <div className='h-screen w-full flex items-center justify-center'>
     <AuthForm type='sign-in' />
@@ -9,4 +10,4 @@ const SignUpPage = () => {
   )
 }
 
-export default SignUpPage
+export default SignInPage
