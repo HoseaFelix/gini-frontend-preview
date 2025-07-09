@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const AuthForm = ({ type }: { type: authType }) => {
   const isSignUp = type === "sign-up";
@@ -55,34 +56,25 @@ const AuthForm = ({ type }: { type: authType }) => {
     console.log("✅ Payload to send:", payload); 
 
     try {
-
-     
-      
-      const res = await fetch(`https://aidgeny.onrender.com/api/auth/signup`, {
+      const res = await fetch(`https://aidgeny.onrender.com/api/auth/${isSignUp ? 'signup' : 'login'}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       
       
-    
-      const text = await res.text();
-      console.log("🔵 Raw response text:", text);
-    
-      try {
-        const data = JSON.parse(text);
-        console.log("🟢 Parsed JSON:", data);
-    
-        if (res.ok) {
-          console.log(`${isSignUp ? "Signup" : "Login"} successful.`);
-        } else {
-          console.error("Server error:", data);
-        }
-      } catch (jsonError) {
-        console.error("Response is not valid JSON. Possibly HTML or text. Raw response:", text);
+      if(!res.ok) {
+        const errorText = await res.text()
+        toast.error(errorText)
+        return
       }
-    } catch (networkError) {
-      console.error("Network error:", networkError);
+
+      // const data = await res.json();
+
+        // TODO: Handle successful login/signup (redirect, save token, etc.)
+
+    } catch (e) {
+      console.error("Network error:", e);
     }
    
   };
@@ -96,7 +88,7 @@ const AuthForm = ({ type }: { type: authType }) => {
       <form onSubmit={handleSubmit} className="w-full mt-5 auth-form flex flex-col gap-3">
         {isSignUp && (
           <>
-            <label>First Name </label>
+            <label>First Name</label>
             <input 
                 onChange={(e)=>{
                   setName(e.target.value)
