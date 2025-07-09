@@ -69,7 +69,7 @@ const AuthForm = ({ type }: { type: authType }) => {
         return
       }
 
-      const data = await res.json();
+      // const data = await res.json();
 
         // TODO: Handle successful login/signup (redirect, save token, etc.)
 
