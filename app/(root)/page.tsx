@@ -1,9 +1,9 @@
-import Features from '@/components/homepage components/features'
-import Footer from '@/components/homepage components/footer'
-import Hero from '@/components/homepage components/hero'
-import Navbar from '@/components/homepage components/navbar'
-import Pricing from '@/components/homepage components/pricing'
-import Testimonials from '@/components/homepage components/testimonials'
+import Features from '@/components/homepageComponents/features'
+import Footer from '@/components/homepageComponents/footer'
+import Hero from '@/components/homepageComponents/hero'
+import Navbar from '@/components/homepageComponents/navbar'
+import Pricing from '@/components/homepageComponents/pricing'
+import Testimonials from '@/components/homepageComponents/testimonials'
 import React from 'react'
 
 const Page = () => {

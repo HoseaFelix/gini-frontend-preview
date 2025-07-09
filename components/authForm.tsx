@@ -3,14 +3,21 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
+import {useRouter} from "next/navigation";
+import { useAuthStore } from "@/store/store";
 
 const AuthForm = ({ type }: { type: authType }) => {
+
+  const setUser = useAuthStore((state)=> state.setUser)
+  const router = useRouter()
   const isSignUp = type === "sign-up";
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [emailValid, setEmailValid] = useState<null | boolean>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -35,8 +42,10 @@ const AuthForm = ({ type }: { type: authType }) => {
     setConfirmPasswordError(value !== password ? "Passwords do not match" : null);
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true)
 
     // Check again before submitting
     validateEmail(email);
@@ -47,42 +56,75 @@ const AuthForm = ({ type }: { type: authType }) => {
       return;
     }
 
-    const payload = isSignUp 
-      ? {name,email,password }
-      : {email, password}
+    const payload = isSignUp
+    ? { name, email, password }
+    : { email, password };
+
+    console.log("✅ Payload to send:", payload); 
 
     try {
       const res = await fetch(`https://aidgeny.onrender.com/api/auth/${isSignUp ? 'signup' : 'login'}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
+      
 
       const data = await res.json();
-      console.log("Success:", data);
-    } catch (err) {
-      console.error("Error:", err);
+
+      if(!data.success) {
+
+          if(data.error == 'User already exists'){
+           toast.error('user already have an account, please sign in')
+            router.push('/sign-in')
+            setLoading(false)
+            return
+          }
+
+          toast.error(data.error)
+
+
+          setLoading(false)
+          return
+      }
+
+      if(isSignUp) {
+        toast.success('signed up successfully, please sign in')
+        router.push('/sign-in')
+        setLoading(false)
+      } else{
+          setUser(data.user.id, data.token)
+          toast.success(data.message)
+          router.push('/Dashboard')
+          setLoading(false)
+      }
+      setLoading(false)
+
+
+    } catch (e) {
+      console.error("Network error:", e);
+    } finally{
+      setLoading(false)
     }
+   
   };
 
   return (
-    <div className="min-w-[300px] w-fit max-w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col">
+    <div className="min-w-[300px] w-fit max-w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col mx-auto">
       <p className="font-bold text-xl md:text-xl">
         {isSignUp ? "Fill out the form below to sign up" : "Welcome back"}
       </p>
-      
 
       <form onSubmit={handleSubmit} className="w-full mt-5 auth-form flex flex-col gap-3">
         {isSignUp && (
           <>
             <label>First Name</label>
             <input 
-              onChange={(e)=>{
-                setName(e.target.value)
-              }}
-              type="text" 
-              name="firstName" 
-              className="auth-input focus:outline-none" />
+                onChange={(e)=>{
+                  setName(e.target.value)
+                }}
+                type="text" name="firstName" 
+                className="auth-input focus:outline-none" />
           </>
         )}
 
@@ -194,7 +236,8 @@ const AuthForm = ({ type }: { type: authType }) => {
         )}
 
         <button type="submit" className="w-full py-3 bg-foreground text-white rounded-lg font-bold mt-2 cursor-pointer">
-          {isSignUp ? "Sign up" : "Sign in"}
+          {loading ? 'loading . . .' : isSignUp ? "Sign up" : "Sign in" }
+          
         </button>
       </form>
 
