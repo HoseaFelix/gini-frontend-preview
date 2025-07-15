@@ -33,6 +33,9 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
         setUser(user.id, token || '');
         setIsAuth(true);
       } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Something went wrong';
+        toast.error(errorMessage);
         setIsAuth(false);
       }
     };
