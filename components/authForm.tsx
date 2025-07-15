@@ -62,7 +62,6 @@ const AuthForm = ({ type }: { type: authType }) => {
     ? { name, email, password }
     : { email, password };
 
-    console.log("✅ Payload to send:", payload); 
 
     try {
       const res = await fetch(`https://aidgeny.onrender.com/api/auth/${isSignUp ? 'signup' : 'login'}`, {
@@ -97,7 +96,7 @@ const AuthForm = ({ type }: { type: authType }) => {
       } else{
           setUser(data.user.id, data.token)
           toast.success(data.message)
-          router.push('/Dashboard')
+          router.push('/dashboard')
           setLoading(false)
       }
       setLoading(false)
@@ -110,6 +109,16 @@ const AuthForm = ({ type }: { type: authType }) => {
     }
    
   };
+
+  const handleLinkedInAuth = async () =>{
+
+    window.location.href=`https://aidgeny.onrender.com/api/linkedin/${isSignUp ? 'signup' : 'login'}`
+
+
+  }
+  const handleGoogleAuth = () =>{
+    window.location.href=`https://aidgeny.onrender.com/api/google/${isSignUp ? 'signup' : 'login'}`
+  }
 
   return (
     <div className="min-w-[300px] w-fit max-w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col mx-auto">
@@ -245,10 +254,12 @@ const AuthForm = ({ type }: { type: authType }) => {
 
       <div className="flex gap-10 mt-10">
         {[
-          { icon: "/icons/linkedin.png", label: "LinkedIn" },
-          { icon: "/icons/google.png", label: "Google" },
-        ].map(({ icon, label }) => (
-          <div key={label} className="flex flex-col items-center gap-3 cursor-pointer">
+          { icon: "/icons/linkedin.png", label: "LinkedIn", onclick: handleLinkedInAuth },
+          { icon: "/icons/google.png", label: "Google", onclick:handleGoogleAuth },
+        ].map(({ icon, label,onclick }) => (
+          <div 
+          onClick={onclick}
+          key={label} className="flex flex-col items-center gap-3 cursor-pointer">
             <Image width={32} height={32} src={icon} alt={`${label} icon`} />
             <p className="text-sm font-bold">{label}</p>
           </div>

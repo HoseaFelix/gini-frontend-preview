@@ -4,14 +4,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { testimonials } from '@/constants';
 
-interface Testimonial {
-  imageUrl: string;
-  name: string;
-  workPosition: string;
-  state: string;
-  topic: string;
-  subText: string;
-}
+// interface Testimonial {
+//   imageUrl: string;
+//   name: string;
+//   workPosition: string;
+//   state: string;
+//   topic: string;
+//   subText: string;
+// }
 
 const Testimonials = () => {
 //   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
@@ -45,7 +45,7 @@ const Testimonials = () => {
     intervalId.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % testimonials.length)
     }, 4000)
-  }, [testimonials])
+  },[])
 
   useEffect(() => {
     startAutoSlide()
