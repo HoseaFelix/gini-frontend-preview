@@ -111,6 +111,49 @@ const AuthForm = ({ type }: { type: authType }) => {
    
   };
 
+  const handleLinkedInAuth = async () =>{
+
+    try{
+      const res = await fetch(`https://aidgeny.onrender.com/api/linkedIn/${isSignUp ? 'signup' : 'login'}`, {
+        method: "GET"
+      })
+
+
+      const data = await res.json()
+
+      if(!data.success){
+        console.error(data.error)
+        return
+      }
+      console.log(data)
+    }catch(e){
+      console.error(e)
+    }
+
+
+  }
+  const handleGoogleAuth = async () =>{
+
+    try{
+      const res = await fetch(`https://aidgeny.onrender.com/api/google/${isSignUp ? 'signup' : 'login'}`, {
+        method: "GET"
+      })
+
+
+      const data = await res.json()
+
+      if(!data.success){
+        console.error(data.error)
+        return
+      }
+      console.log(data)
+    }catch(e){
+      console.error(e)
+    }
+
+
+  }
+
   return (
     <div className="min-w-[300px] w-fit max-w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col mx-auto">
       <p className="font-bold text-xl md:text-xl">
@@ -245,10 +288,12 @@ const AuthForm = ({ type }: { type: authType }) => {
 
       <div className="flex gap-10 mt-10">
         {[
-          { icon: "/icons/linkedin.png", label: "LinkedIn" },
-          { icon: "/icons/google.png", label: "Google" },
-        ].map(({ icon, label }) => (
-          <div key={label} className="flex flex-col items-center gap-3 cursor-pointer">
+          { icon: "/icons/linkedin.png", label: "LinkedIn", onclick: handleLinkedInAuth },
+          { icon: "/icons/google.png", label: "Google", onclick:handleGoogleAuth },
+        ].map(({ icon, label,onclick }) => (
+          <div 
+          onClick={onclick}
+          key={label} className="flex flex-col items-center gap-3 cursor-pointer">
             <Image width={32} height={32} src={icon} alt={`${label} icon`} />
             <p className="text-sm font-bold">{label}</p>
           </div>
