@@ -62,7 +62,6 @@ const AuthForm = ({ type }: { type: authType }) => {
     ? { name, email, password }
     : { email, password };
 
-    console.log("✅ Payload to send:", payload); 
 
     try {
       const res = await fetch(`https://aidgeny.onrender.com/api/auth/${isSignUp ? 'signup' : 'login'}`, {
@@ -97,7 +96,7 @@ const AuthForm = ({ type }: { type: authType }) => {
       } else{
           setUser(data.user.id, data.token)
           toast.success(data.message)
-          router.push('/Dashboard')
+          router.push('/dashboard')
           setLoading(false)
       }
       setLoading(false)
@@ -113,45 +112,12 @@ const AuthForm = ({ type }: { type: authType }) => {
 
   const handleLinkedInAuth = async () =>{
 
-    try{
-      const res = await fetch(`https://aidgeny.onrender.com/api/linkedIn/${isSignUp ? 'signup' : 'login'}`, {
-        method: "GET"
-      })
-
-
-      const data = await res.json()
-
-      if(!data.success){
-        console.error(data.error)
-        return
-      }
-      console.log(data)
-    }catch(e){
-      console.error(e)
-    }
+    window.location.href=`https://aidgeny.onrender.com/api/linkedin/${isSignUp ? 'signup' : 'login'}`
 
 
   }
-  const handleGoogleAuth = async () =>{
-
-    try{
-      const res = await fetch(`https://aidgeny.onrender.com/api/google/${isSignUp ? 'signup' : 'login'}`, {
-        method: "GET"
-      })
-
-
-      const data = await res.json()
-
-      if(!data.success){
-        console.error(data.error)
-        return
-      }
-      console.log(data)
-    }catch(e){
-      console.error(e)
-    }
-
-
+  const handleGoogleAuth = () =>{
+    window.location.href=`https://aidgeny.onrender.com/api/google/${isSignUp ? 'signup' : 'login'}`
   }
 
   return (
