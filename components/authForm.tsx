@@ -3,9 +3,10 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
-import { toast } from "sonner";
 import {useRouter} from "next/navigation";
 import { useAuthStore } from "@/store/store";
+import { toast } from "sonner";
+
 
 const AuthForm = ({ type }: { type: authType }) => {
 
@@ -13,6 +14,7 @@ const AuthForm = ({ type }: { type: authType }) => {
   const router = useRouter()
   const isSignUp = type === "sign-up";
 
+  
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
