@@ -1,5 +1,6 @@
 'use client';
 
+import DashSideNavbar from '@/components/userDashboardComponents/dashsidenavbar';
 import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/store';
@@ -55,10 +56,13 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   }
 
   if (!isAuth) {
-    return null; // or a spinner if you want, while redirecting
+    return null; 
   }
 
-  return <div className="root-layout">{children}</div>;
+  return <div className="root-layout">
+              <DashSideNavbar/>
+              {children}
+          </div>;
 };
 
 export default DashboardLayout;
