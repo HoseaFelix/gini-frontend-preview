@@ -96,7 +96,7 @@ const AuthForm = ({ type }: { type: authType }) => {
       } else{
           setUser(data.user.id, data.token)
           toast.success(data.message)
-          router.push('/dashboard')
+          router.push('/userdashboard/dashboard')
           setLoading(false)
       }
       setLoading(false)
