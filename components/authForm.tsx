@@ -4,18 +4,18 @@ import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import { useAuthStore } from "@/store/store";
 import { toast } from "sonner";
+import { useAuthStore } from "@/store/store";
 
 
 const AuthForm = ({ type }: { type: authType }) => {
 
-  const setUser = useAuthStore((state)=> state.setUser)
+  
   const router = useRouter()
   const isSignUp = type === "sign-up";
 
-  
-  const [name, setName] = useState("")
+  const [rememberMe, setRemember] = useState(false)
+  const [firstName, setName] = useState("")
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -48,6 +48,7 @@ const AuthForm = ({ type }: { type: authType }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true)
+    
 
     // Check again before submitting
     validateEmail(email);
@@ -59,7 +60,7 @@ const AuthForm = ({ type }: { type: authType }) => {
     }
 
     const payload = isSignUp
-    ? { name, email, password }
+    ? { firstName, email, password }
     : { email, password };
 
 
@@ -82,7 +83,8 @@ const AuthForm = ({ type }: { type: authType }) => {
             return
           }
 
-          toast.error(data.error)
+          // toast.error('')
+          console.log(data)
 
 
           setLoading(false)
@@ -94,9 +96,10 @@ const AuthForm = ({ type }: { type: authType }) => {
         router.push('/sign-in')
         setLoading(false)
       } else{
-          setUser(data.user.id, data.token)
+
+          useAuthStore.getState().setUser(data.user, data.token, rememberMe)
           toast.success(data.message)
-          router.push('/userdashboard/dashboard')
+          router.push('/dashboard')
           setLoading(false)
       }
       setLoading(false)
@@ -109,6 +112,10 @@ const AuthForm = ({ type }: { type: authType }) => {
     }
    
   };
+
+  const handleRemember = ()=>{
+    setRemember((prev)=>!prev)
+  }
 
   const handleLinkedInAuth = async () =>{
 
@@ -230,7 +237,7 @@ const AuthForm = ({ type }: { type: authType }) => {
         {!isSignUp && (
           <div className="w-full flex justify-between">
             <label className="flex items-center gap-2">
-              <input type="checkbox" className="h-[20px] w-fit" />
+              <input onClick={handleRemember} type="checkbox" className="h-[20px] w-fit" />
               <p>Remember me</p>
             </label>
             <div>Forgot password?</div>

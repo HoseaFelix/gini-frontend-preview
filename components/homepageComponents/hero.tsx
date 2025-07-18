@@ -25,7 +25,7 @@ const Hero = () => {
           <div className='grid grid-cols-1 md:grid-cols-2 h-[70%] w-full gap-10 py-10 '>
 
             <div className='h-full w-full flex flex-col gap-5'>
-                <div className='text-white text-3xl md:text-4xl capitalize flex gap-2 flex-col font-bold max-md:items-center'>
+                <div className='text-white text-3xl md:text-4xl lg:text-6xl capitalize flex gap-2 flex-col font-bold max-md:items-center'>
 
                   <p>the ultimate career</p> 
                   <p>companion for job</p>
@@ -36,20 +36,20 @@ const Hero = () => {
                 </div>
 
                 <div>
-                  <p className='text-white font-bold lg:text-lg max-md:text-center  '>From resume creation to interview prep, we help you optimize every step of your job security journey</p>
+                  <p className='text-white font-bold text-lg lg:text-xl max-md:text-center  '>From resume creation to interview prep, we help you optimize every step of your job security journey</p>
                 </div>
 
                 <div className='flex w-fit gap-5 max-md:w-full max-md:justify-center max-sm:'>
                   <Button
                     href='/sign-up'
                     title='get started'
-                    containerClass='bg-foreground text-white px-3 py-2 rounded-sm max-md:w-full '
+                    containerClass='bg-[#F8BD00] text-text px-3 py-2 rounded-sm max-md:w-full '
 
                   />
                   <Button
                     href='/sign-in'
                     title='login'
-                    containerClass='border-2 text-white px-3 py-2 rounded-sm max-md:w-full'
+                    containerClass='border-2 text-white px-3 py-1.5 rounded-sm max-md:w-full'
 
                   />
 

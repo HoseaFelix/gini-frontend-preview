@@ -1,7 +1,18 @@
+import { useAuthStore } from '@/store/store'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 
 const DashSideNavbar = () => {
+
+  const user = useAuthStore.getState().user;
+
+  
+
+  const [isOpen, setIsOpen] = useState(false)
+  
+  const toggleNav = ()=>{
+    setIsOpen((prev) => !prev)
+  }
 
   const dashNavItem = [
     {
@@ -47,14 +58,68 @@ const DashSideNavbar = () => {
   ]
 
   return (
-    <div className='fixed h-screen hidden md:block top-0 left-0 w-[300px] z-90  bg-foreground pt-5'>
+    <>
+    
+    <nav className='z-100 fixed top-0 left-0 w-screen h-[80px] bg-foreground flex text-white'>
+        <div className='max-lg:pl-4 lg:w-[300px] lg:flex-shrink-0 flex items-center justify-center text-white font-bold text-xl md:text-2xl lg:text-4xl hover:cursor-pointer '>AideGini</div>
 
-      <p className='mx-auto w-fit text-white font-bold text-3xl hover:cursor-pointer'>AideGini</p>
 
-      <div className='w-max h-fit flex flex-col mx-auto gap-10 text-white pt-10'>
+
+        <div className='flex-1 h-full items-center justify-end lg:justify-between flex px-4'>
+            <p className='font bold hidden lg:block'>Welcome {user?.firstName}</p>
+
+            <div className='w-fit gap-5 flex items-center'>
+                <div className='py-1 hidden lg:block font-bold px-1.5 bg-white rounded text-text'>
+                    Free
+                </div>
+                <div className='hidden lg:flex items-center bg-white py-1.5 px-2 rounded'>
+                    <Image
+                        width={18}
+                        height={21}
+                        src='/icons/notificationicon.png'
+                        alt='notification icon'
+                        className=''
+                    />
+                </div>
+
+                <div className='flex gap-2 items-center hover:cursor-pointer'>
+                    <Image
+                        width={22}
+                        height={22}
+                        alt='profile icon'
+                        src='/icons/profileicon.png'
+                    />
+                    <p className='font-bold'>{user?.firstName}</p>
+
+                </div>
+
+                <div className='h-[44px] w-[44px] flex flex-center hover:cursor-pointer lg:hidden' 
+                onClick={toggleNav}
+                >
+                <Image
+                    width={24}
+                    height={24}
+                    alt='hamburger menu'
+                    src={isOpen ? '/icons/close.png' : '/icons/hamburger.png'}
+                    className='invert'
+                />
+
+              </div>
+
+
+            </div>
+
+        
+
+        </div>
+      
+    </nav>
+    <div className={`fixed h-screen ${isOpen ? 'w-screen md:w-[300px]' : 'hidden w-0'}  lg:block top-0 left-0 lg:w-[300px] z-90  bg-foreground pt-10 px-5 overflow-hidden  `}>
+
+      <div className='w-full h-fit flex flex-col mx-auto gap-10 text-white pt-10'>
         {dashNavItem.map((item, index)=>(
           <div 
-              className={`group hover:cursor-pointer hover:bg-white hover:text-black rounded-lg px-4 py-3 w-fit flex flex-nowrap gap-2 items-center justify-center  `}
+              className={`group hover:cursor-pointer hover:bg-white hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center  `}
               key={index}>
                 <Image
                   width={20}
@@ -73,6 +138,8 @@ const DashSideNavbar = () => {
       </div>
       
     </div>
+    </>
+    
   )
 }
 
