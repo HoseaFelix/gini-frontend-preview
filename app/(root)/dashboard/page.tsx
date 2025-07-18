@@ -1,9 +1,12 @@
+import UserData from '@/components/dashboardComponents/userData'
 import React from 'react'
 
 const Page = () => {
   return (
-    <div>
-      this is the dashboard
+    <div className='w-full h-full relative '>
+      <UserData/>
+      
+      
     </div>
   )
 }
