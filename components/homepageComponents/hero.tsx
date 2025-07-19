@@ -1,9 +1,35 @@
+'use client'
+
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '../generalComponents/button'
 import Carousel from './carousel'
 
 const Hero = () => {
+
+  const [url, setUrl] = useState('')
+  
+
+
+
+  useEffect(()=>{
+  
+      
+      const authString = localStorage.getItem('auth');
+      const savedAuth = authString ? JSON.parse(authString) : null;
+      if(savedAuth){
+        setUrl('/dashboard')
+        
+        
+      }else {
+        setUrl('sign-in')
+      }
+
+  
+  })
+ 
+  
+
   return (
     <section className=' w-screen min-h-screen relative flex items-center justify-center overflow-x-hidden '>
 
@@ -41,13 +67,14 @@ const Hero = () => {
 
                 <div className='flex w-fit gap-5 max-md:w-full max-md:justify-center max-sm:'>
                   <Button
-                    href='/sign-up'
+                     
+                    href={url}
                     title='get started'
                     containerClass='bg-[#F8BD00] text-text px-3 py-2 rounded-sm max-md:w-full '
 
                   />
                   <Button
-                    href='/sign-in'
+                    href={url}
                     title='login'
                     containerClass='border-2 text-white px-3 py-1.5 rounded-sm max-md:w-full'
 
