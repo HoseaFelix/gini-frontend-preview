@@ -69,10 +69,10 @@ const DashSideNavbar = () => {
             <p className='font bold hidden lg:block'>Welcome {user?.firstName}</p>
 
             <div className='w-fit gap-5 flex items-center'>
-                <div className='py-1 hidden lg:block font-bold px-1.5 bg-white rounded text-text'>
+                <div className='py-1 font-bold px-1.5 bg-white rounded text-text'>
                     Free
                 </div>
-                <div className='hidden lg:flex items-center bg-white py-1.5 px-2 rounded'>
+                <div className=' items-center bg-white py-1.5 px-2 rounded'>
                     <Image
                         width={18}
                         height={21}
@@ -114,9 +114,9 @@ const DashSideNavbar = () => {
         </div>
       
     </nav>
-    <div className={`fixed h-screen ${isOpen ? 'w-screen md:w-[300px]' : 'hidden w-0'}  lg:block top-0 left-0 lg:w-[300px] z-90  bg-foreground pt-10 px-5 overflow-hidden  `}>
+    <div className={`fixed h-screen ${isOpen ? 'w-[70vw] md:w-[300px]' : 'hidden w-0'}  lg:block top-0 left-0 lg:w-[300px] z-90  bg-foreground pt-10 px-5 overflow-hidden  `}>
 
-      <div className='w-full h-fit flex flex-col mx-auto gap-10 text-white pt-10'>
+      <div className='w-full h-fit flex flex-col mx-auto gap-5 text-white pt-10'>
         {dashNavItem.map((item, index)=>(
           <div 
               className={`group hover:cursor-pointer hover:bg-white hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center  `}
@@ -134,6 +134,39 @@ const DashSideNavbar = () => {
 
           </div>
         ))}
+
+      </div>
+
+      <div className='absolute left-5 right-5 h-[50px] bottom-10  '>
+        <div className='w-full h-full flex justify-between items-center'>
+          <div className='flex items-center gap-2'>
+            <div className='w-fit h-fit flex'>
+              <Image
+                src='/icons/settings.png'
+                alt='settings icon'
+                width={20}
+                height={20}
+
+              />
+            </div>
+            <div className='w-fit text-white font-bold'>
+                Settings
+
+              </div>
+
+          </div>
+
+          <div className='p-2 h-fit bg-white rounded-lg flex items-center hover:cursor-pointer'>
+            <Image
+              src='/icons/question.png'
+              height={15}
+              width={15}
+              alt='question icon'
+            />
+
+          </div>
+
+        </div>
 
       </div>
       

@@ -77,11 +77,14 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
     return null; 
   }
 
-  return <div className="root-layout pl-4 pr-4 md:pl-10 md:pr-10 lg:pl-[350px] pt-30">
+  return <div className="root-layout pl-4 pr-4 md:pl-10 md:pr-10 lg:pl-[350px] pt-30 relative">
+
+          
               
               <DashSideNavbar/>
               {/* <TopBar/> */}
               {children}
+              
           </div>;
 };
 
