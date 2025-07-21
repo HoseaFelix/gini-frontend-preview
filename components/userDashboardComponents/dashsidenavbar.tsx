@@ -1,14 +1,21 @@
+'use client'
 import { useAuthStore } from '@/store/store'
 import Image from 'next/image'
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
+import { toast } from 'sonner';
 
 const DashSideNavbar = () => {
+
+  const router = useRouter();
 
   const user = useAuthStore.getState().user;
 
   
 
   const [isOpen, setIsOpen] = useState(false)
+  const [isNotificationOpen, setNotificationOpen] = useState(false)
   
   const toggleNav = ()=>{
     setIsOpen((prev) => !prev)
@@ -57,6 +64,25 @@ const DashSideNavbar = () => {
     },
   ]
 
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (confirmed) {
+      useAuthStore.getState().logout();
+      toast('logged out successfully')
+      router.push('/sign-in')
+      
+    }
+  };
+
+  const handleNotificationToggle = ()=>{
+    setNotificationOpen((prev)=> !prev)
+  }
+
+  const notifications = [
+    {name:' dummy1', time: '30 mins ago '},
+    {name:' dummy2', time: '30 mins ago '},
+  ]
+
   return (
     <>
     
@@ -65,14 +91,15 @@ const DashSideNavbar = () => {
 
 
 
-        <div className='flex-1 h-full items-center justify-end lg:justify-between flex px-4'>
+        <div className='flex-1 h-full items-center justify-end lg:justify-between flex px-5'>
             <p className='font bold hidden lg:block'>Welcome {user?.firstName}</p>
 
             <div className='w-fit gap-5 flex items-center'>
                 <div className='py-1 font-bold px-1.5 bg-white rounded text-text'>
                     Free
                 </div>
-                <div className=' items-center bg-white py-1.5 px-2 rounded'>
+                <div 
+                onClick={handleNotificationToggle} className=' hover:cursor-pointer notification items-center bg-white py-1.5 px-2 rounded'>
                     <Image
                         width={18}
                         height={21}
@@ -89,7 +116,7 @@ const DashSideNavbar = () => {
                         alt='profile icon'
                         src='/icons/profileicon.png'
                     />
-                    <p className='font-bold'>{user?.firstName}</p>
+                    <p className='font-bold hidden md:block'>{user?.firstName}</p>
 
                 </div>
 
@@ -137,9 +164,9 @@ const DashSideNavbar = () => {
 
       </div>
 
-      <div className='absolute left-5 right-5 h-[50px] bottom-10  '>
+      <div className=' absolute left-5 right-5 h-[50px] bottom-10  '>
         <div className='w-full h-full flex justify-between items-center'>
-          <div className='flex items-center gap-2'>
+          <div className=' hover:cursor-pointer flex items-center gap-2'>
             <div className='w-fit h-fit flex'>
               <Image
                 src='/icons/settings.png'
@@ -169,8 +196,59 @@ const DashSideNavbar = () => {
         </div>
 
       </div>
+
+      <div 
+      onClick={handleLogout}
+      className='absolute h-fit bottom-25 left-5 w-fit'>
+        <div className='py-3 px-4 hover:cursor-pointer text-sm font-bold bg-white rounded-lg'>
+          Log Out
+
+        </div>
+
+      </div>
       
     </div>
+
+
+    <div className={`notifications-panel fixed top-0 right-0 bottom-0 ${!isNotificationOpen ? 'hidden' : 'w-[70dvw] md:w-[50dvw] ' } bg-foreground z-100 shadow-xl shadow-black overflow-hidden transition-all`}>
+
+      <div className='w-full h-full py-10 px-4  flex flex-col gap-5'>
+        <div className='flex text-white justify-between w-full items-center h-fit'>
+          <p className='font-bold text-2xl'>Notifications</p>
+          <Image
+            src='/icons/close.png'
+            alt='close icon'
+            width={20}
+            height={20}
+            className='invert hover:cursor-pointer'
+            onClick={handleNotificationToggle}
+          />
+
+        </div>
+
+        {notifications.length > 0 && (
+          notifications.map((notification, index)=>(
+            <div className='w-full h-fit p-2 bg-white shadow-sm rounded-xl flex flex-col justify-between gap-5' key={index}>
+              <p className=''>{notification.name}</p>
+              <p className='opacity-50 text-sm'>{notification.time}</p>
+
+            </div>
+          ))
+        )}
+
+        <div className='w-full flex h-fit items-end justify-end'>
+          <Link href='' className='underline text-white hover:cursor-pointer text-sm'>Load more</Link>
+
+        </div>
+
+
+      </div>
+
+
+
+
+    </div>     
+
     </>
     
   )
