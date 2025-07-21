@@ -109,7 +109,7 @@ const Navbar = () => {
                                 ))}
                             </div>
 
-                            <div className='flex w-fit items-center justify-between'>
+                            <div className='flex w-fit items-center justify-between gap-2'>
                                 <Image width={20} height={20} alt='globe icon' src='/icons/globe.svg' 
                                 className='invert'
                                 />

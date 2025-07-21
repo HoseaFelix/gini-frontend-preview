@@ -23,7 +23,7 @@ const UserData = () => {
   return (
     <div className='w-full flex flex-wrap h-fit gap-5'>
         {userdata.map((data, index)=>(
-            <div key={index} className='w-[200px] h-[150px] bg-white rounded-lg shadow flex flex-col justify-between p-2 '>
+            <div key={index}  className='flex-grow basis-[200px] md:h-[150px] h-[100px] bg-white rounded-lg shadow flex flex-col justify-between p-2'>
                 <p>{data.name}</p>
                 <p className='font-bold text-xl'>{data.number}</p>
 
