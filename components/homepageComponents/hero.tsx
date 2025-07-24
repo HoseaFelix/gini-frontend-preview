@@ -65,18 +65,18 @@ const Hero = () => {
                   <p className='text-white font-bold text-lg lg:text-xl max-md:text-center  '>From resume creation to interview prep, we help you optimize every step of your job security journey</p>
                 </div>
 
-                <div className='flex w-fit gap-5 max-md:w-full max-md:justify-center max-sm:'>
+                <div className='flex w-full gap-5 md:w-fit max-md:justify-center max-sm:'>
                   <Button
                      
                     href={url}
                     title='get started'
-                    containerClass='bg-[#F8BD00] text-text px-3 py-2 rounded-sm max-md:w-full '
+                    containerClass='bg-[#F8BD00] text-text px-3 py-2 rounded-sm w-full md:w-fit '
 
                   />
                   <Button
                     href={url}
                     title='login'
-                    containerClass='border-2 text-white px-3 py-1.5 rounded-sm max-md:w-full'
+                    containerClass='border-2 text-white px-3 py-1.5 rounded-sm w-full md:w-fit'
 
                   />
 

@@ -1,5 +1,5 @@
 'use client'
-import { useAuthStore } from '@/store/store'
+import { useAuthStore, useCurrentNav } from '@/store/store'
 import Image from 'next/image'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ const DashSideNavbar = () => {
 
   const [isOpen, setIsOpen] = useState(false)
   const [isNotificationOpen, setNotificationOpen] = useState(false)
+  const [currentNav, setCurrentNav] = useState("Dashboard")
   
   const toggleNav = ()=>{
     setIsOpen((prev) => !prev)
@@ -83,6 +84,14 @@ const DashSideNavbar = () => {
     {name:' dummy2', time: '30 mins ago '},
   ]
 
+  const setCurrentNavbar = useCurrentNav((state) => state.setCurrentNav);
+
+  const handleNavSwitch = (nav : string)=>{
+     setCurrentNavbar(nav);
+     setCurrentNav(useCurrentNav.getState().currentNav)
+     
+  }
+
   return (
     <>
     
@@ -146,14 +155,16 @@ const DashSideNavbar = () => {
       <div className='w-full h-fit flex flex-col mx-auto gap-5 text-white pt-10'>
         {dashNavItem.map((item, index)=>(
           <div 
-              className={`group hover:cursor-pointer hover:bg-white hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center  `}
+
+              onClick={()=>{handleNavSwitch(item.name)}}
+              className={`group hover:cursor-pointer ${currentNav == item.name? 'bg-white text-black' : ''} hover:bg-white/50 hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center  `}
               key={index}>
                 <Image
                   width={20}
                   height={20}
                   src={item.icon}
                   alt={`${item.name}icon`}
-                  className={`${item.name == 'Dashboard' ? 'invert' : ''} group-hover:invert `}
+                  className={`${currentNav == item.name ? 'invert' : ''} group-hover:invert `}
                 />
 
                 <p className='font-bold text-sm'>{item.name}</p>
