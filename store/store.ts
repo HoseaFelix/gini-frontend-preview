@@ -34,6 +34,21 @@ const clearAuthState = () => {
   sessionStorage.removeItem('auth');
 };
 
+type currentNav = {
+  currentNav: string,
+
+  setCurrentNav: (url:string)=> void,
+}
+
+export const useCurrentNav = create <currentNav> ((set)=>({
+  currentNav: "Dashboard",
+
+  setCurrentNav: (current:string)=>{
+    set({currentNav: current})
+  }
+
+}))
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
