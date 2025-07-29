@@ -3,10 +3,11 @@ import { useAuthStore, useCurrentNav } from '@/store/store'
 import Image from 'next/image'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 
 const DashSideNavbar = () => {
+  
 
   const router = useRouter();
 
@@ -87,10 +88,16 @@ const DashSideNavbar = () => {
   const setCurrentNavbar = useCurrentNav((state) => state.setCurrentNav);
 
   const handleNavSwitch = (nav : string)=>{
+
      setCurrentNavbar(nav);
      setCurrentNav(useCurrentNav.getState().currentNav)
+     router.push(`${nav.toLowerCase().split(' ').join("")}`)
      
   }
+
+  useEffect(()=>{
+    setCurrentNav(useCurrentNav.getState().currentNav)
+  })
 
   return (
     <>
