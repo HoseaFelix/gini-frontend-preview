@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import Notifications from '../dashboard/components/notifications'
 import Savedresume from './components/savedresume'
 import { useCurrentNav } from '@/store/store'
+import UploadSequence from './components/uploadSequence'
 
 const ResumePage = () => {
 
@@ -34,7 +35,7 @@ const ResumePage = () => {
   },[])
 
   return (
-    <div className='flex flex-col gap-10 relative'>
+    <div className='flex flex-col gap-10 relative pb-10'>
             <div 
 
                 onClick={handlePanelToggle}
@@ -56,7 +57,7 @@ const ResumePage = () => {
             <Notifications notifications={dummyNotifications}/>
             <Savedresume/>
 
-            <div className={`absolute top-0 left-0 w-full h-max bg-white rounded-lg overflow-hidden pb-20 ${!isPanelOpen ? 'hidden' : ''}`}>
+            <div className={`absolute top-0 left-0 w-full h-max bg-white rounded-lg overflow-hidden pb-20 min-h-[60dvh] ${!isPanelOpen ? 'hidden' : ''}`}>
               <div className='w-full h-full flex flex-col relative py-10 px-4 items-center gap-5 '>
                 <p className='font-bold text-text/70 text-xl'>Add New Resume</p>
                 <div 
@@ -76,50 +77,14 @@ const ResumePage = () => {
 
                 </div>
 
-                <div className='w-full h-fit lg:w-4xl mx-auto flex flex-nowrap gap-2 md:gap-5'>
-                  <div className='h-2 w-full rounded-lg bg-blue-500 '></div>
-                  <div className='h-2 w-full rounded-lg bg-text/60 '></div>
-                  <div className='h-2 w-full rounded-lg bg-text/60 '></div>
+                
+
+                <div className='w-full h-max flex items-center justify-center'>
+                  <UploadSequence/>
 
                 </div>
 
-                <div className='flex flex-col md:flex-row gap-10 mt-20'>
-                <div className='relative'>
-                  <input 
-                    id="fileUpload"
-                    type="file" 
-                    className='hidden' 
-                    onChange={(e) => console.log(e.target.files)} 
-                  />
-                  <label htmlFor="fileUpload">
-                    <div className='w-[200px] h-[200px] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-3 pt-5'>
-                      <div className='flex items-center justify-center p-2 rounded bg-text/30'>
-                        <Image
-                          src={"/icons/create.png"}
-                          width={20}
-                          height={20}
-                          alt='create icon'
-                        />
-                      </div>
-                      <p>Upload from local storage</p>
-                    </div>
-                  </label>
-                </div>
-                <div className='w-[200px] h-[200px] border rounded-lg border-text/50  items-center justify-center hover:cursor-pointer flex flex-col gap-3 pt-5'>
-                      <div className='flex flex-col items-center justify-center p-2 rounded bg-text/30'>
-                        <Image
-                          src={"/icons/write.png"}
-                          width={20}
-                          height={20}
-                          alt='create icon'
-                        />
-                      </div>
-                      <p>Build from a template</p>
-
-                    </div>
-
-
-                </div>
+                
 
 
               </div>

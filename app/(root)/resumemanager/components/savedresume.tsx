@@ -4,17 +4,17 @@ const Savedresume = () => {
 
     const SavedResume = [
         {
-            name: 'Resume 01',
+           
             title: 'sales Assistant',
             id: 1,
         },
         {
-            name: 'Resume 02',
+           
             title: 'sales Assistant',
             id: 2,
         },
         {
-            name: 'Resume 03',
+            
             title: 'sales Assistant',
             id: 3,
         },
@@ -27,7 +27,7 @@ const Savedresume = () => {
             {SavedResume.length > 0 && (
                 SavedResume.map((resume, index)=>(
                     <div key={index} className='flex justify-between items-center text-text font-bold opacity-80 border border-text/50 rounded-sm px-4 py-3 hover:border-blue-400'>
-                        <p>{resume.name}</p>
+                        
                         <p>{resume.title}</p>
                         <div className='flex gap-3'>
                             <p className='hover:cursor-pointer'>View</p>
