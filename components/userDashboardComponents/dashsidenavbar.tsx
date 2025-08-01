@@ -97,7 +97,7 @@ const DashSideNavbar = () => {
 
   useEffect(()=>{
     setCurrentNav(useCurrentNav.getState().currentNav)
-  })
+  },[])
 
   return (
     <>
@@ -159,71 +159,80 @@ const DashSideNavbar = () => {
     </nav>
     <div className={`fixed h-screen ${isOpen ? 'w-[70vw] md:w-[300px]' : 'hidden w-0'}  lg:block top-0 left-0 lg:w-[300px] z-90  bg-foreground pt-10 px-5 overflow-hidden  `}>
 
-      <div className='w-full h-fit flex flex-col mx-auto gap-5 text-white pt-10'>
-        {dashNavItem.map((item, index)=>(
-          <div 
+      <div className='w-full h-full pb-5 flex justify-between flex-col mx-auto gap-5 text-white pt-10'>
+        <div className='flex flex-col gap-1 md:gap-5'>
+          {dashNavItem.map((item, index)=>(
+            <div 
 
-              onClick={()=>{handleNavSwitch(item.name)}}
-              className={`group hover:cursor-pointer ${currentNav == item.name? 'bg-white text-black' : ''} hover:bg-white/50 hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center  `}
-              key={index}>
-                <Image
-                  width={20}
-                  height={20}
-                  src={item.icon}
-                  alt={`${item.name}icon`}
-                  className={`${currentNav == item.name ? 'invert' : ''} group-hover:invert `}
-                />
+                onClick={()=>{handleNavSwitch(item.name)}}
+                className={`group hover:cursor-pointer ${currentNav == item.name? 'bg-white text-black' : ''} hover:bg-white/50 hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center  `}
+                key={index}>
+                  <Image
+                    width={20}
+                    height={20}
+                    src={item.icon}
+                    alt={`${item.name}icon`}
+                    className={`${currentNav == item.name ? 'invert' : ''} group-hover:invert `}
+                  />
 
-                <p className='font-bold text-sm'>{item.name}</p>
+                  <p className='font-bold text-sm'>{item.name}</p>
 
 
-          </div>
-        ))}
-
-      </div>
-
-      <div className=' absolute left-5 right-5 h-[50px] bottom-10  '>
-        <div className='w-full h-full flex justify-between items-center'>
-          <div className=' hover:cursor-pointer flex items-center gap-2'>
-            <div className='w-fit h-fit flex'>
-              <Image
-                src='/icons/settings.png'
-                alt='settings icon'
-                width={20}
-                height={20}
-
-              />
             </div>
-            <div className='w-fit text-white font-bold'>
-                Settings
+          ))}
+        </div>
+        
+        <div className='flex flex-col gap-5'>
+            <div className='  h-[50px]  '>
+            <div className='w-full h-full flex justify-between items-center'>
+              <div className=' hover:cursor-pointer flex items-center gap-2'>
+                <div className='w-fit h-fit flex'>
+                  <Image
+                    src='/icons/settings.png'
+                    alt='settings icon'
+                    width={20}
+                    height={20}
+
+                  />
+                </div>
+                <div className='w-fit text-white font-bold'>
+                    Settings
+
+                  </div>
 
               </div>
 
-          </div>
+              <div className='p-2 h-fit bg-white rounded-lg flex items-center hover:cursor-pointer'>
+                <Image
+                  src='/icons/question.png'
+                  height={15}
+                  width={15}
+                  alt='question icon'
+                />
 
-          <div className='p-2 h-fit bg-white rounded-lg flex items-center hover:cursor-pointer'>
-            <Image
-              src='/icons/question.png'
-              height={15}
-              width={15}
-              alt='question icon'
-            />
+              </div>
 
-          </div>
+            </div>
+
+            </div>
+            <div 
+              onClick={handleLogout}
+              className=' h-fit  w-fit'>
+                <div className='py-3 px-4 hover:cursor-pointer text-sm font-bold bg-white rounded-lg text-foreground'>
+                  Log Out
+
+                </div>
+
+      </div>
+
 
         </div>
 
       </div>
 
-      <div 
-      onClick={handleLogout}
-      className='absolute h-fit bottom-25 left-5 w-fit'>
-        <div className='py-3 px-4 hover:cursor-pointer text-sm font-bold bg-white rounded-lg'>
-          Log Out
+      
 
-        </div>
-
-      </div>
+      
       
     </div>
 

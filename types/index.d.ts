@@ -24,3 +24,4 @@ type testimonialArray = {
 }
 
 type authType = 'sign-in' | 'sign-up'
+
