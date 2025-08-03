@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { extractTextFromFile } from '@/lib/constants/constants'
 import { formatTextWithAi, optimizeResumeWithAi } from '@/lib/actions/general.actions'
 import LoadingStatus from '@/components/generalComponents/loadingStatus'
+import { useOptimizedStore } from '@/store/resumeStore'
 // import { useResumeStore } from '@/store/resumeStore'
 
 const UploadSequence = () => {
@@ -20,6 +21,7 @@ const UploadSequence = () => {
   const [isScanStart, setScanStart] = useState(false)
   const [isScanning, setScanning] = useState('waiting')
   const [generateImprov, setGenImprov] = useState('waiting')
+//   const [rawText, setRawText] = useState("")
 
 //handles uploading documents
   const handleDoc = (e: React.ChangeEvent<HTMLInputElement>)=>{
@@ -57,6 +59,7 @@ const UploadSequence = () => {
             return;
         } 
 
+        // setRawText(rawText)
         setUploadingFile('done')
         setAnalyzingDoc('ready')
         
@@ -113,7 +116,7 @@ const UploadSequence = () => {
    const handleSecondContinue = async ()=>{
 
     if(!description) {
-        toast.error('enter description pleae')
+        toast.error('enter description please')
         return;
     }
 
@@ -121,11 +124,12 @@ const UploadSequence = () => {
     try{
         setScanStart(true)
         setScanning('ready')
-        const optimizeResume = await optimizeResumeWithAi({description})
-        setGenImprov('ready')
+        const optimizeResume = await optimizeResumeWithAi({description, })
         if(optimizeResume?.success){
+            setGenImprov('ready')
             setScanning('done')
             setGenImprov('done')
+            console.log(useOptimizedStore.getState().parsedResume)
             setCurrentView((prev)=> prev + 1)
         }
 
@@ -234,11 +238,11 @@ const UploadSequence = () => {
                             
                             <div className='flex mt-10 flex-col w-full gap-2'>
                                     <div className='flex gap-5'>
-                                        <LoadingStatus loading={isScanning}/> <p>{isScanning == 'done' ? 'Scanned for improvement' : 'Scanning for improvement...' }</p>
+                                        <LoadingStatus loading={isScanning}/> <p>{isScanning !== 'done' ? 'Scanning for improvement. . . ' : 'Scanned for improvement' }</p>
 
                                     </div>
-                                    <div className='flex gap-5'>
-                                        <LoadingStatus loading={generateImprov}/> <p>{generateImprov == 'done' ?   'Generating suggestions' : 'suggestions generated'}</p>
+                                    <div className={`flex gap-5 ${generateImprov !== 'ready' ? 'opacity-10' : '' }`}>
+                                        <LoadingStatus loading={generateImprov}/> <p>{generateImprov !== 'done' ?   'Generating suggestions' : 'suggestions generated'}</p>
 
                                     </div>
 

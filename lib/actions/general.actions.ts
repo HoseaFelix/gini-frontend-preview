@@ -112,11 +112,13 @@ export async function formatTextWithAi(rawText: string) {
 
     
 }
-export async function optimizeResumeWithAi({description}: {description: string}) {
+export async function optimizeResumeWithAi({description, }: {description: string, }) {
 
-    const rawText = useResumeStore.getState().parsedResume;
 
+    console.log('started optimizing')
     const setParsedResume = useOptimizedStore.getState().setParsedResume
+    const rawText = JSON.stringify(useResumeStore.getState().parsedResume)
+    console.log(rawText)
 
     try{
 
@@ -126,9 +128,30 @@ export async function optimizeResumeWithAi({description}: {description: string})
             }),
             schema: ResumeSchema,
             prompt: `
-            
-            You are a resume optimizer, your job is to optimize the resume so that it can attract hiring companies, you'll be provided with the initial resume, find and edit it to be proffessional and eyecatching, you can reduce parts that are not neccessary, add to some, change some entirely, just edit the ones you can edit, you will also be provided with a job description, optimize the resume to fit the job description. if theres no job description, just edit the ones you can and leave the rest. return the following format:
-            
+            You are a professional resume optimizer. Your job is to take a parsed resume object and improve it to be professional, attractive, and tailored for recruiters — while strictly keeping the same structure and all original fields.
+
+            You will receive:
+            1. A raw parsed resume text.
+            2. A job description (optional).
+
+            Your task:
+            - Edit and enhance each section to sound more polished and impactful.
+            - Remove filler or redundant details.
+            - Expand vague points with stronger wording or clearer accomplishments.
+            - If a job description is provided, adjust the resume content to match relevant keywords, skills, and tone — **without fabricating experience**.
+            - Do NOT remove any top-level keys. Always return:
+              - name
+              - contactInfo (with phone, email, address, linkedIn)
+              - education (array)
+              - skills (array)
+              - awards (array)
+              - careerObjective (string)
+              - experience (array)
+              - projects (array)
+            - If any section is missing in the input, return it as an empty array or string.
+
+            Keep the final output in this exact JSON format:
+
             {
               name: string,
               contactInfo: {
@@ -163,50 +186,21 @@ export async function optimizeResumeWithAi({description}: {description: string})
                 }
               ]
             }
-            
-            Some fields may be missing in the original text — that's okay. Just include what you can detect.
 
-            Example:
-            Text:
-            """
-            John Doe
-            Software Engineer at ABC Corp (Jan 2021 - Present)
-            - Led the redesign of the main platform, improving performance by 30%
-            - Introduced CI/CD pipelines
-            """
+            Do not include any commentary or explanations. Only return a valid JSON object matching the schema.
 
-            JSON:
-            {
-              name: "John Doe",
-              experience: [
-                {
-                  heading: "Software Engineer at ABC Corp",
-                  duration: "Jan 2021 - Present",
-                  achievements: [
-                    "Led the redesign of the main platform, improving performance by 30%",
-                    "Introduced CI/CD pipelines"
-                  ]
-                }
-              ]
-            }
+            Description (if any):
+            """${description}"""
 
-            Description: 
-            """"""""""""
-            ${description}
-            """""""""""""
-
-            Now convert this:
-            
-            Text:
+            Raw Resume Text:
             """${rawText}"""
-            
-            """""""""""""
-
             `
+
             
         
         })
 
+        console.log("Raw AI response:", object);
         const parsed = ResumeSchema.safeParse(object);
         if (parsed.success) {
             setParsedResume(parsed.data)
