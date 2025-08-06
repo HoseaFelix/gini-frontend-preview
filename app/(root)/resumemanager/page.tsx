@@ -57,7 +57,7 @@ const ResumePage = () => {
             <Notifications notifications={dummyNotifications}/>
             <Savedresume/>
 
-            <div className={`absolute top-0 left-0 w-full h-max bg-white rounded-lg overflow-hidden pb-20 min-h-[60dvh] ${!isPanelOpen ? 'hidden' : ''}`}>
+            <div className={`absolute top-0 left-0 w-full h-max bg-white rounded-lg overflow-hidden pb-5 min-h-[60dvh] ${!isPanelOpen ? 'hidden' : ''}`}>
               <div className='w-full h-full flex flex-col relative py-10 px-4 items-center gap-5 '>
                 <p className='font-bold text-text/70 text-xl'>Add New Resume</p>
                 <div 
@@ -79,7 +79,7 @@ const ResumePage = () => {
 
                 
 
-                <div className='w-full h-max flex items-center justify-center'>
+                <div className='w-full h-full  flex items-center justify-center'>
                   <UploadSequence/>
 
                 </div>
