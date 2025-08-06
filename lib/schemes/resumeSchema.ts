@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const ResumeSchema = z.object({
   name: z.string().optional(),
+  headline:z.string().optional(), //e.g frontend developer
   contactInfo: z.object({
     phone: z.string().optional(),
     email: z.string().optional(),
