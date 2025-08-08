@@ -9,6 +9,7 @@ import LoadingStatus from '@/components/generalComponents/loadingStatus'
 import { useOptimizedStore, useResumeStore } from '@/store/resumeStore'
 import { optimizeResumeWithAi } from '@/lib/actions/resumeAction'
 import Amended from './amended'
+import { useRouter } from 'next/navigation'
 // import { useResumeStore } from '@/store/resumeStore'
 
 const UploadSequence = () => {
@@ -145,9 +146,21 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
 
    }
 
+   const router = useRouter()
+   
+
 
    const originalResume = useResumeStore.getState().parsedResume
    const optimizedResume = useOptimizedStore.getState().parsedResume
+
+   const handleLastContinue = ()=>{
+
+    if(optimizedResume) {
+        localStorage.setItem('resume', JSON.stringify(optimizedResume))
+    }
+    
+    router.push('/resumemanager/templates1')
+}
 
   return (
 
@@ -308,8 +321,10 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                         <div className='sticky top-5 font-bold  w-full px-4 flex justify-between'>
                             <p className='text-sm md:text-xl'>Resume Optimization</p>
                             <div className='w-fit flex gap-3'>
-                                <div className='text-red-600 hover:cursor-pointer'>Reject</div>
-                                <div className='text-blue-600 hover:cursor-pointer'>Apply</div>
+                                <div className='text-red-600 hover:cursor-pointer md:text-xl'>Reject</div>
+                                <div 
+                                onClick={handleLastContinue}
+                                className='text-blue-600 hover:cursor-pointer md:text-xl'>Apply</div>
 
                             </div>
                         </div>
@@ -394,18 +409,17 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                             </div>
                             <div className='w-full h-fit flex items-end justify-end px-4 gap-8'>
 
-                                                    <button 
-                                                        onClick={handleBackButton}
-                                                        className={`px-4 py-1.5 rounded border border-foreground bg-white text-foreground font-bold`}>
-                                                        Back
-                                                    </button>
+                                <button 
+                                    onClick={handleBackButton}
+                                    className={`px-4 py-1.5 rounded border border-foreground bg-white text-foreground font-bold`}>
+                                        Back
+                                </button>
 
-                                                    <button
-                                                    onClick={handleSecondContinue}
-                                                    className={`px-4 py-2 rounded ${canContinue ? 'bg-blue-600' : 'bg-text/50'} text-white`}
-                                                    >
-                                                    Continue
-                                                    </button>
+                                <button
+                                    onClick={handleSecondContinue}
+                                    className={`px-4 py-2 rounded bg-blue/600 text-white`}>
+                                        Continue
+                                </button>
                             </div>
 
                         </div>
