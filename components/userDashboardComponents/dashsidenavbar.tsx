@@ -17,7 +17,7 @@ const DashSideNavbar = () => {
 
   const [isOpen, setIsOpen] = useState(false)
   const [isNotificationOpen, setNotificationOpen] = useState(false)
-  const [currentNav, setCurrentNav] = useState("Dashboard")
+  const [currentNav, setCurrentNav] = useState("")
   
   const toggleNav = ()=>{
     setIsOpen((prev) => !prev)

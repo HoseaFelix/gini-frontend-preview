@@ -25,3 +25,6 @@ type testimonialArray = {
 
 type authType = 'sign-in' | 'sign-up'
 
+declare module 'html2pdf.js';
+
+
