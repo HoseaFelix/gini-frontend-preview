@@ -17,7 +17,18 @@ export const ResumeSchema = z.object({
     endYear: z.string().optional(), // can be 'Ongoing'
   })).optional(),
 
-  skills: z.array(z.string()).optional(),
+  skills: z.object({
+    technical: z.object({
+      languages: z.array(z.string()).optional(),
+      frameworksAndLibraries: z.array(z.string()).optional(),
+      toolsAndBuildSystems: z.array(z.string()).optional(),
+      testing: z.array(z.string()).optional(),
+      practices: z.array(z.string()).optional(),
+    }).optional(),
+    soft: z.array(z.string()).optional(),
+    certifications: z.array(z.string()).optional()
+  }).optional(),
+  
 
   awards: z.array(z.string()).optional(),
 

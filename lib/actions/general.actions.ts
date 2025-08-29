@@ -1,6 +1,6 @@
 'use server'
 
-import { generateObject } from "ai";
+import { generateObject, generateText } from "ai";
 import { ResumeSchema} from "../schemes/resumeSchema";
 import { google } from "@ai-sdk/google";
 import {  useResumeStore } from "@/store/resumeStore";
@@ -14,7 +14,7 @@ export async function formatTextWithAi(rawText: string) {
     try{
 
         const {object} = await generateObject({
-            model: google('gemini-2.0-flash-001', {
+            model: google('gemini-2.5-flash', {
                 structuredOutputs: false,
             }),
             schema: ResumeSchema,
@@ -116,3 +116,57 @@ export async function formatTextWithAi(rawText: string) {
 
     
 }
+
+export async function answerUser(query: chatMessage[]) {
+
+  const formattedTranscript = query.map((sentence: {role: string, message: string}, index)=>(
+    ` ${index} : -${sentence.role}: ${sentence.message}\n`
+  )).join('')
+
+  if (!query) return {
+    success: false,
+    message: 'Please enter a query'
+  };
+
+  try {
+    const result = await generateText({
+      model: google('gemini-2.5-flash'),
+      prompt: `
+        You are an AI helper designed to help users streamline their resume creation. 
+        If greeted casually, reply casually yet professionally. 
+        If it's resume-related, reply professionally and without complication.
+        You'll be provided with a transcript containing your previous conversation with the user.
+        Your role is 'assistant'.
+        Analyze the transcript carefully, but only answer the most recent question or statement from the 'user'.
+        just for fun, if asked, tell them your name is 'zee'
+        Here is the transcript:
+        ${formattedTranscript}
+        \n\nRespond only to the last message by the user above use index as a hint to the last message.
+      `
+
+    });
+
+    const answers = result.text; // or adjust according to SDK's return type
+    if (answers) {
+      console.log(answers);
+      return {
+        success: true,
+        message: answers
+      };
+    }
+
+    return {
+      success: false,
+      message: 'No response from AI'
+    };
+
+  } catch (e) {
+    console.error(e);
+    return {
+      success: false,
+      message: 'Error processing request'
+    };
+  }
+}
+
+

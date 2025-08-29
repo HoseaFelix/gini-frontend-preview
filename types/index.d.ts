@@ -27,4 +27,9 @@ type authType = 'sign-in' | 'sign-up'
 
 declare module 'html2pdf.js';
 
+type chatMessage = {
+    role: 'user' | 'assistant';
+    message: string
+}
+
 

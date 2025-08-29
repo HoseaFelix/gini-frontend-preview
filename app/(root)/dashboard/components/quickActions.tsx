@@ -1,7 +1,10 @@
+
 import Image from 'next/image'
 import React from 'react'
 
 const QuickActions = () => {
+
+    
 
 
     const quickactions = [
@@ -16,7 +19,10 @@ const QuickActions = () => {
 
     <div className='hidden md:flex gap-7 flex-wrap'>
         {quickactions.map((action, index)=>(
-            <div key={index} className='p-3 flex items-center gap-2 bg-white borer border-black border-1 rounded-lg shadow hover:cursor-pointer'>
+            <div 
+            
+            
+            key={index} className='p-3 flex items-center gap-2 bg-white borer border-black border-1 rounded-lg shadow hover:cursor-pointer'>
                 <div className='w-fit h-fit'>
                     <Image
                         className=''

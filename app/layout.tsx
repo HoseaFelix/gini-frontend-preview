@@ -10,6 +10,8 @@ const Nunito = Nunito_Sans({
 });
 
 
+
+
 export const metadata: Metadata = {
   title: "AideGini",
   description: "Developed by hircs team",
