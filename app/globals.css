@@ -248,9 +248,45 @@
   }
   
 
+  .resume-input {
+    @apply flex flex-col gap-1 ;
+
+    
+  }
+
+  .resume-form{
+    input{
+      @apply w-full px-2 py-1 border border-text rounded-md;
+    }
+    textArea{
+      @apply border-text;
+    }
+    button{
+      @apply border-text hover:cursor-pointer;
+    }
+  }
+  
+  .toolbar-buttons{
+    @apply  py-1 px-4 rounded-md bg-black/20 font-bold  ; 
+  }
   
 
 
+ 
+}
+
+@media print {
+  /* Make sure container always uses desktop styles */
+  .print-desktop {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 2rem !important;
+  }
+
+  /* Force width constraints like large screens */
+  .print-maxwidth {
+    max-width: 900px !important;
+  }
 }
 
 @utility flex-center {

@@ -90,6 +90,7 @@ const DashSideNavbar = () => {
   const handleNavSwitch = (nav : string)=>{
 
      setCurrentNavbar(nav);
+     toggleNav()
      setCurrentNav(useCurrentNav.getState().currentNav)
      router.push(`${nav.toLowerCase().split(' ').join("")}`)
      
@@ -102,7 +103,7 @@ const DashSideNavbar = () => {
   return (
     <>
     
-    <nav className='z-100 fixed top-0 left-0 w-screen h-[80px] bg-foreground flex text-white'>
+    <nav className='print:hidden z-100 fixed top-0 left-0 w-screen h-[80px] bg-foreground flex text-white'>
         <div className='max-lg:pl-4 lg:w-[300px] lg:flex-shrink-0 flex items-center justify-center text-white font-bold text-xl md:text-2xl lg:text-4xl hover:cursor-pointer '>AideGini</div>
 
 
@@ -157,7 +158,7 @@ const DashSideNavbar = () => {
         </div>
       
     </nav>
-    <div className={`fixed h-screen ${isOpen ? 'w-[70vw] md:w-[300px]' : 'hidden w-0'}  lg:block top-0 left-0 lg:w-[300px] z-90  bg-foreground pt-10 px-5 overflow-hidden  `}>
+    <div className={`print:hidden fixed h-screen ${isOpen ? 'w-[70vw] md:w-[300px]' : 'hidden w-0'}  lg:block top-0 left-0 lg:w-[300px] z-90  bg-foreground pt-10 px-5 overflow-hidden  `}>
 
       <div className='w-full h-full pb-5 flex justify-between flex-col mx-auto gap-5 text-white pt-10'>
         <div className='flex flex-col gap-1 md:gap-5'>

@@ -10,6 +10,8 @@ import { useOptimizedStore, useResumeStore } from '@/store/resumeStore'
 import { optimizeResumeWithAi } from '@/lib/actions/resumeAction'
 import Amended from './amended'
 import { useRouter } from 'next/navigation'
+import ManualInput from './manualInput'
+import { useAuthStore } from '@/store/store'
 // import { useResumeStore } from '@/store/resumeStore'
 
 const UploadSequence = () => {
@@ -24,6 +26,9 @@ const UploadSequence = () => {
   const [isScanStart, setScanStart] = useState(false)
   const [isScanning, setScanning] = useState('waiting')
   const [generateImprov, setGenImprov] = useState('waiting')
+  const [isFormVisible, setFormVisibility] = useState(false)
+  const [language, setLanguage] = useState("")
+
 //   const [rawText, setRawText] = useState("")
 const setOriginalResume = useResumeStore.getState().setParsedResume;
 const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
@@ -52,9 +57,11 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
     
     try{
         //extracts raw text from the document using function in contants.js 
+
+        const token = useAuthStore.getState().token;
         setUploadStart(true)
         setUploadingFile('ready')
-        const rawText = await extractTextFromFile(document)
+        const rawText = await extractTextFromFile(document, token)
 
         //handles errors
         if(rawText == 'Unsupported file type'){
@@ -80,6 +87,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
 
         } else {
             //error handling
+            console.log(analyzeDoc?.error)
             setUploadStart(false)
             setAnalyzingDoc('waiting');
             toast.error("Analysis failed please check your internet or try again later");
@@ -129,7 +137,10 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
     try{
         setScanStart(true)
         setScanning('ready')
-        const optimizeResume = await optimizeResumeWithAi({description, })
+        const rawResume = useResumeStore.getState().parsedResume;
+        console.log(rawResume)
+        const RawResume = JSON.stringify(rawResume)
+        const optimizeResume = await optimizeResumeWithAi({description,rawResume:{RawResume}, language })
         if(optimizeResume?.success &&optimizeResume?.parsedResume){
             setGenImprov('ready')
             setScanning('done')
@@ -162,18 +173,33 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
     router.push('/resumemanager/templates1')
 }
 
+const toggleForm = ()=>{
+    setFormVisibility((prev)=> !prev)
+}
+
+const handleFormContinue = async ()=>{
+    setCurrentView(1)
+    toggleForm()
+}
+
+
   return (
 
-    <div className='flex pb-6 flex-col h-[100dvh] gap-5 md:h-[70dvh] w-full'>
+    <div className='w-full h-full pt-5'>
+    <div className='flex pb-6 flex-col h-full gap-5 md:h-[70dvh] w-full overflow-hidden relative'>
 
-            {/* top bars */}
-            <div className="w-full overflow-x-auto z-20">
-                <div className=' h-fit w-full px-4 lg:w-4xl mx-auto flex flex-nowrap gap-2 md:gap-5'>
-                    <div className='h-2 flex-1 min-w-[80px] rounded-lg bg-blue-500'></div>
-                    <div className={`h-2 flex-1 min-w-[80px] rounded-lg ${currentView >= 1 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
-                    <div className={`h-2 flex-1 min-w-[80px] rounded-lg ${currentView == 2 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
+        {/* handles manual form input  */}
+            <ManualInput isVisible={isFormVisible} onContinue={handleFormContinue} onReturn={toggleForm} />
+
+            {/* progress bars */}
+            <div className="w-full overflow-x-hidden z-20">
+                <div className=' h-fit w-full px-2 sm:px-4 mx-auto flex flex-nowrap gap-1 sm:gap-2 md:gap-5'>
+                    <div className='h-2 flex-1 min-w-0 rounded-lg bg-blue-500'></div>
+                    <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView >= 1 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
+                    <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView == 2 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
                 </div>
             </div>
+            {/*slides container*/}
             <div className='w-full relative h-full  overflow-hidden pb-4 '>
                 <div
                     className='grid grid-cols-3 transition-transform duration-500'
@@ -183,7 +209,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                     }}
                 >
                     {/* Slide 1 */}
-                    <div className='w-full h-full overflow-y-auto flex flex-col gap-10 items-center px-4 py-6'>
+                    <div className='w-full min-w-0 h-full overflow-y-auto flex flex-col gap-10 items-center px-4 py-6'>
                         {uploadStart && (
                             <div className='flex mt-10 flex-col w-full gap-2'>
                                 <div className='flex gap-5'>
@@ -200,15 +226,15 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                         {!uploadStart && (
                             <>
                             
-                            <div className='flex flex-col overflow-y-auto md:flex-row gap-10 mt-20'>
-                            <div className='relative'>
+                            <div className='flex flex-col overflow-y-auto md:flex-row gap-5 sm:gap-10 mt-10 sm:mt-16'>
+                            <div className='relative min-w-0'>
                             <input
                                 id="fileUpload"
                                 type="file"
                                 className='hidden'
                                 onChange={handleDoc}
                             />
-                            <label htmlFor="fileUpload">
+                            <label htmlFor="fileUpload" className='w-full'>
                                 <div className='w-full h-fit py-5 md:w-[250px] md:h-[250px] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7'>
                                 <div className='flex items-center justify-center p-2 rounded bg-text/30'>
                                     <Image
@@ -224,7 +250,9 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                             </label>
                             </div>
 
-                            <div className='w-fit px-10 h-fit py-5 md:w-[250px] md:h-[250px] border rounded-lg border-text/50 items-center justify-center hover:cursor-pointer flex flex-col gap-5 pt-7'>
+                            <div 
+                            onClick={toggleForm}
+                            className='w-fit px-10 h-fit py-5 md:w-[250px] md:h-[250px] border rounded-lg border-text/50 items-center justify-center hover:cursor-pointer flex flex-col gap-5 pt-7'>
                             <div className='flex flex-col items-center justify-center p-2 rounded bg-text/30'>
                                 <Image
                                 src={"/icons/write.png"}
@@ -289,7 +317,21 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                             {!isScanStart && (
                                 <>
                                     <div className='w-full h-max pb-5 rounded-xl mt-10 px-4 pt-5 border-1 border-black  flex flex-col gap-3 '>
+                                           
+                                            <div className='flex justify-between gap-2'>
                                             <p className='font-bold text-xl'>Add job description</p>
+
+                                            <label htmlFor="">
+                                                Language (english default): 
+                                                <input type="text" className='border pl-2 ml-1 rounded-md ' 
+                                                onChange={(e)=>{
+                                                    setLanguage(e.target.value)
+                                                }}
+                                                placeholder='english' />
+                                            </label>
+
+                                            </div>
+
                                             <textarea className='border border-text/50 px-4 py-2 min-h-[200px] rounded-lg ' value={description} onChange={collectJobDescription} />
 
                                         </div>
@@ -345,26 +387,111 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
 
                             </div>
                             <div className='w-full h-max gap-3 md:gap-5 grid grid-cols-1 md:grid-cols-2'>
-                                <div className=' w-full rounded-lg flex flex-col gap-5 p-4 h-fit bg-red-300'>
-                                    <p>Current</p>
-                                    <p>Skills</p>
-                                    <ul className='list-disc space-y-2 pl-3'>
-                                        {originalResume?.skills?.map((skill, index)=>(
-                                            <li key={index}>{skill}</li>
-                                        ))}
-                                    </ul>
+                                <div className="w-full rounded-lg flex flex-col gap-5 p-4 h-fit bg-red-300">
+                                <p>Current</p>
+                                <p>Skills</p>
 
+                                <div className="space-y-4">
+                                    {originalResume?.skills?.technical && (
+                                    <div>
+                                        <p className="font-semibold">Technical Skills</p>
+                                        <ul className="list-disc space-y-2 pl-3">
+                                        {originalResume?.skills?.technical?.languages?.map((skill, i) => (
+                                            <li key={`lang-${i}`}>{skill}</li>
+                                        ))}
+                                        {originalResume?.skills?.technical?.frameworksAndLibraries?.map((skill, i) => (
+                                            <li key={`fw-${i}`}>{skill}</li>
+                                        ))}
+                                        {originalResume?.skills?.technical?.toolsAndBuildSystems?.map((skill, i) => (
+                                            <li key={`tool-${i}`}>{skill}</li>
+                                        ))}
+                                        {originalResume?.skills?.technical?.testing?.map((skill, i) => (
+                                            <li key={`test-${i}`}>{skill}</li>
+                                        ))}
+                                        {originalResume?.skills?.technical?.practices?.map((skill, i) => (
+                                            <li key={`practice-${i}`}>{skill}</li>
+                                        ))}
+                                        </ul>
+                                    </div>
+                                    )}
+
+                                    {originalResume?.skills?.soft?.length ? (
+                                    <div>
+                                        <p className="font-semibold">Soft Skills</p>
+                                        <ul className="list-disc space-y-2 pl-3">
+                                        {originalResume?.skills?.soft?.map((skill, i) => (
+                                            <li key={`soft-${i}`}>{skill}</li>
+                                        ))}
+                                        </ul>
+                                    </div>
+                                    ) : null}
+
+                                    {originalResume?.skills?.certifications?.length ? (
+                                    <div>
+                                        <p className="font-semibold">Certifications</p>
+                                        <ul className="list-disc space-y-2 pl-3">
+                                        {originalResume?.skills?.certifications?.map((skill, i) => (
+                                            <li key={`cert-${i}`}>{skill}</li>
+                                        ))}
+                                        </ul>
+                                    </div>
+                                    ) : null}
                                 </div>
-                                <div className=' w-full rounded-lg flex flex-col gap-5 p-4 h-fit bg-green-300'>
+                                </div>
+
+                                <div className="w-full rounded-lg flex flex-col gap-5 p-4 h-fit bg-green-300">
                                     <p>Suggested</p>
                                     <p>Skills</p>
-                                    <ul className='list-disc space-y-2 pl-3'>
-                                        {optimizedResume?.skills?.map((skill, index)=>(
-                                            <li key={index}>{skill}</li>
-                                        ))}
-                                    </ul>
 
+                                    {/* Loop through categories */}
+                                    <div className="space-y-4">
+                                        {optimizedResume?.skills?.technical && (
+                                        <div>
+                                            <p className="font-semibold">Technical Skills</p>
+                                            <ul className="list-disc space-y-2 pl-3">
+                                            {optimizedResume?.skills?.technical?.languages?.map((skill, i) => (
+                                                <li key={`lang-${i}`}>{skill}</li>
+                                            ))}
+                                            {optimizedResume?.skills?.technical?.frameworksAndLibraries?.map((skill, i) => (
+                                                <li key={`fw-${i}`}>{skill}</li>
+                                            ))}
+                                            {optimizedResume?.skills?.technical?.toolsAndBuildSystems?.map((skill, i) => (
+                                                <li key={`tool-${i}`}>{skill}</li>
+                                            ))}
+                                            {optimizedResume?.skills?.technical?.testing?.map((skill, i) => (
+                                                <li key={`test-${i}`}>{skill}</li>
+                                            ))}
+                                            {optimizedResume?.skills?.technical?.practices?.map((skill, i) => (
+                                                <li key={`practice-${i}`}>{skill}</li>
+                                            ))}
+                                            </ul>
+                                        </div>
+                                        )}
+
+                                        {optimizedResume?.skills?.soft?.length ? (
+                                        <div>
+                                            <p className="font-semibold">Soft Skills</p>
+                                            <ul className="list-disc space-y-2 pl-3">
+                                            {optimizedResume?.skills?.soft?.map((skill, i) => (
+                                                <li key={`soft-${i}`}>{skill}</li>
+                                            ))}
+                                            </ul>
+                                        </div>
+                                        ) : null}
+
+                                        {optimizedResume?.skills?.certifications?.length ? (
+                                        <div>
+                                            <p className="font-semibold">Certifications</p>
+                                            <ul className="list-disc space-y-2 pl-3">
+                                            {optimizedResume?.skills?.certifications?.map((skill, i) => (
+                                                <li key={`cert-${i}`}>{skill}</li>
+                                            ))}
+                                            </ul>
+                                        </div>
+                                        ) : null}
+                                    </div>
                                 </div>
+
 
                             </div>
                             <div className='w-full h-max gap-3 md:gap-5 grid grid-cols-1 md:grid-cols-2'>
@@ -373,17 +500,19 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                                     <p className='font-semibold'>Experience</p>
 
                                     {originalResume?.experience?.map((exp, index) => (
-                                        <div key={index} className='space-y-2'>
-                                        <p className='font-medium'>{exp.heading} | {exp.duration}</p>
-                                        <ul className='list-disc space-y-2 pl-5'>
-                                            {exp.achievements
-                                            .split('.')
-                                            .filter(line => line.trim() !== '')
+                                        <div key={index} className="space-y-2 text-sm sm:text-base">
+                                        <p className="font-bold">
+                                          {exp.heading} | {exp.duration}
+                                        </p>
+                                        <ul className="space-y-2 list-disc pl-5">
+                                          {exp.achievements
+                                            .split(/(?<=[.?!])\s+(?=[A-Z])/)
+                                            .filter((line) => line.trim() !== '')
                                             .map((ach, j) => (
-                                                <li key={`${index}-${j}`}>{ach.trim()}.</li>
+                                              <li key={`${index}-${j}`}>{ach.trim()}.</li>
                                             ))}
                                         </ul>
-                                        </div>
+                                      </div>
                                     ))}
                                 </div>
                                 <div className='w-full rounded-lg flex flex-col gap-5 p-4 h-fit bg-green-300'>
@@ -391,17 +520,19 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
                                     <p className='font-semibold'>Experience</p>
 
                                     {optimizedResume?.experience?.map((exp, index) => (
-                                        <div key={index} className='space-y-2'>
-                                        <p className='font-medium'>{exp.heading} | {exp.duration}</p>
-                                        <ul className='list-disc space-y-2 pl-5'>
-                                            {exp.achievements
-                                            .split('.')
-                                            .filter(line => line.trim() !== '')
+                                        <div key={index} className="space-y-2 text-sm sm:text-base">
+                                        <p className="font-bold">
+                                          {exp.heading} | {exp.duration}
+                                        </p>
+                                        <ul className="space-y-2 list-disc pl-5">
+                                          {exp.achievements
+                                            .split(/(?<=[.?!])\s+(?=[A-Z])/)
+                                            .filter((line) => line.trim() !== '')
                                             .map((ach, j) => (
-                                                <li key={`${index}-${j}`}>{ach.trim()}.</li>
+                                              <li key={`${index}-${j}`}>{ach.trim()}.</li>
                                             ))}
                                         </ul>
-                                        </div>
+                                      </div>
                                     ))}
                                 </div>
 
@@ -428,6 +559,9 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
             </div>
     
     </div>
+    </div>
+
+
    
   )
 }
