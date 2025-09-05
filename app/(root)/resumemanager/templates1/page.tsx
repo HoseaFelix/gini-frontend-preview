@@ -1,6 +1,6 @@
 'use client'
 
-import { useOptimizedStore } from '@/store/resumeStore'
+import { useOptimizedStore,  } from '@/store/resumeStore'
 import React, { useEffect, useRef, useState } from 'react'
 import { ResumeType } from '@/lib/schemes/resumeSchema'
 import { useCurrentNav } from '@/store/store'
@@ -37,11 +37,42 @@ const Template1Page = () => {
 
   useEffect(() => {
     const localResume = localStorage.getItem('resume')
+    const localOriginalResume = localStorage.getItem('originalResume')
+
     const parsed = localResume
       ? JSON.parse(localResume)
       : useOptimizedStore.getState().parsedResume
 
-    setResume(parsed ?? null)
+    const originaResume = JSON.parse(localOriginalResume)
+    
+
+    try{
+      if(originaResume && parsed){
+            const formatedResume = {
+                  name: originaResume.name,
+                  headline:parsed.headline,
+                  contactInfo: originaResume.contactInfo,
+                  education: parsed.education,
+                  skills: parsed.skills,
+                  awards: parsed.awards,
+                  careerObjective: parsed.careerObjective,
+                  experience: parsed.experience,
+                  projects: parsed.projects
+
+            }
+
+          setResume(formatedResume ?? null)
+      } else{
+        setResume(parsed)
+      }
+   
+
+    } finally{
+      localStorage.removeItem('originalResume')
+      localStorage.setItem('resume', JSON.stringify(resume))
+    }
+   
+
     useCurrentNav.getState().setCurrentNav('Resume Manager')
   }, [])
 
