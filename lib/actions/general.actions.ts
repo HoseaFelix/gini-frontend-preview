@@ -20,71 +20,10 @@ export async function formatTextWithAi(rawText: string) {
             schema: ResumeSchema,
             prompt: `
             
-            You are a resume parsing assistant. Convert the following raw resume text into a structured JSON in this format:
-            
-            {
-              name: string,
-              headline: string,
-              contactInfo: {
-                phone: string,
-                email: string,
-                address: string,
-                linkedIn: string
-              },
-              education: [
-                {
-                  institution: string,
-                  degree?: string,
-                  startYear?: string,
-                  endYear?: string
-                }
-              ],
-              skills: [string],
-              awards: [string],
-              careerObjective: string,
-              experience: [
-                {
-                  heading: string,
-                  duration: string,
-                  achievements: [string]
-                }
-              ],
-              projects: [
-                {
-                  name: string,
-                  duration: string,
-                  achievements: [string]
-                }
-              ]
-            }
+            You are a resume parsing assistant. Convert the following raw resume text into a structured JSON.
             
             Some fields may be missing in the original text — that's okay. Just include what you can detect.
-
-            Example:
-            Text:
-            """
-            John Doe
-            software Engineer
-            Software Engineer at ABC Corp (Jan 2021 - Present)
-            - Led the redesign of the main platform, improving performance by 30%
-            - Introduced CI/CD pipelines
-            """
-
-            JSON:
-            {
-              name: "John Doe",
-              headline: "Software Engineer"
-              experience: [
-                {
-                  heading: "Software Engineer at ABC Corp",
-                  duration: "Jan 2021 - Present",
-                  achievements: [
-                    "Led the redesign of the main platform, improving performance by 30%",
-                    "Introduced CI/CD pipelines"
-                  ]
-                }
-              ]
-            }
+            fields like education, name, contact and experience are very imprtant. make sure you return any field that you can detect
 
             Now convert this:
             

@@ -12,6 +12,7 @@ import Amended from './amended'
 import { useRouter } from 'next/navigation'
 import ManualInput from './manualInput'
 import { useAuthStore } from '@/store/store'
+import LanguageDropdown from './LanguageDropdown'
 // import { useResumeStore } from '@/store/resumeStore'
 
 const UploadSequence = () => {
@@ -27,7 +28,7 @@ const UploadSequence = () => {
   const [isScanning, setScanning] = useState('waiting')
   const [generateImprov, setGenImprov] = useState('waiting')
   const [isFormVisible, setFormVisibility] = useState(false)
-  const [language, setLanguage] = useState("")
+  const [language, setLanguage] = useState("English")
 
 //   const [rawText, setRawText] = useState("")
 const setOriginalResume = useResumeStore.getState().setParsedResume;
@@ -139,8 +140,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
         setScanning('ready')
         const rawResume = useResumeStore.getState().parsedResume;
         console.log(rawResume)
-        const RawResume = JSON.stringify(rawResume)
-        const optimizeResume = await optimizeResumeWithAi({description,rawResume:{RawResume}, language })
+        const optimizeResume = await optimizeResumeWithAi({description,rawResume, language })
         if(optimizeResume?.success &&optimizeResume?.parsedResume){
             setGenImprov('ready')
             setScanning('done')
@@ -168,6 +168,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
 
     if(optimizedResume) {
         localStorage.setItem('resume', JSON.stringify(optimizedResume))
+        localStorage.setItem('originalResume', JSON.stringify(originalResume))
     }
     
     router.push('/resumemanager/templates1')
@@ -228,26 +229,43 @@ const handleFormContinue = async ()=>{
                             
                             <div className='flex flex-col overflow-y-auto md:flex-row gap-5 sm:gap-10 mt-10 sm:mt-16'>
                             <div className='relative min-w-0'>
-                            <input
+                                
+                                <input
                                 id="fileUpload"
                                 type="file"
                                 className='hidden'
                                 onChange={handleDoc}
-                            />
-                            <label htmlFor="fileUpload" className='w-full'>
-                                <div className='w-full h-fit py-5 md:w-[250px] md:h-[250px] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7'>
-                                <div className='flex items-center justify-center p-2 rounded bg-text/30'>
-                                    <Image
-                                    src={"/icons/create.png"}
-                                    width={20}
-                                    height={20}
-                                    alt='create icon'
-                                    />
-                                </div>
-                                <p>Upload from local storage</p>
+                                />
+                                <label htmlFor="fileUpload" className='w-full'>
+                                    <div className='w-full h-fit py-5 md:w-[250px] md:h-[250px] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7'>
+                                        {document && (
+                                            <div className='mx-auto'>
+                                                {document.name}
+                                            </div>
+                                        )}
+
+                                        {!document && (
+                                            <>
+                                             <div className='flex items-center justify-center p-2 rounded bg-text/30'>
+                                                    <Image
+                                                    src={"/icons/create.png"}
+                                                    width={20}
+                                                    height={20}
+                                                    alt='create icon'
+                                                    />
+                                                </div>
+                                                <p>Upload from local storage</p>
+                                            </>
+                                            
+                                        )}
+                                   
+                                    
+                                    </div>
+                                </label>
                                 
-                                </div>
-                            </label>
+                                
+                            
+                           
                             </div>
 
                             <div 
@@ -318,19 +336,7 @@ const handleFormContinue = async ()=>{
                                 <>
                                     <div className='w-full h-max pb-5 rounded-xl mt-10 px-4 pt-5 border-1 border-black  flex flex-col gap-3 '>
                                            
-                                            <div className='flex justify-between gap-2'>
-                                            <p className='font-bold text-xl'>Add job description</p>
-
-                                            <label htmlFor="">
-                                                Language (english default): 
-                                                <input type="text" className='border pl-2 ml-1 rounded-md ' 
-                                                onChange={(e)=>{
-                                                    setLanguage(e.target.value)
-                                                }}
-                                                placeholder='english' />
-                                            </label>
-
-                                            </div>
+                                           <LanguageDropdown setLanguage={setLanguage}/>
 
                                             <textarea className='border border-text/50 px-4 py-2 min-h-[200px] rounded-lg ' value={description} onChange={collectJobDescription} />
 

@@ -32,37 +32,37 @@ const DashSideNavbar = () => {
     {
       name: "Resume Manager",
       icon: '/icons/Resumemanagericon.png',
-      href: '/resumeManager'
+      href: '/resumemanager'
     },
     {
       name: "Cover Letter Generator",
       icon: '/icons/covericon.png',
-      href: '/coverLetterGenerator'
+      href: '/coverlettergenerator'
     },
     {
       name: "Application Assistant",
       icon: '/icons/Applicationassistanticon.png',
-      href: '/applicationAssistant'
+      href: '/applicationassistant'
     },
     {
       name: "Interview Assistant",
       icon: '/icons/Interviewassistanticon.png',
-      href: '/interviewAssistant'
+      href: '/interviewassistant'
     },
     {
       name: "Presentation Assistant",
       icon: '/icons/Presentationassistanticon.png',
-      href: '/presentationAssistant'
+      href: '/presentationassistant'
     },
     {
       name: "Exam Assistant",
       icon: '/icons/Examassistanticon.png',
-      href: '/examAssistant'
+      href: '/examassistant'
     },
     {
       name: "LinkedIn Optimizer",
       icon: '/icons/Linkedinoptimizericon.png',
-      href: '/LinkedinOptimizer'
+      href: '/Linkedinoptimizer'
     },
   ]
 
@@ -87,14 +87,13 @@ const DashSideNavbar = () => {
 
   const setCurrentNavbar = useCurrentNav((state) => state.setCurrentNav);
 
-  const handleNavSwitch = (nav : string)=>{
+  const handleNavSwitch = (href: string, nav: string) => {
+  setCurrentNavbar(nav);
+  toggleNav();
+  setCurrentNav(useCurrentNav.getState().currentNav);
+  router.push(href); // ✅ use the absolute href from dashNavItem
+};
 
-     setCurrentNavbar(nav);
-     toggleNav()
-     setCurrentNav(useCurrentNav.getState().currentNav)
-     router.push(`${nav.toLowerCase().split(' ').join("")}`)
-     
-  }
 
   useEffect(()=>{
     setCurrentNav(useCurrentNav.getState().currentNav)
@@ -162,25 +161,23 @@ const DashSideNavbar = () => {
 
       <div className='w-full h-full pb-5 flex justify-between flex-col mx-auto gap-5 text-white pt-10'>
         <div className='flex flex-col gap-1 md:gap-5'>
-          {dashNavItem.map((item, index)=>(
-            <div 
-
-                onClick={()=>{handleNavSwitch(item.name)}}
-                className={`group hover:cursor-pointer ${currentNav == item.name? 'bg-white text-black' : ''} hover:bg-white/50 hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center  `}
-                key={index}>
-                  <Image
-                    width={20}
-                    height={20}
-                    src={item.icon}
-                    alt={`${item.name}icon`}
-                    className={`${currentNav == item.name ? 'invert' : ''} group-hover:invert `}
-                  />
-
-                  <p className='font-bold text-sm'>{item.name}</p>
-
-
+          {dashNavItem.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => handleNavSwitch(item.href, item.name)}
+              className={`group hover:cursor-pointer ${currentNav == item.name ? 'bg-white text-black' : ''} hover:bg-white/50 hover:text-black rounded-lg px-4 py-3 w-full flex flex-nowrap gap-2 items-center`}
+            >
+              <Image
+                width={20}
+                height={20}
+                src={item.icon}
+                alt={`${item.name} icon`}
+                className={`${currentNav == item.name ? 'invert' : ''} group-hover:invert`}
+              />
+              <p className="font-bold text-sm">{item.name}</p>
             </div>
           ))}
+
         </div>
         
         <div className='flex flex-col gap-5'>
