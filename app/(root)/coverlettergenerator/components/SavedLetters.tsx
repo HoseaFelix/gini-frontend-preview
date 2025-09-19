@@ -1,26 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-const Savedresume = () => {
+const SavedLetters = () => {
 
-  const [SavedResume, setSavedResume] = useState<any[]>([])
-  
-    useEffect(() => {
-      const stored = localStorage.getItem('savedResume')
-      if (stored) {
-        setSavedResume(JSON.parse(stored))
-      }
-    }, [])
-
+    const savedLetters = [
+        {
+           
+            title: 'sales Assistant',
+            id: 1,
+        },
+        {
+           
+            title: 'sales Assistant',
+            id: 2,
+        },
+        {
+            
+            title: 'sales Assistant',
+            id: 3,
+        },
+    ]
 
   return (
     <div className='w-full h-fit p-5 rounded-lg bg-white shadow-sm flex flex-col gap-5'>
-        <p className='font-bold text-xl'>Saved Resume</p>
+        <p className='font-bold text-xl'>Saved Cover Letters</p>
         <div className='flex flex-col gap-3'>
-            {SavedResume.length > 0 && (
-                SavedResume.map((resume, index)=>(
+            {savedLetters.length > 0 && (
+                savedLetters.map((resume, index)=>(
                     <div key={index} className='flex justify-between items-center text-text font-bold opacity-80 border border-text/50 rounded-sm px-4 py-3 hover:border-blue-400'>
                         
-                        <p>{resume.name}</p>
+                        <p>{resume.title}</p>
                         <div className='flex gap-3'>
                             <p className='hover:cursor-pointer'>View</p>
                             <p className='hover:cursor-pointer'>Delete</p>
@@ -38,4 +46,4 @@ const Savedresume = () => {
   )
 }
 
-export default Savedresume
+export default SavedLetters

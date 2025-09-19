@@ -1,7 +1,7 @@
 'use server'
 
 import { generateObject } from "ai";
-import { ResumeSchema, ResumeType } from "../schemes/resumeSchema";
+import { CoverLetterSchema, ResumeSchema, ResumeType } from "../schemes/resumeSchema";
 import { google } from "@ai-sdk/google";
 import { useOptimizedStore } from "@/store/resumeStore";
 import { z } from "zod";
@@ -115,6 +115,7 @@ async function rewriteResume(rawResume: ResumeType, description: string, keyword
     - Focus on recent experience only
     - Use ${language} language
     - Return valid JSON only
+    - headline is very important, dont omit it for anything, the headline is actally the job role e.g 'front end developer".
 
     RESUME: ${JSON.stringify(chunkedResume)}
     JOB: ${shortDescription}`,
@@ -190,4 +191,56 @@ export async function getCachedKeywords(description: string) {
 export async function setCachedKeywords(description: string, keywords: any) {
   const hash = description.substring(0, 100);
   keywordCache.set(hash, keywords);
+}
+
+
+export async function writeCoverLetter ({ 
+  description, 
+  rawResume, 
+  language 
+}: { 
+  description: string, 
+  rawResume: unknown, 
+  language: string 
+}){
+
+
+  const chunkedResume = chunkResumeContent(rawResume);
+  const shortDescription = cleanAndTruncateText(description, 2000);
+
+   const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Resume rewrite timeout')), 45000)
+  );
+
+  const rewritePromise = generateObject({
+    model: google('gemini-2.5-flash'),
+    schema: CoverLetterSchema,
+    prompt: `
+
+      Generate a professional cover letter in ${language}.  
+      Return valid JSON only in this structure:
+      {
+        "hiringManagerName": "string",
+        "letter": ["paragraph1", "paragraph2", ...]
+      }
+
+      Rules:
+      - hiringManagerName: if a name exists in the job description, use it; otherwise return "Hiring Manager".
+      - letter: array of multiple paragraphs (300–400 words total).
+        - Intro: enthusiasm for the role/company.
+        - Body: highlight recent/relevant skills, experiences, and achievements; integrate job description keywords naturally.
+        - Conclusion: reiterate interest, request interview, polite closing.
+      - Preserve provided achievements/metrics; rewrite experience if needed to fit keywords.
+      - Fabricate context/achievements only if necessary to cover all key skills.
+      - Keep tone professional, confident, and concise.
+
+      RESUME: ${JSON.stringify(chunkedResume)}  
+      JOB: ${shortDescription}
+      }`,
+  });
+
+  const { object } = await Promise.race([rewritePromise, timeoutPromise]) as any;
+  return object;
+
+
 }

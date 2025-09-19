@@ -11,10 +11,7 @@ import { useCurrentNav } from '@/store/store'
 
 const Page = () => {
 
-  const notifications = [{
-    notification:'this is a dummy notification',
-    severity:"casual"
-  }]
+  const notifications = []
 
   useEffect(()=>{
     useCurrentNav.getState().setCurrentNav("Dashboard")
