@@ -1,6 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const UserData = () => {
+      const [SavedResume, setSavedResume] = useState<any[]>([])
+      
+        useEffect(() => {
+          const stored = localStorage.getItem('savedResume')
+          if (stored) {
+            setSavedResume(JSON.parse(stored))
+          }
+        }, [])
+
     const userdata = [
         {
             name: 'Filled Application',
@@ -8,7 +17,7 @@ const UserData = () => {
         },
         {
             name: 'Optimized Resume',
-            number: 0,
+            number: SavedResume.length,
         },
         {
             name: 'Cover Letter Generated',

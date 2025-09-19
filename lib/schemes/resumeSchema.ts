@@ -48,3 +48,13 @@ export const ResumeSchema = z.object({
 });
 
 export type ResumeType = z.infer<typeof ResumeSchema>;
+
+export const CoverLetterSchema = z.object({
+  // Optional, include only if you pass it in the prompt
+  hiringManagerName: z.string().optional(),
+
+  // Array of paragraphs
+  letter: z.array(z.string().min(1, "Paragraph cannot be empty")),
+});
+
+export type CoverLetter = z.infer<typeof CoverLetterSchema>;

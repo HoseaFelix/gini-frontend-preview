@@ -151,6 +151,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
 
     } catch(error){
         console.log(error)
+        toast.error(`${error}`)
     }
     
 

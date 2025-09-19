@@ -14,18 +14,6 @@ const ResumePage = () => {
   const [toggleChat, setToggleChat] = useState(false)
 
   const dummyNotifications = [
-    {
-      notification: 'dummy 1',
-      severity: "important"
-    },
-    {
-      notification: 'dummy 1',
-      severity: "casual"
-    },
-    {
-      notification: 'dummy 1',
-      severity: "important"
-    },
   ]
 
   const handleToggleChat = ()=>{

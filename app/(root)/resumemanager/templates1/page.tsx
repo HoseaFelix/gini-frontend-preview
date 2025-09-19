@@ -5,6 +5,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { ResumeType } from '@/lib/schemes/resumeSchema'
 import { useCurrentNav } from '@/store/store'
 import FormatButtons from '../components/formatButtons'
+import TitleOverlay from '@/components/TitleOverlay'
+import { toast } from 'sonner'
+// import Savedresume from '../components/savedresume'
 
 /**
  * Helper: split paragraph into sentence-like pieces (keeps punctuation)
@@ -34,6 +37,18 @@ const preventEnterBlur = (e: React.KeyboardEvent<HTMLElement>) => {
 const Template1Page = () => {
   const [resume, setResume] = useState<ResumeType | null>(null)
   const resumeRef = useRef<HTMLDivElement | null>(null)
+  const [title, setTitle] = useState('')
+  const [isVisible, setIsvisible] = useState(false)
+
+
+  const collectTitle = (e)=>{
+    setTitle(e.target.value)
+  }
+
+  const setVisiblity = ()=>{
+    setIsvisible((prev)=> !prev)
+    console.log(isVisible)
+  }
 
   useEffect(() => {
     const localResume = localStorage.getItem('resume')
@@ -61,16 +76,17 @@ const Template1Page = () => {
 
             }
 
-          setResume(formatedResume ?? null)
-      } else{
-        setResume(parsed)
+          setResume(formatedResume)
+          localStorage.setItem('resume', JSON.stringify(formatedResume))
+          console.log(formatedResume)
+          
+      }else if (parsed) {
+          setResume(parsed)
+          localStorage.setItem('resume', JSON.stringify(parsed))
+        }
+      } finally {
+        localStorage.removeItem('originalResume')
       }
-   
-
-    } finally{
-      localStorage.removeItem('originalResume')
-      localStorage.setItem('resume', JSON.stringify(resume))
-    }
    
 
     useCurrentNav.getState().setCurrentNav('Resume Manager')
@@ -161,16 +177,36 @@ const Template1Page = () => {
       })
     }
 
-  if (!resume) {
-    return (
-      <section className="w-full h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-lg text-gray-500">No resume data found.</p>
-      </section>
-    )
-  }
 
   const handleExport = async () => {
     window.print()
+  }
+
+  const handleSave = ()=>{
+    const resumeArray = JSON.parse(localStorage.getItem('savedResume')) || []
+
+    if(!title){
+      toast.error('please enter title')
+      return;
+    }
+    resumeArray.push({
+      name: title,
+      resume: resume
+    })
+
+    console.log(resumeArray)
+    localStorage.setItem( 'savedResume', JSON.stringify(resumeArray))
+    toast.success('resume saved')
+    setTitle('')
+    setVisiblity()
+  }
+
+    if (!resume) {
+    return (
+      <section className="w-full h-screen flex items-center justify-center bg-gray-100 relative">
+        <p className="text-lg text-gray-500">No resume data found.</p>
+      </section>
+    )
   }
 
   // const isValid = (val: unknown) =>
@@ -178,6 +214,9 @@ const Template1Page = () => {
 
   return (
     <section className="w-full pb-10 min-h-screen bg-gray-100 px-2 sm:px-4 pt-14 flex flex-col gap-5 justify-center relative">
+
+      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisiblity} handleSave={handleSave}/>
+     
       <FormatButtons />
       <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
         <button
@@ -187,7 +226,7 @@ const Template1Page = () => {
           Export
         </button>
         <button
-          onClick={() => console.log('Save clicked')}
+          onClick={setVisiblity}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow text-sm sm:text-base"
         >
           Save
