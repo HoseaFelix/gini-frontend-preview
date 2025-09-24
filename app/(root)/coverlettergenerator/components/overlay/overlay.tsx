@@ -18,8 +18,11 @@ const Overlay = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(false)
   const [finishedAnayzing, setFinishedAnalyzing] = useState(false)
   const [loading, setLoading]= useState("")
-  const [templateIndex, setSelectedTemplateIndex] = useState(0)
+  const [templateIndex, setSelectedTemplateIndex] = useState<number | null>(null)
   const [savedResume, setSavedResume] = useState<any[]>([])
+
+  const router = useRouter()
+
 
   useEffect(() => {
     const stored = localStorage.getItem('savedResume')
@@ -66,10 +69,7 @@ const Overlay = () => {
         setLoading('done')
         setFinishedAnalyzing(true)
 
-        if(selectedTemplate){
-          router.push(`/coverlettergenerator/covertemplate1`)
-          localStorage.setItem('templateIndex',JSON.stringify(templateIndex) )
-        }
+       localStorage.setItem('templateIndex',JSON.stringify(templateIndex) )
       }
       
 
@@ -83,7 +83,6 @@ const Overlay = () => {
     }
   }
 
-  const router = useRouter()
 
 
   useEffect(() => {
@@ -119,10 +118,12 @@ const Overlay = () => {
 
   const handleLastContinue = ()=>{
     if(finishedAnayzing){
-      router.push(`/coverlettergenerator/covertemplate1`)
+      
       setSelectedTemplate(true)
     } else if(!finishedAnayzing){
       setSelectedTemplate(true)
+      
+      
       
     }
   }
@@ -131,6 +132,13 @@ const Overlay = () => {
   const collectJobDescription = (e : any)=>{
     setJobDescription(e.target.value)
   }
+
+  useEffect(() => {
+  if (selectedTemplate && finishedAnayzing) {
+    router.push(`/coverlettergenerator/covertemplate${templateIndex + 1}`)
+    localStorage.setItem('templateIndex', JSON.stringify(templateIndex))
+  }
+}, [selectedTemplate, finishedAnayzing, templateIndex, router])
 
 
   
@@ -208,12 +216,18 @@ const Overlay = () => {
           {/* slide 2 */}
 
           <div className={`w-full h-full flex flex-col gap-5`}>
-            <div className='flex gap-2'>
+            {
+              selectedTemplate && (
+              <div className='flex gap-2'>
               <LoadingStatus loading={loading}/>
               generating cover letter ...
 
             </div>
-            <div className={`${selectedTemplate ? 'hidden' : ''} w-full h-[80%]`}>
+
+              )
+            }
+           
+            <div className={`${selectedTemplate ? 'hidden' : ''} w-full min-h-[360px] relative`}>
               <TemplateCarousel images={templates} onSelect={handleSelect} />
 
             </div>

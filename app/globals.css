@@ -163,7 +163,9 @@
 }
 
 
-
+@media print{
+  body{background-color:white ;}
+}
 
 @layer components{
   .root-layout {

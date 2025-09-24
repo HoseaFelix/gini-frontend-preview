@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { CoverLetter, ResumeType } from '@/lib/schemes/resumeSchema'
 import FormatButtons from '../../resumemanager/components/formatButtons';
+import Image from 'next/image';
 
 /**
  * Small helpers
@@ -152,9 +153,10 @@ const Page = () => {
        
         <div className="w-full flex flex-col relative ">
         <style>{`@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;  } }`}</style>
-          <div className="w-full flex items-center h-[200px]" style={{ backgroundColor: 'rgba(156,163,175,0.5)', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }} >
-            <div className="flex flex-col gap-3 h-max pl-5">
-              <p
+
+        
+            <div className='p-4 h-max'>
+                 <p
                 contentEditable
                 suppressContentEditableWarning
                 onBlur={handleResumeFieldBlur(['name'])}
@@ -164,28 +166,87 @@ const Page = () => {
                 {resume?.name ?? 'Your name here'}
               </p>
 
-              <p
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
-                onKeyDown={preventEnterBlur}
-              >
-                {resume?.contactInfo?.email ?? 'you@example.com'}
-              </p>
+            </div>
 
-              <p
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={handleResumeFieldBlur(['headline'])}
-                onKeyDown={preventEnterBlur}
-              >
-                {resume?.headline ?? 'Professional headline'}
-              </p>
+          <div className="w-full flex items-center h-max" style={{ backgroundColor: 'rgba(156,163,175,0.4)', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }} >
+
+             
+
+            <div className="flex justify-between py-2 gap-3 h-max w-full px-4">
+
+                <div className='flex gap-2 items-center'>
+                    <div className='h-max p-2 rounded-full bg-white'>
+                        <Image
+                        src='/icons/email.png'
+                        width={15}
+                        height={15}
+                        alt='email icon'
+                        className=' '
+                        />
+                    </div>
+                    
+
+                     <p
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
+                        onKeyDown={preventEnterBlur}
+                    >
+                        {resume?.contactInfo?.email ?? 'you@example.com'}
+                    </p>
+
+                </div>
+
+                <div className='flex gap-2 items-center'>
+                    <div className='h-max p-2 rounded-full bg-white'>
+                        <Image
+                        src='/icons/call.png'
+                        width={15}
+                        height={15}
+                        alt='email icon'
+                        className=' '
+                        />
+                    </div>
+                    
+
+                     <p
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={handleResumeFieldBlur(['contactInfo', 'phone'])}
+                        onKeyDown={preventEnterBlur}
+                    >
+                        {resume?.contactInfo?.phone ?? 'phone number'}
+                    </p>
+
+                </div>
+
+                <div className='flex gap-2 items-center'>
+                    <div className='h-max p-2 rounded-full bg-white'>
+                        <Image
+                        src='/icons/location.png'
+                        width={15}
+                        height={15}
+                        alt='location icon'
+                        className=' '
+                        />
+                    </div>
+                    
+
+                     <p
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={handleResumeFieldBlur(['contactInfo', 'address'])}
+                        onKeyDown={preventEnterBlur}
+                    >
+                        {resume?.contactInfo?.address ?? 'your address'}
+                    </p>
+
+                </div>
+             
             </div>
           </div>
 
           <div className="w-full pt-10 px-5 flex flex-col">
-            <p className="font-bold capitalize text-2xl mx-auto">job application letter</p>
 
             <div className="mt-5 font-bold">{getFullDate()}</div>
 
