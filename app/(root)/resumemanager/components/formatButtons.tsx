@@ -54,7 +54,7 @@ const FormatButtons = () => {
 
 
   return (
-    <div className="space-x-2 px-2 print:hidden sticky top-20">
+    <div className="space-x-2 px-2 print:hidden sticky top-20 z-200 mx-auto">
       <button className="toolbar-buttons" onClick={() => format("undo")}>
         undo
       </button>

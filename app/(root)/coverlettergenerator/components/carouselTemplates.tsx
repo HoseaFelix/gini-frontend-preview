@@ -5,11 +5,16 @@ const TemplateCarousel = ({ images = [], onSelect }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    const prevIndex = (currentIndex - 1 + images.length) % images.length
+    setCurrentIndex(prevIndex);
+    if (onSelect) onSelect(prevIndex);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+     const nextIndex = (currentIndex + 1) % images.length;
+    setCurrentIndex(nextIndex);
+    if (onSelect) onSelect(nextIndex);
+
   };
 
   const handleSelect = (index) => {
@@ -32,7 +37,6 @@ const TemplateCarousel = ({ images = [], onSelect }) => {
         {/* Images */}
         <div className="flex items-center h-full justify-center w-full sm:w-auto space-x-4">
           {images.map((img, index) => {
-            // Desktop view: only render prev, current, next
             const isPrev =
               index === (currentIndex - 1 + images.length) % images.length;
             const isCurrent = index === currentIndex;
@@ -40,20 +44,29 @@ const TemplateCarousel = ({ images = [], onSelect }) => {
 
             if (!isPrev && !isCurrent && !isNext) return null;
 
+            // choose sizes for current vs side images
+            const imgWidth = isCurrent ? 256 : 160; // px
+            const imgHeight = isCurrent ? 320 : 200; // px
+
             return (
-              <Image
+              <div
                 key={index}
-                src={img}
-                alt={`template-${index}`}
-                onClick={() => handleSelect(index)}
-                className={`
-                  cursor-pointer object-contain rounded-xl transition-all duration-300 
-                  ${isCurrent
-                    ? "w-48 h-64 sm:w-64 sm:h-80 shadow-xl border-4 border-blue-500 z-10"
-                    : "hidden sm:block w-32 h-48 opacity-70 hover:opacity-100"
-                  }
-                `}
-              />
+                className="relative flex-shrink-0"
+                style={{ width: imgWidth, height: imgHeight }}
+              >
+                <Image
+                  src={img}
+                  alt={`template-${index}`}
+                  width={imgWidth}
+                  height={imgHeight}
+                  onClick={() => handleSelect(index)}
+                  className={`cursor-pointer object-contain rounded-xl transition-all duration-300 ${
+                    isCurrent
+                      ? "shadow-xl border-4 border-blue-500 z-10"
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                />
+              </div>
             );
           })}
         </div>

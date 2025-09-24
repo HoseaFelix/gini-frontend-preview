@@ -132,50 +132,81 @@ const Template1Page = () => {
     }
 
   // Handler for editing an ITEM inside skills/awards/etc. (path points to array, last element is index)
-  const handleArrayItemBlur =
-    (pathToArray: Array<string | number>, index: number) =>
-    (e: React.FocusEvent<HTMLElement>) => {
-      const text = (e.currentTarget as HTMLElement).innerText ?? ''
-      updateAndPersist((prev) => {
-        const next: any = JSON.parse(JSON.stringify(prev))
-        // traverse to array
-        let curr: any = next
-        for (let i = 0; i < pathToArray.length; i++) {
-          curr = curr[pathToArray[i] as any]
-        }
-        if (!Array.isArray(curr)) return next
-        curr[index] = text
-        return next
-      })
-    }
+ // Generic array item blur -> remove empty items instead of saving empty strings
+const handleArrayItemBlur =
+  (pathToArray: Array<string | number>, index: number) =>
+  (e: React.FocusEvent<HTMLElement>) => {
+    const text = (e.currentTarget as HTMLElement).innerText ?? ''
+    const trimmed = text.trim()
+
+    updateAndPersist((prev) => {
+      const next: any = JSON.parse(JSON.stringify(prev))
+      // traverse to array
+      let curr: any = next
+      for (let i = 0; i < pathToArray.length; i++) {
+        curr = curr[pathToArray[i] as any]
+      }
+      if (!Array.isArray(curr)) return next
+
+      if (trimmed === '') {
+        // remove the item entirely
+        curr.splice(index, 1)
+      } else {
+        // save trimmed value
+        curr[index] = trimmed
+      }
+
+      return next
+    })
+  }
+
 
   // Experience: edit specific achievement sentence
-  const handleExperienceAchievementBlur =
-    (expIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
-      const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
-      updateAndPersist((prev) => {
-        const next: any = JSON.parse(JSON.stringify(prev))
-        const exp = next.experience[expIndex]
-        const arr = splitSentences(exp.achievements)
+// Experience achievements: remove an achievement sentence when cleared
+const handleExperienceAchievementBlur =
+  (expIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
+    const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
+
+    updateAndPersist((prev) => {
+      const next: any = JSON.parse(JSON.stringify(prev))
+      const exp = next.experience[expIndex]
+      const arr = splitSentences(exp.achievements) // array of sentences
+
+      if (text === '') {
+        // remove empty sentence
+        arr.splice(achIndex, 1)
+      } else {
         arr[achIndex] = text
-        exp.achievements = joinSentences(arr)
-        return next
-      })
-    }
+      }
+
+      exp.achievements = joinSentences(arr)
+      return next
+    })
+  }
+
 
   // Projects: edit specific achievement sentence
-  const handleProjectAchievementBlur =
-    (projIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
-      const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
-      updateAndPersist((prev) => {
-        const next: any = JSON.parse(JSON.stringify(prev))
-        const proj = next.projects[projIndex]
-        const arr = splitSentences(proj.achievements)
+ // Project achievements: same logic as experience
+const handleProjectAchievementBlur =
+  (projIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
+    const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
+
+    updateAndPersist((prev) => {
+      const next: any = JSON.parse(JSON.stringify(prev))
+      const proj = next.projects[projIndex]
+      const arr = splitSentences(proj.achievements)
+
+      if (text === '') {
+        arr.splice(achIndex, 1)
+      } else {
         arr[achIndex] = text
-        proj.achievements = joinSentences(arr)
-        return next
-      })
-    }
+      }
+
+      proj.achievements = joinSentences(arr)
+      return next
+    })
+  }
+
 
 
   const handleExport = async () => {

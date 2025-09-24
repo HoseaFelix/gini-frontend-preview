@@ -150,42 +150,72 @@ const Page = () => {
 
       <main className="mt-10 print:mt-0 w-full max-w-[794px] h-max mx-auto bg-white overflow-hidden rounded-lg shadow-lg print:w-[794px] flex flex-col pb-10 relative print:mx-auto ">
        
-        <div className="w-full flex flex-col relative ">
+        <div className="w-full flex relative max-sm:flex-col gap-5 py-5 ">
         <style>{`@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;  } }`}</style>
-          <div className="w-full flex items-center h-[200px]" style={{ backgroundColor: 'rgba(156,163,175,0.5)', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }} >
-            <div className="flex flex-col gap-3 h-max pl-5">
-              <p
+         {/* LEFT COLUMN */}
+        <div className="w-full md:w-[28%] print:max-w-[28%] flex items-start h-auto">
+        <div className="flex flex-col gap-2 h-max pl-5 w-full">
+            {/* Name */}
+            <p
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={handleResumeFieldBlur(['name'])}
+            onKeyDown={preventEnterBlur}
+            className="text-3xl font-bold"
+            >
+            {resume?.name ?? 'Your name here'}
+            </p>
+
+            {/* Headline */}
+            <p
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={handleResumeFieldBlur(['headline'])}
+            onKeyDown={preventEnterBlur}
+            className="whitespace-normal"
+            >
+            {resume?.headline ?? 'Professional headline'}
+            </p>
+
+            {/* PHONE (label + editable content) */}
+            {resume?.contactInfo?.phone !== undefined && (
+            <>
+                <p className="font-bold">Phone</p>
+
+                <div
                 contentEditable
                 suppressContentEditableWarning
-                onBlur={handleResumeFieldBlur(['name'])}
+                onBlur={handleResumeFieldBlur(['contactInfo', 'phone'])} // <-- fixed path
                 onKeyDown={preventEnterBlur}
-                className="text-3xl font-bold"
-              >
-                {resume?.name ?? 'Your name here'}
-              </p>
+                className="whitespace-normal break-words max-w-[220px] sm:max-w-[260px]"
+                >
+                {resume?.contactInfo?.phone ?? 'your phone number'}
+                </div>
+            </>
+            )}
 
-              <p
+            {/* EMAIL (label + editable content) */}
+            {resume?.contactInfo?.email !== undefined && (
+            <>
+                <p className="font-bold">E-mail</p>
+
+                <div
                 contentEditable
                 suppressContentEditableWarning
                 onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
                 onKeyDown={preventEnterBlur}
-              >
-                {resume?.contactInfo?.email ?? 'you@example.com'}
-              </p>
+                className="whitespace-normal break-words max-w-[220px] sm:max-w-[260px]"
+                >
+                {resume?.contactInfo?.email ?? 'your email address'}
+                </div>
+            </>
+            )}
+        </div>
+        </div>
 
-              <p
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={handleResumeFieldBlur(['headline'])}
-                onKeyDown={preventEnterBlur}
-              >
-                {resume?.headline ?? 'Professional headline'}
-              </p>
-            </div>
-          </div>
 
           <div className="w-full pt-10 px-5 flex flex-col">
-            <p className="font-bold capitalize text-2xl mx-auto">job application letter</p>
+            
 
             <div className="mt-5 font-bold">{getFullDate()}</div>
 
