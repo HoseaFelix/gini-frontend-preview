@@ -71,7 +71,10 @@ async function extractKeywords(description: string) {
 
   const { object } = await Promise.race([extractionPromise, timeoutPromise]) as any;
   console.log(object)
-  return object;
+  return {
+    success: false,
+    error:'network timeout'
+  }
 }
 
 /**
@@ -105,17 +108,28 @@ async function rewriteResume(rawResume: ResumeType, description: string, keyword
   const rewritePromise = generateObject({
     model: google('gemini-2.5-flash'),
     schema: ResumeSchema,
-    prompt: `Optimize this resume for ATS using these keywords: ${JSON.stringify(keywords)}
+    prompt: `
+    You are an expert team of a Recruiter, an ATS Specialist, and a Senior HR Business Partner. 
+    Your mission is to rewrite my resume for the role below so it passes ATS and impresses human recruiters.
+     keywords: ${JSON.stringify(keywords)}
 
-    Rules:
-    - Integrate keywords naturally in skills, experience, and objective
-    - fabricate experience only when no experience was provide, if provided, rewrite the current experience so as to integrate the keywords and match the description.
-    - fabricate achievments only when you have not successfully integrated all ATS keywords, if provided, rewrite experience to include keywords
-    - Keep existing metrics and achievements
-    - Focus on recent experience only
+    Instructions:
+    - Start with the exact job title as the headline.
+    - Rewrite the summary to highlight must-have skills and measurable impact.
+    - Integrate all job description keywords naturally (Scrum ceremonies, metrics, DoD, servant leadership, etc.).
+    - Keep existing achievements/metrics but reframe using the X-Y-Z formula (achieved X by doing Y which resulted in Z).
+    - Add Scrum/Agile-specific keywords if missing, but don’t overstuff.
+    - Emphasize both technical skills/tools AND leadership/soft skills.
+    - Certifications should be listed in order of relevance.
+    - Format should remain ATS-friendly and easy to read.
     - Use ${language} language
     - Return valid JSON only
     - headline is very important, dont omit it for anything, the headline is actally the job role e.g 'front end developer".
+
+    Deliverables:
+    1. The optimized resume text.
+    2. ATS match score estimate and the top keywords integrated.
+    
 
     RESUME: ${JSON.stringify(chunkedResume)}
     JOB: ${shortDescription}`,

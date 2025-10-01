@@ -83,7 +83,7 @@ const AuthForm = ({ type }: { type: authType }) => {
             return
           }
 
-          // toast.error('')
+          toast.error(data.error)
           console.log(data)
 
 

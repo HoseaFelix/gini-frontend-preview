@@ -13,7 +13,10 @@ import { toast } from 'sonner'
  * Helper: split paragraph into sentence-like pieces (keeps punctuation)
  */
 const splitSentences = (text: string) =>
-  (text?.match(/[^.!?]+[.!?]*/g) || []).map((s) => s.trim())
+  (text?.match(/[^.!?]+(?:[.!?](?=\s|$))?/g) || [])
+    .map((s) => s.trim())
+    .filter(Boolean);
+
 
 /**
  * Helper: join sentence pieces back into a single string (each ends with punctuation)
@@ -267,7 +270,7 @@ const handleProjectAchievementBlur =
       <div
         ref={resumeRef}
         id="resume-div"
-        className="bg-white shadow-lg rounded-lg p-4 sm:p-6 border border-text/70 w-full sm:max-w-[900px] print:max-w-[900px]"
+        className="bg-white shadow-lg rounded-lg p-4 sm:p-6 border border-text/70 w-full sm:max-w-[900px] print:max-w-[900px] mx-auto"
       >
         {/* Top section */}
         <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-5 justify-between border-b pb-4 print:flex-row print:gap-5">
