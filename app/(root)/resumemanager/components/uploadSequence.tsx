@@ -92,7 +92,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
             setUploadStart(false)
             setAnalyzingDoc('waiting');
             toast.error("Analysis failed please check your internet or try again later");
-          }
+        }
 
 
 
