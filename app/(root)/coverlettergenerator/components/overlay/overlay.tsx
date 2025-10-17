@@ -3,7 +3,7 @@ import { writeCoverLetter } from '@/lib/actions/resumeAction'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import TemplateCarousel from '../carouselTemplates'
+import TemplateCarousel from '../../../../../components/generalComponents/carouselTemplates'
 import LoadingStatus from '@/components/generalComponents/loadingStatus'
 
 const Overlay = () => {
@@ -26,6 +26,7 @@ const Overlay = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem('savedResume')
+    console.log(stored)
     if (stored) {
       setSavedResume(JSON.parse(stored))
     }
@@ -51,9 +52,10 @@ const Overlay = () => {
     }
 
 
-    const rawResume = savedResume[resumeIndex]
+    const rawResume = savedResume[resumeIndex].data
+    console.log(rawResume)
     setCurrentView(1)
-    localStorage.setItem('selectedResume', JSON.stringify(resumeIndex))
+    localStorage.setItem('selectedResume', JSON.stringify(rawResume))
 
     try{
 
@@ -135,6 +137,10 @@ const Overlay = () => {
 
   useEffect(() => {
   if (selectedTemplate && finishedAnayzing) {
+     localStorage.setItem('typeCoverLetter',JSON.stringify({
+        type: 'new',
+        index: ''
+      }))
     router.push(`/coverlettergenerator/covertemplate${templateIndex + 1}`)
     localStorage.setItem('templateIndex', JSON.stringify(templateIndex))
   }
@@ -167,7 +173,7 @@ const Overlay = () => {
 
             <div className='w-full max-w-2xl h-max mx-auto flex flex-col space-y-5'>
               <div className='p-2 flex justify-between border-2 rounded-lg '>
-                <p>{resumeIndex !== null ? savedResume[resumeIndex].name : 'No resume seleted'}</p>
+                <p>{resumeIndex !== null ? savedResume[resumeIndex].file_name : 'No resume seleted'}</p>
 
                 {resumeAvailable && (
                   <div 
@@ -265,7 +271,7 @@ const Overlay = () => {
               onClick={()=>handleResumeIndex(index)}
               key={index} 
               className={`w-full p-4 border rounded-md hover:cursor-pointer ${resumeIndex == index ? 'border-foreground': ''}  `}>
-              {resume.name}
+              {resume.file_name}
 
             </div>
 

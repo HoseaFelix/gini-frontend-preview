@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react'
 import { CoverLetter, ResumeType } from '@/lib/schemes/resumeSchema'
 import FormatButtons from '../../resumemanager/components/formatButtons';
 import Image from 'next/image';
+import { toast } from 'sonner';
+import { handleSaveCoverletter } from '@/lib/constants/constants';
+import TitleOverlay from '@/components/TitleOverlay';
 
 /**
  * Small helpers
@@ -36,6 +39,8 @@ const setByPath = (obj: any, path: Array<string | number>, value: any) => {
 const Page = () => {
   const [coverLetter, setCoverletter] = useState<CoverLetter | null>(null)
   const [resume, setResume] = useState<ResumeType | null>(null)
+   const [title,setTitle] = useState('')
+    const [isVisible, setVisibility]= useState(false)
 
   useEffect(() => {
     try {
@@ -129,10 +134,35 @@ const Page = () => {
     window.print()
   }
 
+    const collectTitle = (e)=>{
+      setTitle(e.target.value)
+    }
+  
+    const handleVisibility = ()=> {
+      setVisibility(prev => !prev)
+    }
+  
+    const handleSave = async ()=>{
+      if(!title){
+        toast('please enter a title')
+      }
+      const payload = {
+        title: title,
+        data: coverLetter
+  
+      }
+  
+      const data = await handleSaveCoverletter(payload)
+      if(data.success){
+        setVisibility(false)
+      }
+    }
+
   if (coverLetter == null) return <p>No cover letter selected</p>
 
   return (
     <section className="w-full h-full px-4 py-10 relative flex justify-center items-center flex-col print:py-0 print:px-0 ">
+      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisibility} handleSave={handleSave}/>
     <FormatButtons/>
      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
         <button
@@ -141,12 +171,12 @@ const Page = () => {
         >
           Export
         </button>
-        {/* <button
-          onClick={setVisiblity}
+        <button
+          onClick={handleVisibility}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow text-sm sm:text-base"
         >
           Save
-        </button> */}
+        </button>
       </div>
 
       <main className="mt-10 print:mt-0 w-full max-w-[794px] h-max mx-auto bg-white overflow-hidden rounded-lg shadow-lg print:w-[794px] flex flex-col pb-10 relative print:mx-auto ">

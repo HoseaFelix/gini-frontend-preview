@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import { CoverLetter, ResumeType } from '@/lib/schemes/resumeSchema'
 import FormatButtons from '../../resumemanager/components/formatButtons';
+import TitleOverlay from '@/components/TitleOverlay';
+import { toast } from 'sonner';
+import { handleSaveCoverletter } from '@/lib/constants/constants';
 
 /**
  * Small helpers
@@ -13,6 +16,8 @@ const preventEnterBlur = (e: React.KeyboardEvent<HTMLElement>) => {
     ;(e.currentTarget as HTMLElement).blur()
   }
 }
+
+
 
 const setByPath = (obj: any, path: Array<string | number>, value: any) => {
   const next: any = JSON.parse(JSON.stringify(obj))
@@ -35,18 +40,71 @@ const setByPath = (obj: any, path: Array<string | number>, value: any) => {
 const Page = () => {
   const [coverLetter, setCoverletter] = useState<CoverLetter | null>(null)
   const [resume, setResume] = useState<ResumeType | null>(null)
+  const [title,setTitle] = useState('')
+  const [isVisible, setVisibility]= useState(false)
 
   useEffect(() => {
+
+    const type = JSON.parse(localStorage.getItem('typeCoverLetter'))
+
+    
+    if (type.type == 'old'){
+       const stored = localStorage.getItem('savedCoverLetters')
+       console.log(JSON.parse(stored)[type.index])
+            if (stored) {
+              setCoverletter(JSON.parse(stored)[type.index].data)
+            }
+    } else{
     try {
       const storedCover = localStorage.getItem('coverLetter')
-      const storedResume = localStorage.getItem('resume')
+      const storedResume = localStorage.getItem('selectedResume')
+      console.log(storedResume)
       if (storedCover) setCoverletter(JSON.parse(storedCover))
       if (storedResume) setResume(JSON.parse(storedResume))
+        if(storedCover && storedResume){
+          const resume = JSON.parse(storedResume)
+          const cover = JSON.parse(storedCover)
+          const newCover = {
+            hiringManagerName: cover?.hiringManagerName || '',
+            name: resume?.name || 'Your name here',
+            email: resume?.contactInfo?.email || 'example@gmail.com',
+            headline: resume?.headline || 'your resume headline',
+            letter: cover?.letter || '',
+          }
+
+          console.log(newCover)
+          setCoverletter(newCover)
+        }
     } catch (err) {
       console.warn('Failed to parse localStorage for coverLetter/resume', err)
     }
+    }
+
   }, [])
 
+  const collectTitle = (e)=>{
+    setTitle(e.target.value)
+  }
+
+  const handleVisibility = ()=> {
+    setVisibility(prev => !prev)
+  }
+
+  const handleSave = async ()=>{
+    if(!title){
+      toast('please enter a title')
+    }
+    const payload = {
+      title: title,
+      data: coverLetter
+
+    }
+
+    const data = await handleSaveCoverletter(payload)
+    if(data.success){
+      setVisibility(false)
+    }
+  }
   // Persist helpers
   const persistCover = (next: CoverLetter | null) => {
     setCoverletter(next)
@@ -132,6 +190,8 @@ const Page = () => {
 
   return (
     <section className="w-full h-full px-4 py-10 relative flex justify-center items-center flex-col print:py-0 print:px-0 ">
+
+      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisibility} handleSave={handleSave}/>
     <FormatButtons/>
      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
         <button
@@ -140,12 +200,12 @@ const Page = () => {
         >
           Export
         </button>
-        {/* <button
-          onClick={setVisiblity}
+        <button
+          onClick={handleVisibility}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow text-sm sm:text-base"
         >
           Save
-        </button> */}
+        </button>
       </div>
 
       <main className="mt-10 print:mt-0 w-full max-w-[794px] h-max mx-auto bg-white overflow-hidden rounded-lg shadow-lg print:w-[794px] flex flex-col pb-10 relative print:mx-auto ">
@@ -161,7 +221,7 @@ const Page = () => {
                 onKeyDown={preventEnterBlur}
                 className="text-3xl font-bold"
               >
-                {resume?.name ?? 'Your name here'}
+                {coverLetter?.name ?? 'Your name here'}
               </p>
 
               <p
@@ -170,7 +230,7 @@ const Page = () => {
                 onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
                 onKeyDown={preventEnterBlur}
               >
-                {resume?.contactInfo?.email ?? 'you@example.com'}
+                {coverLetter?.email ?? 'you@example.com'}
               </p>
 
               <p
@@ -179,7 +239,7 @@ const Page = () => {
                 onBlur={handleResumeFieldBlur(['headline'])}
                 onKeyDown={preventEnterBlur}
               >
-                {resume?.headline ?? 'Professional headline'}
+                {coverLetter?.headline ?? 'Professional headline'}
               </p>
             </div>
           </div>
