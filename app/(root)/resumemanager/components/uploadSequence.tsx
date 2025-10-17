@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { extractTextFromFile } from '@/lib/constants/constants'
 import { formatTextWithAi} from '@/lib/actions/general.actions'
@@ -13,10 +13,11 @@ import { useRouter } from 'next/navigation'
 import ManualInput from './manualInput'
 import { useAuthStore } from '@/store/store'
 import LanguageDropdown from './LanguageDropdown'
+import TemplateCarousel from '@/components/generalComponents/carouselTemplates'
 // import { useResumeStore } from '@/store/resumeStore'
 
 const UploadSequence = () => {
-  const totalItems = 3
+  const totalItems = 4
   const [currentView, setCurrentView] = useState(0)
   const [document, setDocument] = useState<File | null>(null)
   const [canContinue, setCanContinue]= useState(false)
@@ -29,6 +30,8 @@ const UploadSequence = () => {
   const [generateImprov, setGenImprov] = useState('waiting')
   const [isFormVisible, setFormVisibility] = useState(false)
   const [language, setLanguage] = useState("English")
+  const [selectedTemplate, setSelectedTemplate] = useState(false)
+  const [templateIndex, setSelectedTemplateIndex] = useState<number | null>(null)
 
 //   const [rawText, setRawText] = useState("")
 const setOriginalResume = useResumeStore.getState().setParsedResume;
@@ -115,6 +118,15 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
         
   }
 
+    const templates = [
+    '/img/resumetemplate1.png',
+    '/img/resumetemplate2.png',
+  ]
+
+  const handleSelect= (index)=>{
+    setSelectedTemplateIndex(index)
+  }
+
   //handles job description collection 
    const collectJobDescription = (e: React.ChangeEvent<HTMLTextAreaElement>)=>{
         setDescription(e.target.value)
@@ -126,6 +138,12 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
     setCurrentView((prev)=> prev -1)
    }
 
+
+   useEffect(()=>{
+     if(selectedTemplate && isScanning == 'done'){
+        setCurrentView(3)
+        }
+   }, [selectedTemplate, isScanning])
    //handles the second continue button which sends the description along with the formatted resume to the Ai for processing  
    const handleSecondContinue = async ()=>{
 
@@ -133,6 +151,8 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
         toast.error('enter description please')
         return;
     }
+
+    setCurrentView((prev)=> prev + 1)
 
 
     try{
@@ -146,7 +166,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
             setScanning('done')
             setGenImprov('done')
             setOptimizedResume(optimizeResume.parsedResume)
-            setCurrentView((prev)=> prev + 1)
+           
         }
 
     } catch(error){
@@ -156,6 +176,16 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
     
 
 
+   }
+
+   const handleTemplateContinue= ()=>{
+    if(isScanning == 'done'){
+        setCurrentView((prev)=> prev + 1)
+        setSelectedTemplate(true)
+    }else{
+        setCurrentView((prev)=> prev - 1)
+        setSelectedTemplate(true)
+    }
    }
 
    const router = useRouter()
@@ -170,9 +200,14 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
     if(optimizedResume) {
         localStorage.setItem('resume', JSON.stringify(optimizedResume))
         localStorage.setItem('originalResume', JSON.stringify(originalResume))
+
+        localStorage.setItem('type',JSON.stringify({
+        type: 'new',
+        index: ''
+      }))
     }
     
-    router.push('/resumemanager/templates1')
+    router.push(`/resumemanager/templates${templateIndex+1}`)
 }
 
 const toggleForm = ()=>{
@@ -198,13 +233,14 @@ const handleFormContinue = async ()=>{
                 <div className=' h-fit w-full px-2 sm:px-4 mx-auto flex flex-nowrap gap-1 sm:gap-2 md:gap-5'>
                     <div className='h-2 flex-1 min-w-0 rounded-lg bg-blue-500'></div>
                     <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView >= 1 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
-                    <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView == 2 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
+                    <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView >= 2 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
+                    <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView == 3 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
                 </div>
             </div>
             {/*slides container*/}
             <div className='w-full relative h-full  overflow-hidden pb-4 '>
                 <div
-                    className='grid grid-cols-3 transition-transform duration-500'
+                    className='grid grid-cols-4 transition-transform duration-500'
                     style={{
                     width: `${totalItems * 100}%`,
                     transform: `translateX(-${currentView * (100 / totalItems)}%)`
@@ -230,7 +266,6 @@ const handleFormContinue = async ()=>{
                             
                             <div className='flex flex-col overflow-y-auto md:flex-row gap-5 sm:gap-10 mt-10 sm:mt-16'>
                             <div className='relative min-w-0'>
-                                
                                 <input
                                 id="fileUpload"
                                 type="file"
@@ -238,9 +273,9 @@ const handleFormContinue = async ()=>{
                                 onChange={handleDoc}
                                 />
                                 <label htmlFor="fileUpload" className='w-full'>
-                                    <div className='w-full h-fit py-5 md:w-[250px] md:h-[250px] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7'>
+                                    <div className='w-full h-fit py-5 md:w-[250px] md:h-[250px] max-sm:max-w-[85%] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7 px-4'>
                                         {document && (
-                                            <div className='mx-auto'>
+                                            <div className='mx-auto max-w-full flex flex-wrap'>
                                                 {document.name}
                                             </div>
                                         )}
@@ -363,9 +398,32 @@ const handleFormContinue = async ()=>{
 
                         
                         
+                    </div>
+
+                            {/* Slide 3 */}
+                    
+                    <div className={`w-full h-full flex flex-col gap-5`}>
+           
+                        <div className={`${selectedTemplate ? 'hidden' : ''} w-full min-h-[360px] relative`}>
+                        <TemplateCarousel images={templates} onSelect={handleSelect} />
+
                         </div>
 
-                    {/* Slide 3 */}
+                        <div className={`${selectedTemplate ? 'hidden' : ''} w-full h-fit flex items-end justify-end gap-3 `}>
+                        <button
+                            onClick={handleTemplateContinue}
+                            className={`px-4 py-2 rounded ${canContinue? 'bg-blue-600': 'bg-text/50'} text-white`}
+                        
+                        >
+                            Continue
+
+                        </button>
+
+                        </div>
+
+                    </div>
+
+                    {/* Slide 4 */}
                     <div className='w-full h-[60dvh] flex flex-col  items-center relative border border-text rounded-lg p-5 overflow-y-auto'>
                         <div className='sticky top-5 font-bold  w-full px-4 flex justify-between'>
                             <p className='text-sm md:text-xl'>Resume Optimization</p>

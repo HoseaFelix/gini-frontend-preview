@@ -271,6 +271,10 @@
   .toolbar-buttons{
     @apply  py-1 px-4 rounded-md bg-black/20 font-bold  ; 
   }
+
+  .template2-skill-section ul{
+    @apply flex gap-6 max-w-full flex-wrap list-none;
+  }
   
 
 

@@ -1,13 +1,21 @@
+import { getSavedResume } from '@/lib/constants/constants'
 import React, { useEffect, useState } from 'react'
 
 const UserData = () => {
       const [SavedResume, setSavedResume] = useState<any[]>([])
       
         useEffect(() => {
-          const stored = localStorage.getItem('savedResume')
-          if (stored) {
-            setSavedResume(JSON.parse(stored))
-          }
+         
+
+           const fetchData = async () => {
+              await getSavedResume();
+               const stored = localStorage.getItem('savedResume')
+                if (stored) {
+                  setSavedResume(JSON.parse(stored))
+                }
+            };
+
+            fetchData()
         }, [])
 
     const userdata = [

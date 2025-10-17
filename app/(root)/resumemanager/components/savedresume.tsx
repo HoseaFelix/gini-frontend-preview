@@ -1,15 +1,51 @@
+'use client'
+
+import { getSavedResume, handleDeleteResume } from '@/lib/constants/constants'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const Savedresume = () => {
 
+  const router = useRouter()
   const [SavedResume, setSavedResume] = useState<any[]>([])
+  const [deleted, setDeleted]= useState(0)
   
     useEffect(() => {
+
+      const fetchData = async () => {
+        await getSavedResume();
+        const stored = localStorage.getItem('savedResume')
+        if (stored) {
+          setSavedResume(JSON.parse(stored))
+        }
+      };
+      
+      fetchData()
+
       const stored = localStorage.getItem('savedResume')
       if (stored) {
         setSavedResume(JSON.parse(stored))
       }
-    }, [])
+    }, [deleted])
+
+    const handleView = (index)=>{
+      localStorage.setItem('type',JSON.stringify({
+        type: 'old',
+        index: index
+      }))
+
+      router.push('resumemanager/templates1')
+
+    }
+
+    const handleDelete = async (id)=>{
+      const data = await handleDeleteResume(id)
+      if(data.success){
+        setDeleted(prev=>prev+1)
+      }
+
+
+    }
 
 
   return (
@@ -20,12 +56,10 @@ const Savedresume = () => {
                 SavedResume.map((resume, index)=>(
                     <div key={index} className='flex justify-between items-center text-text font-bold opacity-80 border border-text/50 rounded-sm px-4 py-3 hover:border-blue-400'>
                         
-                        <p>{resume.name}</p>
+                        <p>{resume.file_name}</p>
                         <div className='flex gap-3'>
-                            <p className='hover:cursor-pointer'>View</p>
-                            <p className='hover:cursor-pointer'>Delete</p>
-                            <p className='hover:cursor-pointer'>Export</p>
-
+                            <p onClick={()=>handleView(index)} className='hover:cursor-pointer'>View</p>
+                            <p onClick={()=>handleDelete(resume.id)} className='hover:cursor-pointer'>Delete</p>
                         </div>
 
                     </div>
