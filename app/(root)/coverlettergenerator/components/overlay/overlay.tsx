@@ -141,8 +141,12 @@ const Overlay = () => {
         type: 'new',
         index: ''
       }))
-    router.push(`/coverlettergenerator/covertemplate${templateIndex + 1}`)
+   
     localStorage.setItem('templateIndex', JSON.stringify(templateIndex))
+
+    setTimeout(() => {
+      router.push(`/coverlettergenerator/covertemplate${templateIndex + 1}`)
+    }, 300)
   }
 }, [selectedTemplate, finishedAnayzing, templateIndex, router])
 
@@ -161,7 +165,7 @@ const Overlay = () => {
 
       <div className='slide-containter w-full h-full relative overflow-hidden'>
         <div 
-          className='mt-10 grid-cols-2 grid transition-transform duration-500'
+          className='justify-between mt-10 grid-cols-2 grid transition-transform duration-500'
           style={{
             width: `${totalItems*100}%`,
             transform:` translateX(-${currentView * (100/totalItems)}%)`
@@ -169,7 +173,7 @@ const Overlay = () => {
         >
           {/* slide 1 */}
 
-          <div className='w-full h-full flex flex-col gap-10'>
+          <div className='w-full h-full flex flex-col gap-10 '>
 
             <div className='w-full max-w-2xl h-max mx-auto flex flex-col space-y-5'>
               <div className='p-2 flex justify-between border-2 rounded-lg '>
@@ -221,7 +225,7 @@ const Overlay = () => {
 
           {/* slide 2 */}
 
-          <div className={`w-full h-full flex flex-col gap-5`}>
+          <div className={`w-full h-full flex flex-col gap-5 max-w-full `}>
             {
               selectedTemplate && (
               <div className='flex gap-2'>

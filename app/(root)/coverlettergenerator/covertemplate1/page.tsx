@@ -47,7 +47,7 @@ const Page = () => {
 
     const type = JSON.parse(localStorage.getItem('typeCoverLetter'))
 
-    
+    console.log(type)
     if (type.type == 'old'){
        const stored = localStorage.getItem('savedCoverLetters')
        console.log(JSON.parse(stored)[type.index])
@@ -58,11 +58,19 @@ const Page = () => {
     try {
       const storedCover = localStorage.getItem('coverLetter')
       const storedResume = localStorage.getItem('selectedResume')
+
+
+      if (!storedCover || !storedResume) {
+        console.warn('No stored cover letter or resume found')
+        return
+      }
+      
       console.log(storedResume)
       if (storedCover) setCoverletter(JSON.parse(storedCover))
       if (storedResume) setResume(JSON.parse(storedResume))
         if(storedCover && storedResume){
           const resume = JSON.parse(storedResume)
+          console.log(resume)
           const cover = JSON.parse(storedCover)
           const newCover = {
             hiringManagerName: cover?.hiringManagerName || '',

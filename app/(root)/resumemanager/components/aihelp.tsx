@@ -75,7 +75,7 @@ const Aihelp = ({toggleChat, handleToggleChat}: {toggleChat: boolean, handleTogg
     <div 
     className={`${!toggleChat ? 'hidden' : ''} fixed w-full h-screen md:w-[450px] md:h-[650px] right-0 max-sm:top-20 md:right-5 z-150 md:bottom-10 bg-white rounded-md `}>
       <div 
-        className='h-full p-4 w-full  flex flex-col relative pb-10'
+        className='h-full p-4 w-full  flex flex-col relative pb-3'
       > 
 
             {/* handles chat close */}
@@ -100,7 +100,7 @@ const Aihelp = ({toggleChat, handleToggleChat}: {toggleChat: boolean, handleTogg
 
                 {/* chat body */}
 
-                <div className=' w-full h-full flex flex-col gap-2 overflow-y-auto pr-2 py-10 '>
+                <div className=' w-full h-full flex flex-col gap-2 overflow-y-auto pr-2 py-10 relative '>
                     {chat.length > 0 && (
                         chat.map((sentence, index)=>(
                             <div 
@@ -127,42 +127,43 @@ const Aihelp = ({toggleChat, handleToggleChat}: {toggleChat: boolean, handleTogg
                     
                     <div ref={endMessageRef}/>
 
+                    {/* input field */}
+                    <div className='absolute bottom-0 inset-x-4 h-fit
+                    '>
+                        <div className='w-full h-fit flex-nowrap flex gap-5 rounded-lg bg-white/50 backdrop:saturate-150 backdrop:blur-md shadow items-center justify-between'>
+                        
+                            <input 
+                                onChange={handleChange}
+                                value={input}
+                                type="text" 
+                                className='hover:outline-0 px-2 py-2 h-fit max-h-[100px] min-w-[80%] border-0  focus:outline-0' 
+                                placeholder='enter query here'
+                            
+                            />
+
+                            <button
+                            onClick={handleSubmit}
+                            className='hover:cursor-pointer'
+                            >
+                                <Image
+                                    src='/icons/message.png'
+                                    width={30}
+                                    height={30}
+                                    alt='message icon'
+                                />
+
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
     
 
 
 
-                {/* input field */}
-                <div className='absolute bottom-5 inset-x-4 h-fit
-                '>
-                    <div className='w-full h-fit flex-nowrap flex gap-5 rounded-lg bg-white/50 backdrop:saturate-150 backdrop:blur-md shadow items-center justify-between'>
-                    
-                        <input 
-                            onChange={handleChange}
-                            value={input}
-                            type="text" 
-                            className='hover:outline-0 px-2 py-2 h-fit max-h-[100px] min-w-[80%] border-0  focus:outline-0' 
-                            placeholder='enter query here'
-                        
-                        />
 
-                        <button
-                        onClick={handleSubmit}
-                        className='hover:cursor-pointer'
-                        >
-                            <Image
-                                src='/icons/message.png'
-                                width={30}
-                                height={30}
-                                alt='message icon'
-                            />
-
-                        </button>
-
-                    </div>
-
-                </div>
 
             
 

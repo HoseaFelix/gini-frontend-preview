@@ -36,8 +36,8 @@ const ResumePage = () => {
 
           <div 
               onClick={handleToggleChat}
-              className={`${toggleChat ? 'hidden' : ''} fixed right-5 md:right-20 bottom-10 w-max h-max hover:cursor-pointer z-150`}>
-                <div className='p-4 w-max h-max flex gap-2 items-center bg-foreground rounded-lg'>
+              className={`${toggleChat ? 'hidden' : ''} fixed right-5 md:right-20 bottom-5 w-max h-max hover:cursor-pointer z-150`}>
+                <div className='p-4 w-max h-max flex gap-2 items-center bg-foreground rounded-lg group transition-all duration-300 '>
                   <Image
                       src={'/icons/comment.png'}
                       width={30}
@@ -46,7 +46,7 @@ const ResumePage = () => {
                       className='invert'
                   
                   />
-                  <p className='hidden md:block text-white font-bold '>Chat with AI</p>
+                  <p className='group-hover:block hidden text-white font-bold '>Chat with AI</p>
 
                 </div>
 
