@@ -275,7 +275,7 @@ const handleFormContinue = async ()=>{
                                 <label htmlFor="fileUpload" className='w-full'>
                                     <div className='w-full h-fit py-5 md:w-[250px] md:h-[250px] max-sm:max-w-[85%] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7 px-4'>
                                         {document && (
-                                            <div className='mx-auto max-w-full flex flex-wrap'>
+                                            <div className='mx-auto max-w-[90%] flex flex-wrap'>
                                                 {document.name}
                                             </div>
                                         )}
