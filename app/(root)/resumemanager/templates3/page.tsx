@@ -396,32 +396,21 @@ const printable = (val: any) => {
         className="resume-container bg-white shadow-lg rounded-lg p-4 sm:p-6 border border-text/70 w-full sm:max-w-[900px] print:w-[1100px] mx-auto "
       >
         {/* Top section */}
-        <div className="flex flex-col flex-wrap gap-2 justify-between border-b pb-4 print:flex-row print:gap-5">
-          <div className="w-full flex flex-col items-center">
+        <div className="flex flex-col flex-wrap gap-2 justify-between  pb-4 print:flex-row print:gap-5">
+          <div className="w-full flex flex-col items-center ">
             {/* Name */}
             <p
               contentEditable
               suppressContentEditableWarning
               onBlur={handleFieldBlur(['name'])}
               onKeyDown={preventEnterBlur}
-              className="font-bold print:text-xl text-2xl sm:text-6xl"
+              className="font-bold print:text-xl text-2xl sm:text-6xl text-blue-950 "
             >
               {resume.name ?? 'your name here'}
             </p>
-
-            {/* Headline */}
-            <p
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={handleFieldBlur(['headline'])}
-              onKeyDown={preventEnterBlur}
-              className="text-text/80 text-base sm:text-lg"
-            >
-              {resume.headline}
-            </p>
           </div>
 
-            <div className="flex items-center justify-center text-text/70 gap-1 text-sm sm:text-base flex-wrap w-full print:items-center">
+            <div className="flex items-center justify-center border-b-4 border-b-blue-950 text-blue-950 font-bold gap-1 text-sm sm:text-base flex-wrap w-full print:items-center">
                 {contactItems
                   .filter(Boolean) // remove empty or undefined fields
                   .map((item, index, arr) => (
@@ -444,6 +433,18 @@ const printable = (val: any) => {
                               </React.Fragment>
                 ))}
             </div>
+
+            <div className='flex items-center justify-center text-blue-950'>
+                <p
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={handleFieldBlur(['headline'])}
+                onKeyDown={preventEnterBlur}
+                className="text-xl font-bold "
+                >
+                {resume.headline}
+                </p>
+            </div>
         </div>
 
         {/* Main content */}
@@ -453,7 +454,7 @@ const printable = (val: any) => {
           <div className="flex flex-col gap-5 flex-1">
             {/* Career Objective */}
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-xl">CAREER OBJECTIVE</p>
+              <p className="font-bold text-xl border-b-4 border-b-blue-950">Qualifications Profile</p>
               <p
                 contentEditable
                 suppressContentEditableWarning
@@ -464,15 +465,158 @@ const printable = (val: any) => {
                 {resume.careerObjective}
               </p>
             </div>
+            
+            
+            {/*Skills*/}
+            <div className="flex flex-col gap-4">
+              <p className="font-bold text-xl border-b-4 border-b-blue-950">SKILLS</p>
+
+              {/* Technical */}
+              {resume.skills?.technical && (
+                <div>
+                  <p className="font-bold text-blue-950">Technical Skills</p>
+                  <div className="pl-5">
+                    {/* Languages */}
+                    {resume.skills?.technical?.languages ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Languages:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'languages'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.languages)}
+                        </span>
+                      </p>
+                    ) : null}
+
+                    {/* Frameworks & Libraries */}
+                    {resume.skills?.technical?.frameworksAndLibraries ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Framework & Libraries:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'frameworksAndLibraries'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.frameworksAndLibraries)}
+                        </span>
+                      </p>
+                    ) : null}
+
+                    {/* Tools & Build Systems */}
+                    {resume.skills?.technical?.toolsAndBuildSystems ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Tools & Build systems:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'toolsAndBuildSystems'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.toolsAndBuildSystems)}
+                        </span>
+                      </p>
+                    ) : null}
+
+                    {/* Testing */}
+                    {resume.skills?.technical?.testing ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Testing:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'testing'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.testing)}
+                        </span>
+                      </p>
+                    ) : null}
+
+                    {/* Practices */}
+                    {resume.skills?.technical?.practices ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Practices:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'practices'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.practices)}
+                        </span>
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              )}
+
+              {/* Soft Skills */}
+              {resume.skills?.soft ? (
+                <div>
+                  <p className="font-bold text-blue-950">Soft Skills</p>
+                  <p
+
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={handleFieldBlur(['skills', 'soft'])}
+                    onKeyDown={preventEnterBlur}
+                    className="pl-5 text-sm sm:text-base skill-items"
+                  >
+                    {printable(resume.skills.soft)}
+                  </p>
+                </div>
+              ) : null}
+
+              {/* Certifications */}
+              {resume.skills?.certifications.length > 0 ? (
+                <div>
+                  <p className="font-semibold">Certifications</p>
+                  <p
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={handleFieldBlur(['skills', 'certifications'])}
+                    onKeyDown={preventEnterBlur}
+                    className="pl-5 text-sm sm:text-base"
+                  >
+                    {printable(resume.skills.certifications)}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+            {/* ===== END SKILLS BLOCK ===== */}
 
             {/* Experience */}
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-xl">EXPERIENCE</p>
+              <p className="font-bold text-xl border-b-4 text-blue-950 border-b-blue-950">EXPERIENCE</p>
               {resume.experience?.map((exp, index) => {
                 const achArr = splitSentences(exp.achievements)
                 return (
                   <div key={index} className="space-y-2 text-sm sm:text-base">
-                    <p className="font-bold">
+                    <div className="font-bold text-blue-950 flex justify-between border-b-3 border-b-blue-950">
                       <span
                         contentEditable
                         suppressContentEditableWarning
@@ -480,8 +624,7 @@ const printable = (val: any) => {
                         onKeyDown={preventEnterBlur}
                       >
                         {exp.heading}
-                      </span>{' '}
-                      |{' '}
+                      </span>
                       <span
                         contentEditable
                         suppressContentEditableWarning
@@ -490,7 +633,7 @@ const printable = (val: any) => {
                       >
                         {exp.duration}
                       </span>
-                    </p>
+                    </div>
                     <ul className="space-y-2 list-disc pl-5">
                       {achArr.map((ach: string, j: number) => (
                         <li
@@ -555,144 +698,10 @@ const printable = (val: any) => {
               </div>
             )}
 
-                        {/*Skills*/}
-            <div className="flex flex-col gap-4">
-              <p className="font-bold text-xl">SKILLS</p>
 
-              {/* Technical */}
-              {resume.skills?.technical && (
-                <div>
-                  <p className="font-bold">Technical Skills</p>
-                  <div className="pl-5">
-                    {/* Languages */}
-                    {resume.skills?.technical?.languages ? (
-                      <p
-
-                        className="mt-2"
-                      >
-                        <span className="font-bold">Languages:&nbsp;</span>
-                        <span
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={handleFieldBlur(['skills', 'technical', 'languages'])}
-                          onKeyDown={preventEnterBlur}
-                        >
-                          {printable(resume.skills.technical.languages)}
-                        </span>
-                      </p>
-                    ) : null}
-
-                    {/* Frameworks & Libraries */}
-                    {resume.skills?.technical?.frameworksAndLibraries ? (
-                      <p
-
-                        className="mt-2"
-                      >
-                        <span className="font-bold">Framework & Libraries:&nbsp;</span>
-                        <span
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={handleFieldBlur(['skills', 'technical', 'frameworksAndLibraries'])}
-                          onKeyDown={preventEnterBlur}
-                        >
-                          {printable(resume.skills.technical.frameworksAndLibraries)}
-                        </span>
-                      </p>
-                    ) : null}
-
-                    {/* Tools & Build Systems */}
-                    {resume.skills?.technical?.toolsAndBuildSystems ? (
-                      <p
-
-                        className="mt-2"
-                      >
-                        <span className="font-bold">Tools & Build systems:&nbsp;</span>
-                        <span
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={handleFieldBlur(['skills', 'technical', 'toolsAndBuildSystems'])}
-                          onKeyDown={preventEnterBlur}
-                        >
-                          {printable(resume.skills.technical.toolsAndBuildSystems)}
-                        </span>
-                      </p>
-                    ) : null}
-
-                    {/* Testing */}
-                    {resume.skills?.technical?.testing ? (
-                      <p
-
-                        className="mt-2"
-                      >
-                        <span className="font-bold">Testing:&nbsp;</span>
-                        <span
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={handleFieldBlur(['skills', 'technical', 'testing'])}
-                          onKeyDown={preventEnterBlur}
-                        >
-                          {printable(resume.skills.technical.testing)}
-                        </span>
-                      </p>
-                    ) : null}
-
-                    {/* Practices */}
-                    {resume.skills?.technical?.practices ? (
-                      <p
-
-                        className="mt-2"
-                      >
-                        <span className="font-bold">Practices:&nbsp;</span>
-                        <span
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={handleFieldBlur(['skills', 'technical', 'practices'])}
-                          onKeyDown={preventEnterBlur}
-                        >
-                          {printable(resume.skills.technical.practices)}
-                        </span>
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-              )}
-
-              {/* Soft Skills */}
-              {resume.skills?.soft ? (
-                <div>
-                  <p className="font-bold">Soft Skills</p>
-                  <p
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={handleFieldBlur(['skills', 'soft'])}
-                    onKeyDown={preventEnterBlur}
-                    className="pl-5 text-sm sm:text-base"
-                  >
-                    {printable(resume.skills.soft)}
-                  </p>
-                </div>
-              ) : null}
-
-              {/* Certifications */}
-              {resume.skills?.certifications.length > 0 ? (
-                <div>
-                  <p className="font-semibold">Certifications</p>
-                  <p
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={handleFieldBlur(['skills', 'certifications'])}
-                    onKeyDown={preventEnterBlur}
-                    className="pl-5 text-sm sm:text-base"
-                  >
-                    {printable(resume.skills.certifications)}
-                  </p>
-                </div>
-              ) : null}
-            </div>
-            {/* ===== END SKILLS BLOCK ===== */}
             {/* Education */}
             <div className="flex flex-col gap-2">
-              <p className="font-bold text-xl">EDUCATION</p>
+              <p className="font-bold text-xl border-b-4 border-b-blue-950 text-blue-950">EDUCATION</p>
               {resume.education?.map((edu, index) => (
                 <div key={index} className="flex flex-col gap-1 text-sm sm:text-base">
                   <p>

@@ -53,10 +53,10 @@ const Overlay = () => {
 
 
     const rawResume = savedResume[resumeIndex].data
-    console.log(rawResume)
+   
     setCurrentView(1)
     localStorage.setItem('selectedResume', JSON.stringify(rawResume))
-
+     console.log(JSON.parse(localStorage.getItem('selectedResume')))
     try{
 
       setLoading('ready')
@@ -163,7 +163,7 @@ const Overlay = () => {
             </div>
       </div>
 
-      <div className='slide-containter w-full h-full relative overflow-hidden'>
+      <div className='slide-containter w-full h-full relative overflow-x-hidden overflow-y-scroll'>
         <div 
           className='justify-between mt-10 grid-cols-2 grid transition-transform duration-500'
           style={{
