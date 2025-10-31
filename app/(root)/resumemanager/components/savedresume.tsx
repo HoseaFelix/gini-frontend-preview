@@ -16,25 +16,28 @@ const Savedresume = () => {
         await getSavedResume();
         const stored = localStorage.getItem('savedResume')
         if (stored) {
+          
           setSavedResume(JSON.parse(stored))
+          
         }
       };
       
       fetchData()
-
-      const stored = localStorage.getItem('savedResume')
-      if (stored) {
-        setSavedResume(JSON.parse(stored))
-      }
     }, [deleted])
 
     const handleView = (index)=>{
+     
+      console.log(SavedResume[index].data)
+      localStorage.setItem('savedResume', JSON.stringify(SavedResume[index].data))
       localStorage.setItem('type',JSON.stringify({
         type: 'old',
         index: index
       }))
 
-      router.push('resumemanager/templates1')
+      setTimeout(()=>{
+       router.push('resumemanager/templates1')
+
+      }, 3000)
 
     }
 

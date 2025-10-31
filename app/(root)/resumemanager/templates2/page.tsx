@@ -7,6 +7,7 @@ import { useAuthStore, useCurrentNav } from '@/store/store'
 import FormatButtons from '../components/formatButtons'
 import TitleOverlay from '@/components/TitleOverlay'
 import { toast } from 'sonner'
+import htmlDocx from "html-docx-js/dist/html-docx";
 // import Savedresume from '../components/savedresume'
 
 /**
@@ -52,7 +53,7 @@ const Template1Page = () => {
     setIsvisible((prev)=> !prev)
   }
 
- useEffect(() => {
+  useEffect(() => {
 
     const type =JSON.parse( localStorage.getItem('type'))
     console.log(type)
@@ -96,9 +97,18 @@ const Template1Page = () => {
         localStorage.removeItem('originalResume')
       }
     } else{
-      const savedResume = JSON.parse(localStorage.getItem('savedResume'))
-      setResume(savedResume[type.index].data)
-      console.log(savedResume[type.index].data)
+      const fetchData = async () => {
+              const savedResume = JSON.parse(localStorage.getItem('savedResume'))
+              if (savedResume) {
+                setResume(savedResume)
+                console.log(savedResume)
+              }
+            };
+            
+            fetchData()
+      
+      
+      
     }
    
 
@@ -222,8 +232,40 @@ const handleProjectAchievementBlur =
 
 
 
-  const handleExport = async () => {
-    window.print()
+  const handleExport = async (type) => {
+    if(type == 'PDF'){
+      window.print()
+    } else{
+        const content = document.querySelector('.resume-container') as HTMLElement | null;
+
+        if (!content) {
+          console.error('Resume container not found!');
+          return;
+        }
+
+        const clone = content.cloneNode(true) as HTMLElement;
+
+        // Convert Tailwind/computed styles into inline CSS
+        const allElements = clone.querySelectorAll('*');
+        allElements.forEach((el) => {
+          const computed = window.getComputedStyle(el);
+          (el as HTMLElement).style.cssText = computed.cssText; // safely cast
+        });
+
+        // Wrap in HTML and convert to blob
+        const html = '<!DOCTYPE html>' + clone.outerHTML;
+        const converted = htmlDocx.asBlob(html);
+
+        // Trigger download
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(converted);
+        a.download = 'resume.docx';
+        a.click();
+        toast('downloaded')
+
+
+    }
+
   }
 
   const handleSave = async ()=>{
@@ -238,14 +280,9 @@ const handleProjectAchievementBlur =
 
       
         const payload = {
-          file_id:'jlsj;j;ljsaljsjhfjshfkjsh',
           file_name: title,
-          data: {
-            name:'francis',
-            phonenumber:'090909080'
-          },
+          data: resume,
         }
-        
 
       const res = await fetch("https://aidgeny.onrender.com/api/documents/json", {
         method: "POST",
@@ -302,14 +339,29 @@ const handleProjectAchievementBlur =
   }
 
   const contactItems = [
-  resume.contactInfo.phone,
-  resume.contactInfo.email,
-  resume.contactInfo.address,
-  resume.contactInfo.linkedIn,
+  resume.contactInfo.phone ?? 'phone number',
+  resume.contactInfo.email ?? 'email@example.com',
+  resume.contactInfo.address ?? 'your address',
+  resume.contactInfo.linkedIn ?? 'linkedin profile',
 ];
 
-  // const isValid = (val: unknown) =>
-  //   val !== undefined && val !== null && val !== 'undefined' && `${val}`.trim() !== ''
+const printable = (val: any) => {
+  if (val == null) return '';
+  if (Array.isArray(val)) return val.join(', ');
+  // If it's an object (e.g. { js: true }) try reasonable conversions:
+  if (typeof val === 'object') {
+    try {
+      // flatten simple object into "k: v" pairs
+      const entries = Object.entries(val);
+      if (entries.length) return entries.map(([k, v]) => `${k}: ${v}`).join(', ');
+      return JSON.stringify(val);
+    } catch {
+      return String(val);
+    }
+  }
+  return String(val);
+};
+
 
   return (
     <section className="w-full pb-10 min-h-screen bg-gray-100 px-2 sm:px-4 pt-14 flex flex-col gap-5 justify-center relative">
@@ -318,12 +370,17 @@ const handleProjectAchievementBlur =
      
       <FormatButtons />
       <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
-        <button
-          onClick={handleExport}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md shadow text-sm sm:text-base"
-        >
-          Export
-        </button>
+        <select 
+          onChange={(e)=>{
+            handleExport(e.target.value)
+          }}
+        
+          name="" id="" className='border-2 border-foreground rounded-md outline outline-foreground hover:cursor-pointer'>
+          <option>Export as</option>
+          <option onClick={()=>{handleExport('pdf')}}>PDF</option>
+          <option onClick={()=>{handleExport('pdf')}}>Docx</option>
+        </select>
+
         <button
           onClick={setVisiblity}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow text-sm sm:text-base"
@@ -335,20 +392,20 @@ const handleProjectAchievementBlur =
       <div
         ref={resumeRef}
         id="resume-div"
-        className="bg-white shadow-lg rounded-lg p-4 sm:p-6 border border-text/70 w-full sm:max-w-[900px] print:max-w-[900px] mx-auto"
+        className="resume-container bg-white shadow-lg rounded-lg p-4 sm:p-6 border border-text/70 w-full sm:max-w-[900px] print:w-[1100px] mx-auto "
       >
         {/* Top section */}
-        <div className="flex flex-col flex-wrap gap-4 sm:gap-5 justify-between border-b pb-4 print:flex-row print:gap-5">
-          <div className=" ">
+        <div className="flex flex-col flex-wrap gap-2 justify-between border-b pb-4 print:flex-row print:gap-5">
+          <div className="w-full flex flex-col ">
             {/* Name */}
             <p
               contentEditable
               suppressContentEditableWarning
               onBlur={handleFieldBlur(['name'])}
               onKeyDown={preventEnterBlur}
-              className="font-bold print:text-xl text-3xl sm:text-6xl"
+              className="font-bold print:text-xl text-2xl sm:text-6xl"
             >
-              {resume.name}
+              {resume.name ?? 'your name here'}
             </p>
 
             {/* Headline */}
@@ -357,36 +414,35 @@ const handleProjectAchievementBlur =
               suppressContentEditableWarning
               onBlur={handleFieldBlur(['headline'])}
               onKeyDown={preventEnterBlur}
-              className="text-text/80 text-base sm:text-lg"
+              className="text-green-500 font-bold text-base sm:text-lg"
             >
               {resume.headline}
             </p>
           </div>
 
-            <div className="flex text-text/70 gap-1 text-sm sm:text-base flex-wrap">
+            <div className="flex  text-text/70 gap-1 text-sm sm:text-base flex-wrap w-full print:items-center">
                 {contactItems
-                    .filter(Boolean) // remove empty or undefined fields
-                    .map((item, index, arr) => (
-                    <React.Fragment key={index}>
-                        <p
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={handleFieldBlur(['contactInfo', Object.keys(resume.contactInfo)[index]])}
-                        onKeyDown={preventEnterBlur}
-                        >
-                        {item}
-                        </p>
-
-                        {/* Only show dot if not the last visible item */}
-                        {index < arr.length - 1 && (
-                        <div className="flex items-center justify-center h-6">
-                            <p className="font-bold text-2xl leading-none">·</p>
-                        </div>
-                        )}
-                    </React.Fragment>
-                    ))}
+                  .filter(Boolean) // remove empty or undefined fields
+                  .map((item, index, arr) => (
+                              <React.Fragment key={index}>
+                                  <p
+                                  contentEditable
+                                  suppressContentEditableWarning
+                                  onBlur={handleFieldBlur(['contactInfo', Object.keys(resume.contactInfo)[index]])}
+                                  onKeyDown={preventEnterBlur}
+                                  >
+                                  {item}
+                                  </p>
+          
+                                  {/* Only show dot if not the last visible item */}
+                                  {index < arr.length - 1 && (
+                                  <div className="flex items-center justify-center h-6">
+                                      <p className="font-bold text-2xl leading-none">·</p>
+                                  </div>
+                                  )}
+                              </React.Fragment>
+                ))}
             </div>
-
         </div>
 
         {/* Main content */}
@@ -396,7 +452,7 @@ const handleProjectAchievementBlur =
           <div className="flex flex-col gap-5 flex-1">
             {/* Career Objective */}
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-xl">PROFESSIONAL SUMMARY</p>
+              <p className="font-bold text-xl border-b-3 border-b-black">SUMMARY</p>
               <p
                 contentEditable
                 suppressContentEditableWarning
@@ -407,169 +463,158 @@ const handleProjectAchievementBlur =
                 {resume.careerObjective}
               </p>
             </div>
-
-            {/* SKILLS */}
-            <div className="flex flex-col gap-4 template2-skill-section border-t border-black/80 mt-5">
-              <p className="font-bold text-xl mt-3">SKILLS</p>
+            
+            
+            {/*Skills*/}
+            <div className="flex flex-col gap-4">
+              <p className="font-bold text-xl border-b-3 border-b-black">SKILLS</p>
 
               {/* Technical */}
               {resume.skills?.technical && (
                 <div>
-                  <p className="font-bold mb-5">Technical Skills</p>
+                  <p className="font-bold text-green-500">Technical Skills</p>
                   <div className="pl-5">
                     {/* Languages */}
-                    {resume.skills?.technical?.languages?.length ? (
-                      <>
-                        <p className="font-bold mt-2">Languages</p>
-                        <ul className=" pl-5 text-sm sm:text-base">
-                          {resume.skills.technical.languages.map((lang, i) => (
-                            <li
-                              key={i}
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={handleArrayItemBlur(['skills', 'technical', 'languages'], i)}
-                              onKeyDown={preventEnterBlur}
-                            >
-                              {lang}
-                            </li>
-                          ))}
-                        </ul>
-                      </>
+                    {resume.skills?.technical?.languages ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Languages:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'languages'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.languages)}
+                        </span>
+                      </p>
                     ) : null}
 
-                    {/* Frameworks */}
-                    {resume.skills?.technical?.frameworksAndLibraries?.length ? (
-                      <>
-                        <p className="font-bold mt-3">Frameworks & Libraries</p>
-                        <ul className=" pl-5 text-sm sm:text-base">
-                          {resume.skills.technical.frameworksAndLibraries.map((fw, i) => (
-                            <li
-                              key={i}
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={handleArrayItemBlur(['skills', 'technical', 'frameworksAndLibraries'], i)}
-                              onKeyDown={preventEnterBlur}
-                            >
-                              {fw}
-                            </li>
-                          ))}
-                        </ul>
-                      </>
+                    {/* Frameworks & Libraries */}
+                    {resume.skills?.technical?.frameworksAndLibraries ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Framework & Libraries:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'frameworksAndLibraries'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.frameworksAndLibraries)}
+                        </span>
+                      </p>
                     ) : null}
 
-                    {/* Tools */}
-                    {resume.skills?.technical?.toolsAndBuildSystems?.length ? (
-                      <>
-                        <p className="font-bold mt-2">Tools & Build Systems</p>
-                        <ul className=" pl-5 text-sm sm:text-base">
-                          {resume.skills.technical.toolsAndBuildSystems.map((tool, i) => (
-                            <li
-                              key={i}
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={handleArrayItemBlur(['skills', 'technical', 'toolsAndBuildSystems'], i)}
-                              onKeyDown={preventEnterBlur}
-                            >
-                              {tool}
-                            </li>
-                          ))}
-                        </ul>
-                      </>
+                    {/* Tools & Build Systems */}
+                    {resume.skills?.technical?.toolsAndBuildSystems ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Tools & Build systems:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'toolsAndBuildSystems'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.toolsAndBuildSystems)}
+                        </span>
+                      </p>
                     ) : null}
 
                     {/* Testing */}
-                    {resume.skills?.technical?.testing?.length ? (
-                      <>
-                        <p className="font-bold mt-2">Testing</p>
-                        <ul className=" pl-5 text-sm sm:text-base">
-                          {resume.skills.technical.testing.map((test, i) => (
-                            <li
-                              key={i}
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={handleArrayItemBlur(['skills', 'technical', 'testing'], i)}
-                              onKeyDown={preventEnterBlur}
-                            >
-                              {test}
-                            </li>
-                          ))}
-                        </ul>
-                      </>
+                    {resume.skills?.technical?.testing ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Testing:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'testing'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.testing)}
+                        </span>
+                      </p>
                     ) : null}
 
                     {/* Practices */}
-                    {resume.skills?.technical?.practices?.length ? (
-                      <>
-                        <p className="font-bold mt-2">Practices</p>
-                        <ul className=" pl-5 text-sm sm:text-base">
-                          {resume.skills.technical.practices.map((practice, i) => (
-                            <li
-                              key={i}
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={handleArrayItemBlur(['skills', 'technical', 'practices'], i)}
-                              onKeyDown={preventEnterBlur}
-                            >
-                              {practice}
-                            </li>
-                          ))}
-                        </ul>
-                      </>
+                    {resume.skills?.technical?.practices ? (
+                      <p
+
+                        className="mt-2"
+                      >
+                        <span className="font-bold">Practices:&nbsp;</span>
+                        <span
+                          className='skill-items'
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={handleFieldBlur(['skills', 'technical', 'practices'])}
+                          onKeyDown={preventEnterBlur}
+                        >
+                          {printable(resume.skills.technical.practices)}
+                        </span>
+                      </p>
                     ) : null}
                   </div>
                 </div>
               )}
 
               {/* Soft Skills */}
-              {resume.skills?.soft?.length ? (
+              {resume.skills?.soft ? (
                 <div>
-                  <p className="font-semibold">Soft Skills</p>
-                  <ul className=" pl-5 text-sm sm:text-base">
-                    {resume.skills.soft.map((skill, i) => (
-                      <li
-                        key={i}
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={handleArrayItemBlur(['skills', 'soft'], i)}
-                        onKeyDown={preventEnterBlur}
-                      >
-                        {skill}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="font-bold text-green-500">Soft Skills</p>
+                  <p
+
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={handleFieldBlur(['skills', 'soft'])}
+                    onKeyDown={preventEnterBlur}
+                    className="pl-5 text-sm sm:text-base skill-items"
+                  >
+                    {printable(resume.skills.soft)}
+                  </p>
                 </div>
               ) : null}
 
               {/* Certifications */}
-              {resume.skills?.certifications?.length ? (
+              {resume.skills?.certifications.length > 0 ? (
                 <div>
                   <p className="font-semibold">Certifications</p>
-                  <ul className=" pl-5 text-sm sm:text-base">
-                    {resume.skills.certifications.map((cert, i) => (
-                      <li
-                        key={i}
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={handleArrayItemBlur(['skills', 'certifications'], i)}
-                        onKeyDown={preventEnterBlur}
-                      >
-                        {cert}
-                      </li>
-                    ))}
-                  </ul>
+                  <p
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={handleFieldBlur(['skills', 'certifications'])}
+                    onKeyDown={preventEnterBlur}
+                    className="pl-5 text-sm sm:text-base"
+                  >
+                    {printable(resume.skills.certifications)}
+                  </p>
                 </div>
               ) : null}
             </div>
-            
+            {/* ===== END SKILLS BLOCK ===== */}
 
             {/* Experience */}
-            <div className="flex flex-col gap-3 border-t-1 border-black/80 mt-5">
-              <p className="font-bold text-xl mt-3">EXPERIENCE</p>
+            <div className="flex flex-col gap-3">
+              <p className="font-bold text-xl border-b-3 border-b-black">EXPERIENCE</p>
               {resume.experience?.map((exp, index) => {
                 const achArr = splitSentences(exp.achievements)
                 return (
                   <div key={index} className="space-y-2 text-sm sm:text-base">
-                    <p className="font-bold">
+                    <p className="font-bold text-green-500">
                       <span
                         contentEditable
                         suppressContentEditableWarning
@@ -588,7 +633,7 @@ const handleProjectAchievementBlur =
                         {exp.duration}
                       </span>
                     </p>
-                    <ul className="space-y-2  pl-5">
+                    <ul className="space-y-2 list-disc pl-5">
                       {achArr.map((ach: string, j: number) => (
                         <li
                           key={`${index}-${j}`}
@@ -608,7 +653,7 @@ const handleProjectAchievementBlur =
 
             {/* Projects */}
             {resume.projects && resume.projects.length > 0 && (
-              <div className="flex flex-col gap-3 border-t-1 border-black/80 mt-5">
+              <div className="flex flex-col gap-3">
                 <p className="font-bold text-xl">PROJECTS</p>
                 {resume.projects.map((proj, index) => {
                   const achArr = splitSentences(proj.achievements)
@@ -633,7 +678,7 @@ const handleProjectAchievementBlur =
                           {proj.duration}
                         </span>
                       </p>
-                      <ul className=" space-y-2 pl-5">
+                      <ul className="list-disc space-y-2 pl-5">
                         {achArr.map((ach: string, j: number) => (
                           <li
                             key={`${index}-${j}`}
@@ -652,9 +697,10 @@ const handleProjectAchievementBlur =
               </div>
             )}
 
-            {/* EDUCATION */}
-             <div className="flex flex-col gap-3 border-t-1 border-black/80 mt-5">
-              <p className="font-bold text-xl mt-3">EDUCATION</p>
+
+            {/* Education */}
+            <div className="flex flex-col gap-2">
+              <p className="font-bold text-xl border-b-3 border-b-black">EDUCATION</p>
               {resume.education?.map((edu, index) => (
                 <div key={index} className="flex flex-col gap-1 text-sm sm:text-base">
                   <p>
@@ -674,38 +720,43 @@ const handleProjectAchievementBlur =
                         suppressContentEditableWarning
                         onBlur={handleFieldBlur(['education', index, 'endYear'])}
                         onKeyDown={preventEnterBlur}
+                        className='font-bold'
                       >
                         {edu.endYear}
                       </span>
                     </span>
                   </p>
 
-                  <p
+                  <div
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={handleFieldBlur(['education', index, 'institution'])}
                     onKeyDown={preventEnterBlur}
+                    className='flex gap-2'
                   >
+                    <p className='font-bold'>Institution :</p>
                     {edu.institution}
-                  </p>
+                  </div>
 
-                  <p
+                  <div
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={handleFieldBlur(['education', index, 'degree'])}
                     onKeyDown={preventEnterBlur}
+                    className='flex gap-2'
                   >
+                    <p className='font-bold'>Qualification : </p>
                     {edu.degree}
-                  </p>
+                  </div>
                 </div>
               ))}
             </div>
 
-             {/* Awards */}
+                        {/* Awards */}
             {resume.awards && resume.awards.length > 0 && (
               <div className="flex flex-col gap-2">
                 <p className="font-bold text-xl">AWARDS</p>
-                <ul className=" pl-5 text-sm sm:text-base">
+                <ul className="list-disc pl-5 text-sm sm:text-base">
                   {resume.awards.map((award, index) => (
                     <li
                       key={index}
@@ -720,6 +771,7 @@ const handleProjectAchievementBlur =
                 </ul>
               </div>
             )}
+
           </div>
         </div>
       </div>

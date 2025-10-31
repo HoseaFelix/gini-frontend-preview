@@ -58,6 +58,7 @@ const Page = () => {
     try {
       const storedCover = localStorage.getItem('coverLetter')
       const storedResume = localStorage.getItem('selectedResume')
+      console.log(storedResume)
 
 
       if (!storedCover || !storedResume) {

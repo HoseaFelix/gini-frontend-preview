@@ -119,8 +119,9 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
   }
 
     const templates = [
-    '/img/resumetemplate1.png',
-    '/img/resumetemplate2.png',
+    '/img/resumetemplate1.jpg',
+    '/img/resumetemplate2.jpg',
+    '/img/resumetemplate3.jpg',
   ]
 
   const handleSelect= (index)=>{
@@ -238,7 +239,7 @@ const handleFormContinue = async ()=>{
                 </div>
             </div>
             {/*slides container*/}
-            <div className='w-full relative h-full  overflow-hidden pb-4 '>
+            <div className='w-full relative h-full  overflow-x-hidden pb-4 overflow-y-scroll'>
                 <div
                     className='grid grid-cols-4 transition-transform duration-500'
                     style={{
@@ -273,16 +274,16 @@ const handleFormContinue = async ()=>{
                                 onChange={handleDoc}
                                 />
                                 <label htmlFor="fileUpload" className='w-full'>
-                                    <div className='w-full h-fit py-5 md:w-[250px] md:h-[250px] max-sm:max-w-[85%] border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7 px-4'>
+                                    <div className=' max-sm:w-[200px]  max-sm:h-[150px] py-5 w-[250px] h-[250px]  border rounded-lg border-text/50 flex items-center justify-center hover:cursor-pointer flex-col gap-5 pt-7 px-4'>
                                         {document && (
-                                            <div className='mx-auto max-w-[90%] flex flex-wrap'>
+                                            <div className='mx-auto flex flex-wrap w-full h-full'>
                                                 {document.name}
                                             </div>
                                         )}
 
                                         {!document && (
                                             <>
-                                             <div className='flex items-center justify-center p-2 rounded bg-text/30'>
+                                             <div className='flex items-center justify-center p-2 rounded bg-text/30 '>
                                                     <Image
                                                     src={"/icons/create.png"}
                                                     width={20}
@@ -306,7 +307,7 @@ const handleFormContinue = async ()=>{
 
                             <div 
                             onClick={toggleForm}
-                            className='w-fit px-10 h-fit py-5 md:w-[250px] md:h-[250px] border rounded-lg border-text/50 items-center justify-center hover:cursor-pointer flex flex-col gap-5 pt-7'>
+                            className='max-sm:w-[200px]  max-sm:h-[150px] px-10 py-5 w-[250px] h-[250px] border rounded-lg border-text/50 items-center justify-center hover:cursor-pointer flex flex-col gap-5 pt-7'>
                             <div className='flex flex-col items-center justify-center p-2 rounded bg-text/30'>
                                 <Image
                                 src={"/icons/write.png"}
