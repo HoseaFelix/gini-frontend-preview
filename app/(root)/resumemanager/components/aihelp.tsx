@@ -73,7 +73,7 @@ const Aihelp = ({toggleChat, handleToggleChat}: {toggleChat: boolean, handleTogg
 
   return (
     <div 
-    className={`${!toggleChat ? 'hidden' : ''} fixed w-full h-screen md:w-[450px] md:h-[650px] right-0 max-sm:top-20 md:right-5 z-150 md:bottom-10 bg-white rounded-md `}>
+    className={`${!toggleChat ? 'hidden' : ''} fixed w-full h-[85dvh] md:w-[450px] md:h-[650px] right-0 max-sm:top-20  max-sm:bottom-20 md:right-5 z-150 md:bottom-10 bg-white rounded-md `}>
       <div 
         className='h-full p-4 w-full  flex flex-col relative pb-3'
       > 

@@ -55,7 +55,7 @@ export const testimonials : testimonialArray[] = [
         workPosition: 'Marketing Analyst',
         state: 'San Francisco',
         topic: 'From Lost to Hired - This platform changed everything for me',
-        subText: "I was overwhelmed. After months of aimless job applications, ignored resumes, and frustrating interviews, I felt like I was invisible in the job market. That changed the moment I found AideGini. This isn’t just a job board or another resume template site. AideGini is your career partner from Day One. They helped me identify my strengths, craft a resume that actually got noticed, and prepare for interviews with confidence. I wasn’t just applying anymore I was strategizing. Every step felt guided and intentional. The AI feature gave real feedback, not just generic advice. I learned how to tailor my approach to each opportunity, negotiate offers, and even build a personal brand that aligned with the roles I wanted. Within six weeks, I went from feeling completely stuck to signing an offer letter at a company I admire, doing work I love. If you're serious about getting hired, not just searching endlessly, this is the support system you need. They don’t just help you find a job. They help you find your place."
+        subText: "From Lost to Hired — This Platform Changed Everything for Me. I was overwhelmed after months of aimless job applications. AideGini helped me identify my strengths, craft a resume that got noticed, and prepare for interviews with confidence. Within six weeks, I signed an offer at a company I admire."
     },
    
 ]
