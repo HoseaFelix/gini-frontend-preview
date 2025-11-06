@@ -12,7 +12,8 @@ const AuthForm = ({ type }: { type: authType }) => {
 
   
   const router = useRouter()
-  const isSignUp = type === "sign-up";
+  const isSignUp = type === "signup";
+  const isReset = type == 'reset-password';
 
   const [rememberMe, setRemember] = useState(false)
   const [firstName, setName] = useState("")
@@ -63,16 +64,64 @@ const AuthForm = ({ type }: { type: authType }) => {
     ? { firstName, email, password }
     : { email, password };
 
+    let data;
 
     try {
-      const res = await fetch(`https://aidgeny.onrender.com/api/auth/${isSignUp ? 'signup' : 'login'}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      if (type== 'signup' || type == 'login'){
+        const res = await fetch(`https://aidgeny.onrender.com/api/auth/${type}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        data = await res.json();
+
+
+      } else{
+
+        try{
+          const exists = await fetch(`https://aidgeny.onrender.com/api/auth/exists/${email}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          });
+
+
+          const exist = await exists.json()
+          console.log(exist)
+
+          if(exist){
+            console.log(payload)
+            const res = await fetch(`https://aidgeny.onrender.com/api/auth/${type}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            data = await res.json()
+
+            console.log(data)
+            if(data.success){
+              toast.success('password changed successfully')
+              router.push('/sign-in')
+              setLoading(false)
+              return
+            } else{
+              toast.error('an error occurred')
+              return
+            }
+
+          } else{
+            toast('user does not exist in our database')
+          }
+        } catch(e){
+          console.error(e)
+        }
+
+
+      }
+
       
 
-      const data = await res.json();
 
       if(!data.success) {
 
@@ -234,13 +283,15 @@ const AuthForm = ({ type }: { type: authType }) => {
           </>
         )}
 
-        {!isSignUp && (
+        {!isSignUp && !isReset && (
           <div className="w-full flex justify-between">
             <label className="flex items-center gap-2">
               <input onClick={handleRemember} type="checkbox" className="h-[20px] w-fit" />
               <p>Remember me</p>
             </label>
-            <div>Forgot password?</div>
+            <div>
+               <Link href='/reset-password' className="hover:cursor-pointer hover:underline ">Forgot password?</Link>
+            </div>
           </div>
         )}
 
