@@ -200,7 +200,7 @@ const Page = () => {
   return (
     <section className="w-full h-full px-4 py-10 relative flex justify-center items-center flex-col print:py-0 print:px-0 ">
 
-      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisibility} handleSave={handleSave}/>
+      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave}/>
     <FormatButtons/>
      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
         <button

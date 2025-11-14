@@ -94,7 +94,10 @@ const AuthForm = ({ type }: { type: authType }) => {
             const res = await fetch(`https://aidgeny.onrender.com/api/auth/${type}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
+              body: JSON.stringify({
+                email: email,
+                newPassword:password
+              }),
             });
 
             data = await res.json()
