@@ -23,7 +23,7 @@ type testimonialArray = {
     subText: string
 }
 
-type authType = 'sign-in' | 'sign-up'
+type authType = 'login' | 'signup'| 'reset-password'
 
 declare module 'html2pdf.js';
 

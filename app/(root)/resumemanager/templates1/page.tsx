@@ -99,7 +99,7 @@ const Template1Page = () => {
       }
     } else{
       const fetchData = async () => {
-              const savedResume = JSON.parse(localStorage.getItem('savedResume'))
+              const savedResume = JSON.parse(localStorage.getItem('currentResume'))
               if (savedResume) {
                 setResume(savedResume)
                 console.log(savedResume)
