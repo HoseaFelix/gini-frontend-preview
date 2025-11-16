@@ -7,6 +7,8 @@ import { handleSaveCoverletter } from '@/lib/constants/constants';
 import { toast } from 'sonner';
 import TitleOverlay from '@/components/TitleOverlay';
 
+import { exportAsDocx } from '@/utils/exportDocx';
+
 /**
  * Small helpers
  */
@@ -194,24 +196,38 @@ const Page = () => {
     })
   }
 
-  const handleExport = ()=>{
-    window.print()
-  }
+
+  const handleExport = async (type: string) => {
+    if (type === "PDF") {
+      window.print();
+      return;
+    }
+
+      if (type === "DOCX") {
+        exportAsDocx(".cover-container", "resume");
+      }
+  };
+
 
   if (coverLetter == null) return <p>No cover letter selected</p>
 
   return (
     <section className="w-full h-full px-4 py-10 relative flex justify-center items-center flex-col print:py-0 print:px-0 ">
 
-        <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisibility} handleSave={handleSave}/>
+      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave}/>
     <FormatButtons/>
      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
-        <button
-          onClick={handleExport}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md shadow text-sm sm:text-base"
-        >
-          Export
-        </button>
+        <label  className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
+          <p>Export As</p>
+          <select name="" id="" onChange={(e)=>{
+            handleExport(e.target.value)
+          }} >
+            <option > </option>
+            <option >DOCX</option>
+            <option >PDF</option>
+          </select>
+
+        </label>
         <button
           onClick={handleVisibility}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow text-sm sm:text-base"
@@ -220,9 +236,9 @@ const Page = () => {
         </button>
       </div>
 
-      <main className="mt-10 print:mt-0 w-full max-w-[794px] h-max mx-auto bg-white overflow-hidden rounded-lg shadow-lg print:w-[794px] flex flex-col pb-10 relative print:mx-auto ">
+      <main className=" mt-10 print:mt-0 w-full max-w-[794px] h-max mx-auto bg-white overflow-hidden rounded-lg shadow-lg print:w-[794px] flex flex-col pb-10 relative print:mx-auto ">
        
-        <div className="w-full flex relative max-sm:flex-col gap-5 py-5 ">
+        <div className="cover-container w-full flex relative max-sm:flex-col gap-5 py-5 ">
         <style>{`@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;  } }`}</style>
          {/* LEFT COLUMN */}
         <div className="w-full md:w-[28%] print:max-w-[28%] flex items-start h-auto">
