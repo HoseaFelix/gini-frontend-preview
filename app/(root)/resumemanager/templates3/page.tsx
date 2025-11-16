@@ -7,7 +7,8 @@ import { useAuthStore, useCurrentNav } from '@/store/store'
 import FormatButtons from '../components/formatButtons'
 import TitleOverlay from '@/components/TitleOverlay'
 import { toast } from 'sonner'
-import htmlDocx from "html-docx-js/dist/html-docx";
+
+import { exportAsDocx } from '@/utils/exportDocx'
 
 // import Savedresume from '../components/savedresume'
 
@@ -233,42 +234,16 @@ const handleProjectAchievementBlur =
 
 
 
-  const handleExport = async (type) => {
-    if(type == 'PDF'){
-      window.print()
-    } else{
-        const content = document.querySelector('.resume-container') as HTMLElement | null;
-
-        if (!content) {
-          console.error('Resume container not found!');
-          return;
-        }
-
-        const clone = content.cloneNode(true) as HTMLElement;
-
-        // Convert Tailwind/computed styles into inline CSS
-        const allElements = clone.querySelectorAll('*');
-        allElements.forEach((el) => {
-          const computed = window.getComputedStyle(el);
-          (el as HTMLElement).style.cssText = computed.cssText; // safely cast
-        });
-
-        // Wrap in HTML and convert to blob
-        const html = '<!DOCTYPE html>' + clone.outerHTML;
-        const converted = htmlDocx.asBlob(html);
-
-        // Trigger download
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(converted);
-        a.download = 'resume.docx';
-        a.click();
-        toast('downloaded')
-
-
+  const handleExport = async (type: string) => {
+    if (type === "PDF") {
+      window.print();
+      return;
     }
 
-  }
-
+      if (type === "DOCX") {
+        exportAsDocx(".resume-container", "resume");
+      }
+  };
   const handleSave = async ()=>{
     if(!title){
         toast.error('please enter title')
@@ -370,17 +345,18 @@ const printable = (val: any) => {
       <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisiblity} handleSave={handleSave}/>
      
       <FormatButtons />
-      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
-        <select 
-          onChange={(e)=>{
+      <div className="print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
+        <label  className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
+          <p>Export As</p>
+          <select name="" id="" onChange={(e)=>{
             handleExport(e.target.value)
-          }}
-        
-          name="" id="" className='border-2 border-foreground rounded-md outline outline-foreground hover:cursor-pointer'>
-          <option>Export as</option>
-          <option onClick={()=>{handleExport('pdf')}}>PDF</option>
-          <option onClick={()=>{handleExport('pdf')}}>Docx</option>
-        </select>
+          }} >
+            <option > </option>
+            <option >DOCX</option>
+            <option >PDF</option>
+          </select>
+
+        </label>
 
         <button
           onClick={setVisiblity}
