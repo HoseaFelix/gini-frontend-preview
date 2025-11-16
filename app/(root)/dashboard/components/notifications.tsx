@@ -14,7 +14,7 @@ type NotificationsProps = {
 const Notifications: React.FC<NotificationsProps> = ({ notifications }) => {
   return (
     <div className='flex gap-2 flex-col'>
-      {notifications.length > 0 &&
+      {notifications.length > 0 ?
         notifications.map((item, index) => (
           <div
             key={index}
@@ -44,7 +44,10 @@ const Notifications: React.FC<NotificationsProps> = ({ notifications }) => {
 
             <div className="w-[10px] absolute top-0 bottom-0 left-0 bg-black"></div>
           </div>
-        ))}
+        )) : 
+        <p className='italics text-black/80'>there are no notifications</p>
+
+        }
     </div>
   );
 };
