@@ -5,7 +5,7 @@ import CloseIcon from './generalComponents/closeIcon'
 const TitleOverlay = ({isVisible, setVisiblity, collectTitle, handleSave}) => {
 
   return (
-    <div className={` ${!isVisible ? 'hidden' : ''} absolute w-full h-max py-5 max-w-2xl mx-auto bg-white shadow-md top-10 rounded-lg overflow-hidden z-300  `}>
+    <div className={` ${!isVisible ? 'hidden' : ''} absolute w-full h-max py-5 max-w-2xl mx-auto bg-white shadow-md top-10 rounded-lg overflow-hidden z-300 min-h-[300px]  `}>
         <div className='w-full h-full relative items-center flex px-4 justify-center flex-col gap-10 py-5  '>
             <CloseIcon OnClick={setVisiblity} containerClass={`top-4 right-4`}/>
             <div className='mt-5'></div>
