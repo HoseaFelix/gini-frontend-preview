@@ -2,15 +2,15 @@
 
 export const navLinks = [
     {
-        href: '',
+        href: '#pricing',
         name: 'Pricing',
     },
     {
-        href: '',
+        href: '#about',
         name: 'About Us',
     },
     {
-        href: '', 
+        href: '#contact', 
         name: 'Contact Us',
     }
 ]
@@ -48,7 +48,7 @@ export const features = [
 ]
 
 
-export const testimonials : testimonialArray[] = [
+export const testimonials : testimonialArray = [
     {
         imageUrl: '/img/testimonial1.jpg',
         name: 'Alex M',
@@ -57,5 +57,24 @@ export const testimonials : testimonialArray[] = [
         topic: 'From Lost to Hired - This platform changed everything for me',
         subText: "From Lost to Hired — This Platform Changed Everything for Me. I was overwhelmed after months of aimless job applications. AideGini helped me identify my strengths, craft a resume that got noticed, and prepare for interviews with confidence. Within six weeks, I signed an offer at a company I admire."
     },
+    {
+    imageUrl: '/img/testimonial2.jpg',
+    name: 'Chiamaka O.',
+    workPosition: 'Product Designer',
+    state: 'Lagos',
+    topic: 'AideGini helped me get clarity when I needed it most',
+    subText:
+        "I felt stuck for months trying to switch into product design. AideGini didn’t just give me templates — it guided me on what companies actually look for. The feedback on my portfolio and the mock interviews made a huge difference. Two months later, I landed my first full-time role."
+},
+{
+    imageUrl: '/img/testimonial3.jpg',
+    name: 'Tunde B.',
+    workPosition: 'Frontend Developer',
+    state: 'Abuja',
+    topic: 'This platform gave me the confidence I didn’t know I needed',
+    subText:
+        "As a self-taught developer, I was always doubting myself. AideGini helped me structure my resume, highlight the right projects, and practice real interview questions. I finally stopped second-guessing myself — and I got hired by a fintech company shortly after."
+}
+
    
 ]

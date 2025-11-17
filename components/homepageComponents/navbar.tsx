@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react'
 import {navLinks} from '@/constants'
-import Link from 'next/link'
 import Image from 'next/image'
 import Button from '../generalComponents/button'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 
 const Navbar = () => {
@@ -16,24 +17,38 @@ const Navbar = () => {
         setIsOpen((prev) => !prev)
     }
 
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  e.preventDefault() // prevent default jump
+  const el = document.getElementById(id)
+  if (el) el.scrollIntoView({ behavior: 'smooth' })
+}
+
+const router = useRouter()
+
+
 
   return (
     <>
            <nav className='z-100 fixed h-[72px] inset-x-0 top-0 bg-white/50  backdrop-blur-md backdrop-saturate-150 flex items-center justify-between px-4 md:px-10 py-5 font-bold overflow-hidden'>
 
-                <h1 className='text-foreground text-2xl font-bold hover:cursor-pointer '>
-                    AideGini
-                </h1>
+                <Link href='/' >
+                    <h1 className='text-foreground text-2xl font-bold hover:cursor-pointer '>
+                        AideGini
+                    </h1>
+                </Link>
+                
 
                 <div className=' justify-between items-center text-foreground text-sm gap-5 hidden md:flex'>
 
                     <div className="relative inline-block w-fit">
                         <select
+                            onChange={(e) => router.push(e.target.value)}
+
                             className="hover:cursor-pointer  bg-transparent border border-foreground rounded-md py-1 px-2 pr-6 text-sm"
                         >
-                            <option>Products</option>
-                                <option>Resume Manager</option>
-                                <option>Cover Letter Generatior</option>
+                                <option value="">Products</option>
+                                <option value="/resumemanager">Resume Manager</option>
+                                <option value="/coverlettergenerator">Cover Letter Generator</option>
                                 <option>Application Assistant</option>
                                 <option>Interview Assistant</option>
                                 <option>Presentation Assistant</option>
@@ -47,7 +62,7 @@ const Navbar = () => {
 
                     <div className='flex justify-between w-fit font-bold gap-5'>
                         {navLinks.map(({href, name}, index)=>(
-                            <Link key={index} href={href}>{name}</Link>
+                           <a href={href} key={index} onClick={(e) => handleClick(e, name.toLowerCase())}>{name}</a>
                         ))}
                     </div>
 
@@ -88,11 +103,13 @@ const Navbar = () => {
 
                         <div className="relative inline-block w-fit">
                             <select
-                                className=" font-bold hover:cursor-pointer text-black  bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-white rounded-md py-1 px-2 pr-6 text-sm"
+                            onChange={(e) => router.push(e.target.value)}
+
+                            className="hover:cursor-pointer  bg-transparent border border-foreground rounded-md py-1 px-2 pr-6 text-sm"
                             >
-                                <option>Products</option>
-                                <option>Resume Manager</option>
-                                <option>Cover Letter Generatior</option>
+                                <option value="">Products</option>
+                                <option value="/resumemanager">Resume Manager</option>
+                                <option value="/coverlettergenerator">Cover Letter Generator</option>
                                 <option>Application Assistant</option>
                                 <option>Interview Assistant</option>
                                 <option>Presentation Assistant</option>
@@ -105,7 +122,7 @@ const Navbar = () => {
 
                             <div className='flex flex-col justify-between w-fit font-bold gap-5'>
                                 {navLinks.map(({href, name}, index)=>(
-                                    <Link key={index} href={href}>{name}</Link>
+                                    <a href={href} key={index} onClick={(e) => handleClick(e, name.toLowerCase())}>{name}</a>
                                 ))}
                             </div>
 

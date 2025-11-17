@@ -2,110 +2,88 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { testimonials } from '@/constants';
-
-// interface Testimonial {
-//   imageUrl: string;
-//   name: string;
-//   workPosition: string;
-//   state: string;
-//   topic: string;
-//   subText: string;
-// }
+import { testimonials } from '@/constants'
 
 const Testimonials = () => {
-//   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
-//   const [loading, setLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(0)
   const intervalId = useRef<NodeJS.Timeout | null>(null)
 
-//   const fetchTestimonials = async () => {
-//     try {
-//       const res = await fetch('https://aidgeny.onrender.com/api/testimony',
-//         {credentials: 'include'}
-//       )
-//       if (!res.ok) throw new Error('Failed to fetch testimonials')
-//       const data = await res.json()
-//       setTestimonials(data)
-//     } catch (err) {
-//       console.error(err)
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
+  // Clear interval function
+  const clearAutoSlide = useCallback(() => {
+    if (intervalId.current) {
+      clearInterval(intervalId.current)
+      intervalId.current = null
+    }
+  }, [])
 
-//   useEffect(() => {
-//     fetchTestimonials()
-//   }, [])
-
-
-
+  // AUTO SLIDE
   const startAutoSlide = useCallback(() => {
-    if (testimonials.length === 0) return
+    if (!testimonials || testimonials.length === 0) return
+
+    clearAutoSlide() // Clear any existing interval first
+    
     intervalId.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % testimonials.length)
-    }, 4000)
-  },[])
+      setCurrentSlide(prev => (prev + 1) % testimonials.length)
+    }, 10000)
+  }, [clearAutoSlide])
 
   useEffect(() => {
     startAutoSlide()
-    return () => {
-      if (intervalId.current) clearInterval(intervalId.current)
-    }
-  }, [startAutoSlide])
+    return () => clearAutoSlide()
+  }, [startAutoSlide, clearAutoSlide])
 
   const handleClick = (index: number) => {
+    clearAutoSlide() // Clear interval when dot is clicked
     setCurrentSlide(index)
+    startAutoSlide() // Restart the interval
   }
 
-//   if (loading) return <div className="text-center">Loading testimonials...</div>
-//   if (testimonials.length === 0) return <div className="text-center">No testimonials yet.</div>
-
   return (
-    <section className="h-fit py-20 w-full bg-[#D5E0F6] relative">
-      <div className="h-full w-full relative flex flex-col px-4 md:px-10 lg:px-20 xl:px-80 gap-5 overflow-hidden">
+    <section id='testimonial' className="h-max py-20 w-full bg-[#D5E2F6] relative">
+      <div className="h-full w-full flex flex-col px-4 md:px-10 lg:px-20 xl:px-80 gap-5 overflow-hidden">
         <h1 className="w-fit mx-auto font-bold text-xl">Testimonials</h1>
 
-        <div className="w-full h-full overflow-hidden rounded-2xl">
+        {/* CAROUSEL WRAPPER */} 
+        <div className="w-full overflow-hidden rounded-2xl min-h-[350px]">
           <div
-            className="flex h-full w-full overflow-hidden slider rounded-2xl"
+            className="flex h-full transition-transform duration-500 ease-in-out"
             style={{
-              width: `${testimonials.length * 100}%`,
               transform: `translateX(-${currentSlide * (100 / testimonials.length)}%)`,
-              transition: 'transform 0.5s ease-in-out',
+              width: `${testimonials.length * 100}%`,
             }}
           >
             {testimonials.map((t, index) => {
               const { imageUrl, name, workPosition, state, topic, subText } = t
+
               return (
                 <div
                   key={index}
-                  className="testimonial-carousel min-w-full h-fit flex flex-col bg-[#80A2E5] rounded-2xl p-4"
+                  className="flex flex-col bg-[#80A2E5] rounded-2xl p-4"
+                  style={{
+                    width: `${100 / testimonials.length}%`,
+                  }}
                 >
-                  <div className="flex gap-5 w-full h-fit items-center">
+                  {/* HEADER */}
+                  <div className="flex gap-5 items-center">
                     <div className="h-[80px] w-[80px] relative rounded-full overflow-hidden">
                       <Image
                         fill
-                        alt="testimony image"
+                        alt="Testimonial Image"
                         src={imageUrl}
                         className="object-cover"
                       />
                     </div>
-                    <div className="w-fit h-fit">
+                    <div>
                       <p className="font-bold text-xl">{name}</p>
                       <p className="text-sm">{workPosition}, {state}</p>
                     </div>
                   </div>
-                  <div className="w-full h-fit py-5">
+
+                  {/* BODY */}
+                  <div className="w-full py-5">
                     <p className="text-sm font-bold">{topic}</p>
-                    <p>
-                      {subText.split('. ').map((sentence, i) => (
-                        <React.Fragment key={i}>
-                          {sentence.trim()}
-                          {i < subText.split('. ').length - 1 && '.'}
-                          <br />
-                        </React.Fragment>
-                      ))}
+                    <p className="mt-2 text-[15px] leading-relaxed whitespace-pre-line">
+                      {subText}
                     </p>
                   </div>
                 </div>
@@ -115,14 +93,17 @@ const Testimonials = () => {
         </div>
       </div>
 
+      {/* DOT INDICATORS */}
       <div className="flex w-fit mx-auto mt-10">
         <ul className="flex gap-2 items-center">
           {testimonials.map((_, index) => (
             <li
               key={index}
               onClick={() => handleClick(index)}
-              className={`rounded-full bg-[#80A2E5] ${
-                index === currentSlide ? 'selected bg-[#295FCC]' : 'w-[16px] h-[16px]'
+              className={`rounded-full transition-all ${
+                index === currentSlide
+                  ? 'bg-[#295FCC] w-[20px] h-[20px]'
+                  : 'bg-[#80A2E5] w-[16px] h-[16px]'
               } hover:cursor-pointer`}
             ></li>
           ))}
