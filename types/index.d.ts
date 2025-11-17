@@ -21,7 +21,8 @@ type testimonialArray = {
     state: string
     topic: string
     subText: string
-}
+}[]
+
 
 type authType = 'login' | 'signup'| 'reset-password'
 

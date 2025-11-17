@@ -14,7 +14,7 @@ const Footer = () => {
 
         </div>
 
-        <div className='w-full flex flex-col h-fit px-4 md:px-10 text-sm mt-5 mb-5 gap-2 md:flex-row '>
+        <div  className='w-full flex flex-col h-fit px-4 md:px-10 text-sm mt-5 mb-5 gap-2 md:flex-row '>
             <div className='flex w-full gap-2 md:items-end'>
                 <p className='w-fit hover:cursor-pointer'>Terms of service</p>
                 <p className='w-fit hover:cursor-pointer'>Privacy policy</p>
