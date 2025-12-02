@@ -7,7 +7,7 @@ import TitleOverlay from '@/components/TitleOverlay';
 import { toast } from 'sonner';
 import { handleSaveCoverletter } from '@/lib/constants/constants';
 
-import { exportAsDocx } from '@/utils/exportDocx';
+// DOCX export is performed via a client-only module dynamically imported at runtime
 
 /**
  * Small helpers
@@ -197,15 +197,25 @@ const Page = () => {
 
 
   const handleExport = async (type: string) => {
-    if (type === "PDF") {
-      window.print();
-      return;
+    if (type === 'PDF') {
+      window.print()
+      return
     }
 
-      if (type === "DOCX") {
-        exportAsDocx(".cover-container", "resume");
+    if (type === 'DOCX') {
+      if (!coverLetter) {
+        toast.error('No cover letter to export')
+        return
       }
-  };
+      const mod = await import('@/lib/client/coverDocxExport')
+      const fn = (mod as any).exportCoverTemplate1Docx || (mod as any).exportCoverDocx
+      if (!fn) {
+        toast.error('Could not load cover DOCX exporter')
+        return
+      }
+      await fn(coverLetter, resume)
+    }
+  }
 
   if (coverLetter == null) return <p>No cover letter selected</p>
 

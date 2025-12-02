@@ -1,28 +1,57 @@
 'use client'
 
-import { useOptimizedStore,  } from '@/store/resumeStore'
+/**
+ * @file Resume Template 1 - Professional Resume Layout
+ * 
+ * This page displays a clean, professional resume template where users can:
+ * - View and edit resume sections inline (name, headline, experience, education, skills, etc.)
+ * - Save changes automatically to localStorage
+ * - Export the resume as DOCX or PDF
+ * - Save the resume to cloud storage
+ * 
+ * Data Flow:
+ * 1. Load resume from localStorage or Zustand store on mount
+ * 2. Display in editable sections using contentEditable divs
+ * 3. Save updates on field blur (automatic persistence)
+ * 4. Export or save to cloud via action buttons
+ * 
+ * @component Template1Page
+ */
+
+import { useOptimizedStore } from '@/store/resumeStore'
 import React, { useEffect, useRef, useState } from 'react'
 import { ResumeType } from '@/lib/schemes/resumeSchema'
 import { useAuthStore, useCurrentNav } from '@/store/store'
 import FormatButtons from '../components/formatButtons'
 import TitleOverlay from '@/components/TitleOverlay'
 import { toast } from 'sonner'
+import { exportToDocx } from '@/lib/client/docxExport'
 
-import { exportAsDocx } from '@/utils/exportDocx'
-
-// import Savedresume from '../components/savedresume'
+// Note: Unused imports below - can be removed in cleanup:
+// import jsPDF from "jspdf";
+// import html2canvas from "html2canvas";
+// import htmlDocx from "html-docx-js/dist/html-docx";
+// import { saveAs } from "file-saver";
+// import { generateDocx } from '@/lib/constants/constants'
+// import generateDocxClient from '@/lib/client/docxExport'
+// import htmlToDocx from "html-to-docx";
 
 /**
  * Helper: split paragraph into sentence-like pieces (keeps punctuation)
+ * Used for breaking up multi-sentence paragraphs into editable sentences
+ * @param {string} text - Text to split
+ * @returns {string[]} Array of sentences
  */
 const splitSentences = (text: string) =>
   (text?.match(/[^.!?]+(?:[.!?](?=\s|$))?/g) || [])
     .map((s) => s.trim())
     .filter(Boolean);
 
-
 /**
  * Helper: join sentence pieces back into a single string (each ends with punctuation)
+ * Used after user edits a sentence within a paragraph
+ * @param {string[]} arr - Array of sentences to join
+ * @returns {string} Joined paragraph text
  */
 const joinSentences = (arr: string[]) =>
   arr
@@ -33,14 +62,25 @@ const joinSentences = (arr: string[]) =>
     )
     .join(' ')
 
+/**
+ * Prevents default Enter key behavior in contentEditable elements
+ * Commented out - can be enabled if you want to prevent line breaks on Enter
+ * @param {React.KeyboardEvent} e - Keyboard event
+ */
 const preventEnterBlur = (e: React.KeyboardEvent<HTMLElement>) => {
   if (e.key === 'Enter') {
+    // Uncomment to prevent Enter from creating new lines:
     // e.preventDefault()
-    // ;(e.currentTarget as HTMLElement).blur()
+    // (e.currentTarget as HTMLElement).blur()
   }
 }
 
+/**
+ * Main Template1Page component
+ * Renders a fully editable, professional resume template
+ */
 const Template1Page = () => {
+  // State: Loaded resume data
   const [resume, setResume] = useState<ResumeType | null>(null)
   const resumeRef = useRef<HTMLDivElement | null>(null)
   const [title, setTitle] = useState('')
@@ -56,24 +96,42 @@ const Template1Page = () => {
   }
 
   useEffect(() => {
+    // Safe localStorage parsing — local keys may be absent or malformed in some environments.
+    let type: any = null
+    try {
+      const rawType = localStorage.getItem('type')
+      type = rawType ? JSON.parse(rawType) : null
+    } catch (e) {
+      console.warn('Could not parse localStorage.type', e)
+      type = null
+    }
 
-    const type =JSON.parse( localStorage.getItem('type'))
     console.log(type)
 
-    if(type.type == 'new'){
+    if (type && type.type === 'new') {
 
-    const localResume = localStorage.getItem('resume')
-    const localOriginalResume = localStorage.getItem('originalResume')
+      const localResume = localStorage.getItem('resume')
+      const localOriginalResume = localStorage.getItem('originalResume')
 
-    const parsed = localResume
-      ? JSON.parse(localResume)
-      : useOptimizedStore.getState().parsedResume
+      const parsed = (() => {
+        try {
+          return localResume ? JSON.parse(localResume) : useOptimizedStore.getState().parsedResume
+        } catch (e) {
+          console.warn('Could not parse local resume from localStorage', e)
+          return useOptimizedStore.getState().parsedResume
+        }
+      })()
 
-    const originaResume = JSON.parse(localOriginalResume)
-    
+      let originaResume: any = null
+      try {
+        originaResume = localOriginalResume ? JSON.parse(localOriginalResume) : null
+      } catch (e) {
+        console.warn('Could not parse originalResume from localStorage', e)
+        originaResume = null
+      }
 
-    try{
-      if(originaResume && parsed){
+      try {
+        if (originaResume && parsed) {
             const formatedResume = {
                   name: originaResume.name,
                   headline:parsed.headline,
@@ -233,16 +291,19 @@ const handleProjectAchievementBlur =
   }
 
 
-  const handleExport = async (type: string) => {
-    if (type === "PDF") {
-      window.print();
-      return;
-    }
+  // const reportRef = useRef<HTMLDivElement | null>(null);
+const handleExport = async (type: string) => {
+  if (type === "PDF") {
+    window.print()
+    return;
+  }
 
-      if (type === "DOCX") {
-        exportAsDocx(".resume-container", "resume");
-      }
-  };
+  if (type === "DOCX") {
+    exportToDocx(resume)
+  }
+};
+
+
 
   const handleSave = async ()=>{
     if(!title){
@@ -369,6 +430,7 @@ const printable = (val: any) => {
 
       <div
         ref={resumeRef}
+        
         id="resume-div"
         className="resume-container bg-white shadow-lg rounded-lg p-4 sm:p-6 border border-text/70 w-full sm:max-w-[900px] print:w-[1100px] mx-auto "
       >
@@ -424,7 +486,10 @@ const printable = (val: any) => {
         </div>
 
         {/* Main content */}
-        <div className="flex flex-col md:flex-row gap-5 mt-6 print:flex-row print:gap-5">
+        <div
+
+        
+        className="flex flex-col md:flex-row gap-5 mt-6 print:flex-row print:gap-5">
 
           {/* Right column */}
           <div className="flex flex-col gap-5 flex-1">
@@ -747,5 +812,6 @@ const printable = (val: any) => {
     </section>
   )
 }
+
 
 export default Template1Page
