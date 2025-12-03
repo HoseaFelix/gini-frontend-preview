@@ -607,7 +607,9 @@ const handleFormContinue = async ()=>{
                             <div className='w-full h-fit flex items-end justify-end px-4 gap-8'>
 
                                 <button 
-                                    onClick={handleBackButton}
+                                    onClick={()=>{
+                                        setCurrentView((prev)=> prev -2)
+                                    }}
                                     className={`px-4 py-1.5 rounded border border-foreground bg-white text-foreground font-bold`}>
                                         Back
                                 </button>

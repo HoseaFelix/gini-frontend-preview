@@ -37,7 +37,7 @@ const ResumePage = () => {
 
           <div 
               onClick={handleToggleChat}
-              className={`${toggleChat ? 'hidden' : ''} absolute max-md:right-5 md:left-2 bottom-5 w-max h-max hover:cursor-pointer z-150`}>
+              className={`${toggleChat ? 'hidden' : ''} absolute left-2 bottom-5 w-max h-max hover:cursor-pointer z-150`}>
                 <div className='p-4 w-max h-max flex gap-2 items-center bg-foreground rounded-lg group transition-all duration-300 '>
                   <Image
                       src={'/icons/comment.png'}
@@ -62,7 +62,7 @@ const ResumePage = () => {
             <div 
 
                 onClick={handlePanelToggle}
-                className='p-3 flex items-center gap-2 w-max bg-white  border-black border-1 rounded-lg shadow hover:cursor-pointer'>
+                className='p-3 flex items-center gap-2 w-max bg-white  border-black border rounded-lg shadow hover:cursor-pointer'>
                 <div className='w-fit h-fit'>
                     <Image
                         className=''
@@ -80,7 +80,7 @@ const ResumePage = () => {
             <Notifications notifications={dummyNotifications}/>
             <Savedresume/>
 
-            <div className={`absolute top-0 left-0 w-full h-[100dvh] md:h-[80dvh] bg-white rounded-lg overflow-hidden pb-5 min-h-[60dvh] ${!isPanelOpen ? 'hidden' : ''}`}>
+            <div className={`absolute top-0 left-0 w-full h-dvh md:h-[80dvh] bg-white rounded-lg overflow-hidden pb-5 min-h-[60dvh] ${!isPanelOpen ? 'hidden' : ''}`}>
               <div className='w-full h-full flex flex-col relative py-10 px-4 items-center gap-5 '>
                 <p className='font-bold text-text/70 text-xl'>Add New Resume</p>
                 <div 
