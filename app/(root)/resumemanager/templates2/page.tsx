@@ -8,7 +8,7 @@ import FormatButtons from '../components/formatButtons'
 import TitleOverlay from '@/components/TitleOverlay'
 import { toast } from 'sonner'
 
-import { exportAsDocx } from '@/utils/exportDocx'
+// import { exportAsDocx } from '@/utils/exportDocx'
 // import Savedresume from '../components/savedresume'
 
 /**
@@ -234,16 +234,26 @@ const handleProjectAchievementBlur =
 
 
  
-   const handleExport = async (type: string) => {
-     if (type === "PDF") {
-       window.print();
-       return;
-     }
- 
-       if (type === "DOCX") {
-         exportAsDocx(".resume-container", "resume");
-       }
-   };
+const handleExport = async (type: string) => {
+  if (type === "PDF") {
+    window.print()
+    return;
+  }
+
+  if (type === "DOCX") {
+    if (!resume) {
+      toast.error('No resume data to export')
+      return
+    }
+    const mod = await import('@/lib/client/docxExport')
+    const fn = (mod as any).exportTemplate2Docx || (mod as any).exportToDocx
+    if (!fn) {
+      toast.error('Could not load DOCX exporter')
+      return
+    }
+    await fn(resume)
+  }
+};
 
   const handleSave = async ()=>{
     if(!title){

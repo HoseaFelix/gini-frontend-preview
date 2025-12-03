@@ -8,7 +8,7 @@ import FormatButtons from '../components/formatButtons'
 import TitleOverlay from '@/components/TitleOverlay'
 import { toast } from 'sonner'
 
-import { exportAsDocx } from '@/utils/exportDocx'
+// import { exportAsDocx } from '@/utils/exportDocx'
 
 // import Savedresume from '../components/savedresume'
 
@@ -239,10 +239,19 @@ const handleProjectAchievementBlur =
       window.print();
       return;
     }
-
-      if (type === "DOCX") {
-        exportAsDocx(".resume-container", "resume");
+    if (type === 'DOCX') {
+      if (!resume) {
+        toast.error('No resume data to export')
+        return
       }
+      const mod = await import('@/lib/client/docxExport')
+      const fn = (mod as any).exportTemplate3Docx || (mod as any).exportToDocx
+      if (!fn) {
+        toast.error('Could not load DOCX exporter')
+        return
+      }
+      await fn(resume)
+    }
   };
   const handleSave = async ()=>{
     if(!title){
@@ -755,5 +764,4 @@ const printable = (val: any) => {
     </section>
   )
 }
-
 export default Template1Page

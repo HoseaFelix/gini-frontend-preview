@@ -28,15 +28,16 @@ const ResumePage = () => {
   },[])
 
   return (
-    <div className=' flex flex-col gap-10 relative pb-10'>
+    <div className=' flex flex-col gap-10 relative pb-10 min-h-[80dvh] '>
 
           
 
           <Aihelp toggleChat={toggleChat} handleToggleChat={handleToggleChat} />
+          
 
           <div 
               onClick={handleToggleChat}
-              className={`${toggleChat ? 'hidden' : ''} fixed right-5 md:right-20 bottom-5 w-max h-max hover:cursor-pointer z-150`}>
+              className={`${toggleChat ? 'hidden' : ''} absolute max-md:right-5 md:left-2 bottom-5 w-max h-max hover:cursor-pointer z-150`}>
                 <div className='p-4 w-max h-max flex gap-2 items-center bg-foreground rounded-lg group transition-all duration-300 '>
                   <Image
                       src={'/icons/comment.png'}
@@ -51,6 +52,8 @@ const ResumePage = () => {
                 </div>
 
           </div>
+          
+
 
 
 
