@@ -608,7 +608,7 @@ const handleFormContinue = async ()=>{
 
                                 <button 
                                     onClick={()=>{
-                                        setCurrentView((prev)=> prev -2)
+                                        setCurrentView(0)
                                     }}
                                     className={`px-4 py-1.5 rounded border border-foreground bg-white text-foreground font-bold`}>
                                         Back
