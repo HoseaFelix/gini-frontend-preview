@@ -180,9 +180,9 @@ const AuthForm = ({ type }: { type: authType }) => {
   }
 
   return (
-    <div className=" w-full border-text border-1 md:w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col mx-auto">
+    <div className=" w-full border-text border md:w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col mx-auto">
       <p className="font-bold text-xl md:text-xl">
-        {isSignUp ? "Fill out the form below to sign up" : "Welcome back"}
+        {isSignUp ? "Fill out the form below to sign up" : isReset ? 'Reset Password' :  "Welcome back"}
       </p>
 
       <form onSubmit={handleSubmit} className="w-full mt-5 auth-form flex flex-col gap-3">
@@ -289,7 +289,7 @@ const AuthForm = ({ type }: { type: authType }) => {
         {!isSignUp && !isReset && (
           <div className="w-full flex justify-between">
             <label className="flex items-center gap-2">
-              <input onClick={handleRemember} type="checkbox" className="h-[20px] w-fit" />
+              <input onClick={handleRemember} type="checkbox" className="h-5 w-fit" />
               <p>Remember me</p>
             </label>
             <div>
@@ -308,34 +308,52 @@ const AuthForm = ({ type }: { type: authType }) => {
         )}
 
         <button type="submit" className="w-full py-3 bg-foreground text-white rounded-lg font-bold mt-2 cursor-pointer">
-          {loading ? 'loading . . .' : isSignUp ? "Sign up" : "Sign in" }
+          {loading ? 'loading . . .' : isSignUp ? "Sign up" : isReset ? 'Reset Password' : "Sign in" }
           
         </button>
       </form>
 
-      <div className="flex gap-10 mt-10">
-        {[
-          { icon: "/icons/linkedin.png", label: "LinkedIn", onclick: handleLinkedInAuth },
-          { icon: "/icons/google.png", label: "Google", onclick:handleGoogleAuth },
-        ].map(({ icon, label,onclick }) => (
-          <div 
-          onClick={onclick}
-          key={label} className="flex flex-col items-center gap-3 cursor-pointer">
-            <Image width={32} height={32} src={icon} alt={`${label} icon`} />
-            <p className="text-sm font-bold">{label}</p>
+      {
+        !isReset &&
+        <>
+        
+        
+      
+          <div className="flex gap-10 mt-10">
+            {[
+              { icon: "/icons/linkedin.png", label: "LinkedIn", onclick: handleLinkedInAuth },
+              { icon: "/icons/google.png", label: "Google", onclick:handleGoogleAuth },
+            ].map(({ icon, label,onclick }) => (
+              <div 
+              onClick={onclick}
+              key={label} className="flex flex-col items-center gap-3 cursor-pointer">
+                <Image width={32} height={32} src={icon} alt={`${label} icon`} />
+                <p className="text-sm font-bold">{label}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <p className="text-sm font-bold mt-10">
-        {isSignUp ? "Already have an account?" : "Don't have an account?"}
-        <Link
-          href={isSignUp ? "/sign-in" : "/sign-up"}
-          className="text-link underline underline-offset-1 cursor-pointer ml-1"
-        >
-          {isSignUp ? "Login" : "Sign up"}
-        </Link>
-      </p>
+
+          <p className={`text-sm font-bold mt-10`}>
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}
+            <Link
+              href={isSignUp ? "/sign-in" : "/sign-up"}
+              className="text-link underline underline-offset-1 cursor-pointer ml-1"
+            >
+              {isSignUp ? "Login" : "Sign up"}
+            </Link>
+          </p>
+
+        </>
+      }
+
+      {
+        isReset && 
+        <div className="w-max m-auto mt-5 font-bold text-xl hover:text-foreground">
+          <Link href='/sign-in'>Return</Link>
+        </div>
+      }
+
     </div>
   );
 };

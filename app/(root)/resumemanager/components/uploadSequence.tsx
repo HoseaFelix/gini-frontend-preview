@@ -371,7 +371,7 @@ const handleFormContinue = async ()=>{
 
                             {!isScanStart && (
                                 <>
-                                    <div className='w-full h-max pb-5 rounded-xl mt-10 px-4 pt-5 border-1 border-black  flex flex-col gap-3 '>
+                                    <div className='w-full h-max pb-5 rounded-xl mt-10 px-4 pt-5 border border-black  flex flex-col gap-3 '>
                                            
                                            <LanguageDropdown setLanguage={setLanguage}/>
 
