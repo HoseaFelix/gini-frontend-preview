@@ -1,19 +1,27 @@
-import { getSavedResume } from '@/lib/constants/constants'
+import { getSavedCoverLetter, getSavedResume } from '@/lib/constants/constants'
 import React, { useEffect, useState } from 'react'
 
 const UserData = () => {
       const [SavedResume, setSavedResume] = useState<any[]>([])
+      const [savedCover, setSavedCover] = useState<any[]>([])
       
         useEffect(() => {
          
-
            const fetchData = async () => {
               await getSavedResume();
                const stored = localStorage.getItem('savedResume')
                 if (stored) {
                   setSavedResume(JSON.parse(stored))
                 }
+
+                await getSavedCoverLetter();
+                const storedCover = localStorage.getItem('savedCoverLetters')
+                if (storedCover) {
+                  setSavedCover(JSON.parse(storedCover))
+                }
             };
+
+            
 
             fetchData()
         }, [])
@@ -29,7 +37,7 @@ const UserData = () => {
         },
         {
             name: 'Cover Letter Generated',
-            number: 0,
+            number: savedCover.length,
         },
         {
             name: 'Perfomance Rating',

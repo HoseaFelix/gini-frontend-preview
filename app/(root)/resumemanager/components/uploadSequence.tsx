@@ -211,6 +211,23 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
     router.push(`/resumemanager/templates${templateIndex+1}`)
 }
 
+// handle reject action: confirm twice and revert to previous view if confirmed
+const onReject = () => {
+    try {
+        const firstConfirm = window.confirm('Are you sure you want to reject this resume?');
+        if (!firstConfirm) return;
+
+        const secondConfirm = window.confirm('The resume can be edited in the editor in later stages. Do you still want to reject?');
+        if (secondConfirm) {
+            setCurrentView(0);
+            toast('Resume rejected');
+        }
+    } catch (err) {
+        // fallback if window.confirm isn't available for some reason
+        console.error('Reject confirmation failed', err);
+    }
+}
+
 const toggleForm = ()=>{
     setFormVisibility((prev)=> !prev)
 }
@@ -429,7 +446,7 @@ const handleFormContinue = async ()=>{
                         <div className='sticky top-5 font-bold  w-full px-4 flex justify-between'>
                             <p className='text-sm md:text-xl'>Resume Optimization</p>
                             <div className='w-fit flex gap-3'>
-                                <div className='text-red-600 hover:cursor-pointer md:text-xl'>Reject</div>
+                                    <div onClick={onReject} className='text-red-600 hover:cursor-pointer md:text-xl'>Reject</div>
                                 <div 
                                 onClick={handleLastContinue}
                                 className='text-blue-600 hover:cursor-pointer md:text-xl'>Apply</div>
@@ -607,9 +624,7 @@ const handleFormContinue = async ()=>{
                             <div className='w-full h-fit flex items-end justify-end px-4 gap-8'>
 
                                 <button 
-                                    onClick={()=>{
-                                        setCurrentView(0)
-                                    }}
+                                    onClick={onReject}
                                     className={`px-4 py-1.5 rounded border border-foreground bg-white text-foreground font-bold`}>
                                         Back
                                 </button>

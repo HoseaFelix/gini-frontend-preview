@@ -6,6 +6,7 @@ import FormatButtons from '../../resumemanager/components/formatButtons';
 import TitleOverlay from '@/components/TitleOverlay';
 import { toast } from 'sonner';
 import { handleSaveCoverletter } from '@/lib/constants/constants';
+import BackButton from '@/components/backButton';
 
 // DOCX export is performed via a client-only module dynamically imported at runtime
 
@@ -222,7 +223,10 @@ const Page = () => {
   return (
     <section className="w-full h-full px-4 py-10 relative flex justify-center items-center flex-col print:py-0 print:px-0 ">
 
-      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave}/>
+      {/* Back button (top-left) */}
+      <BackButton />
+
+      <TitleOverlay type='Letter' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave}/>
     <FormatButtons/>
      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
         <label  className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>

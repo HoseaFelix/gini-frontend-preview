@@ -2,7 +2,7 @@
 // import React, { useState } from 'react'
 import CloseIcon from './generalComponents/closeIcon'
 
-const TitleOverlay = ({isVisible, setVisiblity, collectTitle, handleSave}) => {
+const TitleOverlay = ({isVisible, setVisiblity, collectTitle, handleSave, type}) => {
 
   return (
     <div className={` ${!isVisible ? 'hidden' : ''} absolute w-full h-max py-5 max-w-2xl mx-auto bg-white shadow-md top-10 rounded-lg overflow-hidden z-300 min-h-[300px]  `}>
@@ -10,7 +10,7 @@ const TitleOverlay = ({isVisible, setVisiblity, collectTitle, handleSave}) => {
             <CloseIcon OnClick={setVisiblity} containerClass={`top-4 right-4`}/>
             <div className='mt-5'></div>
             <div className='w-full max-w-xl h-max p-4 border border-foreground rounded-md mx-auto  flex flex-col gap'>
-                <p>Give your resume a title</p>
+                <p>Give your {type} a title</p>
 
                 <input onChange={collectTitle} type="text"  className='w-full p-1 border rounded-md '/>
 

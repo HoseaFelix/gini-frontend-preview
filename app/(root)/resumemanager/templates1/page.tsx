@@ -26,6 +26,7 @@ import FormatButtons from '../components/formatButtons'
 import TitleOverlay from '@/components/TitleOverlay'
 import { toast } from 'sonner'
 import { exportToDocx } from '@/lib/client/docxExport'
+import BackButton from '@/components/backButton'
 
 // Note: Unused imports below - can be removed in cleanup:
 // import jsPDF from "jspdf";
@@ -403,7 +404,10 @@ const printable = (val: any) => {
   return (
     <section className="w-full pb-10 min-h-screen bg-gray-100 px-2 sm:px-4 pt-14 flex flex-col gap-5 justify-center relative">
 
-      <TitleOverlay isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisiblity} handleSave={handleSave}/>
+      {/* Back button (top-left) */}
+      <BackButton />
+
+      <TitleOverlay type='Resume' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisiblity} handleSave={handleSave}/>
      
       <FormatButtons />
       <div className="print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
