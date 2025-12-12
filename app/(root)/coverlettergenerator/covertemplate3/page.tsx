@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { handleSaveCoverletter } from '@/lib/constants/constants';
 import TitleOverlay from '@/components/TitleOverlay';
+import { logActivity } from '@/lib/client/recentActivityClient';
 // DOCX export is performed via a client-only module dynamically imported at runtime
 
 /**
@@ -189,6 +190,7 @@ const Page = () => {
       const data = await handleSaveCoverletter(payload)
       if(data.success){
         setVisibility(false)
+        try { void logActivity('Save Cover Letter', title || 'Untitled') } catch {}
       }
     }
 
@@ -209,6 +211,7 @@ const Page = () => {
         toast.error('Could not load cover DOCX exporter')
         return
       }
+      try { void logActivity('Export Cover Letter', 'Template 3') } catch {}
       await fn(coverLetter, resume)
     }
   }
@@ -350,13 +353,13 @@ const Page = () => {
                 onBlur={handleCoverFieldBlur(['hiringManagerName'])}
                 onKeyDown={preventEnterBlur}
               >
-                {coverLetter.hiringManagerName || 'Hiring Manager'}
+                {coverLetter?.hiringManagerName || 'Hiring Manager'}
               </span>{' '}
             </p>
 
             <div className="w-full gap-5 flex flex-col mt-5">
-              {Array.isArray(coverLetter.letter) && coverLetter.letter.length > 0 ? (
-                coverLetter.letter.map((p, i) => (
+              {Array.isArray(coverLetter?.letter) && coverLetter?.letter?.length > 0 ? (
+                coverLetter?.letter?.map((p, i) => (
                   <p
                     key={i}
                     contentEditable

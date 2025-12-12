@@ -8,6 +8,7 @@ import FormatButtons from '../components/formatButtons'
 import TitleOverlay from '@/components/TitleOverlay'
 import { toast } from 'sonner'
 import BackButton from '@/components/backButton'
+import { logActivity } from '@/lib/client/recentActivityClient'
 
 // import { exportAsDocx } from '@/utils/exportDocx'
 
@@ -251,6 +252,7 @@ const handleProjectAchievementBlur =
         toast.error('Could not load DOCX exporter')
         return
       }
+      try { void logActivity('Export Resume', 'Template 3') } catch {}
       await fn(resume)
     }
   };
@@ -290,6 +292,7 @@ const handleProjectAchievementBlur =
       console.log(data)
       if(data.success){
         toast.success('resume saved successfully!')
+        try { void logActivity('Save Resume', title || 'Untitled') } catch {}
       } else {
         toast.error(data.error)
         return
@@ -325,10 +328,10 @@ const handleProjectAchievementBlur =
   }
 
   const contactItems = [
-  resume.contactInfo.phone ?? 'phone number',
-  resume.contactInfo.email ?? 'email@example.com',
-  resume.contactInfo.address ?? 'your address',
-  resume.contactInfo.linkedIn ?? 'linkedin profile',
+  resume?.contactInfo?.phone ?? 'phone number',
+  resume?.contactInfo?.email ?? 'email@example.com',
+  resume?.contactInfo?.address ?? 'your address',
+  resume?.contactInfo?.linkedIn ?? 'linkedin profile',
 ];
 
 const printable = (val: any) => {
@@ -395,7 +398,7 @@ const printable = (val: any) => {
               onKeyDown={preventEnterBlur}
               className="font-bold print:text-xl text-2xl sm:text-6xl text-blue-950 "
             >
-              {resume.name ?? 'your name here'}
+              {resume?.name ?? 'your name here'}
             </p>
           </div>
 
@@ -407,7 +410,7 @@ const printable = (val: any) => {
                                   <p
                                   contentEditable
                                   suppressContentEditableWarning
-                                  onBlur={handleFieldBlur(['contactInfo', Object.keys(resume.contactInfo)[index]])}
+                                  onBlur={handleFieldBlur(['contactInfo', Object.keys(resume?.contactInfo ?? {})[index]])}
                                   onKeyDown={preventEnterBlur}
                                   >
                                   {item}
@@ -431,7 +434,7 @@ const printable = (val: any) => {
                 onKeyDown={preventEnterBlur}
                 className="text-xl font-bold "
                 >
-                {resume.headline}
+                {resume?.headline}
                 </p>
             </div>
         </div>
@@ -451,7 +454,7 @@ const printable = (val: any) => {
                 onKeyDown={preventEnterBlur}
                 className="text-sm sm:text-base"
               >
-                {resume.careerObjective}
+                {resume?.careerObjective}
               </p>
             </div>
             
@@ -479,7 +482,7 @@ const printable = (val: any) => {
                           onBlur={handleFieldBlur(['skills', 'technical', 'languages'])}
                           onKeyDown={preventEnterBlur}
                         >
-                          {printable(resume.skills.technical.languages)}
+                          {printable(resume?.skills?.technical?.languages)}
                         </span>
                       </p>
                     ) : null}
@@ -498,7 +501,7 @@ const printable = (val: any) => {
                           onBlur={handleFieldBlur(['skills', 'technical', 'frameworksAndLibraries'])}
                           onKeyDown={preventEnterBlur}
                         >
-                          {printable(resume.skills.technical.frameworksAndLibraries)}
+                          {printable(resume?.skills?.technical?.frameworksAndLibraries)}
                         </span>
                       </p>
                     ) : null}
@@ -517,7 +520,7 @@ const printable = (val: any) => {
                           onBlur={handleFieldBlur(['skills', 'technical', 'toolsAndBuildSystems'])}
                           onKeyDown={preventEnterBlur}
                         >
-                          {printable(resume.skills.technical.toolsAndBuildSystems)}
+                          {printable(resume?.skills?.technical?.toolsAndBuildSystems)}
                         </span>
                       </p>
                     ) : null}
@@ -536,7 +539,7 @@ const printable = (val: any) => {
                           onBlur={handleFieldBlur(['skills', 'technical', 'testing'])}
                           onKeyDown={preventEnterBlur}
                         >
-                          {printable(resume.skills.technical.testing)}
+                          {printable(resume?.skills?.technical?.testing)}
                         </span>
                       </p>
                     ) : null}
@@ -555,7 +558,7 @@ const printable = (val: any) => {
                           onBlur={handleFieldBlur(['skills', 'technical', 'practices'])}
                           onKeyDown={preventEnterBlur}
                         >
-                          {printable(resume.skills.technical.practices)}
+                          {printable(resume?.skills?.technical?.practices)}
                         </span>
                       </p>
                     ) : null}
@@ -575,13 +578,13 @@ const printable = (val: any) => {
                     onKeyDown={preventEnterBlur}
                     className="pl-5 text-sm sm:text-base skill-items"
                   >
-                    {printable(resume.skills.soft)}
+                    {printable(resume?.skills?.soft)}
                   </p>
                 </div>
               ) : null}
 
               {/* Certifications */}
-              {resume.skills?.certifications.length > 0 ? (
+              {resume?.skills?.certifications?.length > 0 ? (
                 <div>
                   <p className="font-semibold">Certifications</p>
                   <p
@@ -590,8 +593,8 @@ const printable = (val: any) => {
                     onBlur={handleFieldBlur(['skills', 'certifications'])}
                     onKeyDown={preventEnterBlur}
                     className="pl-5 text-sm sm:text-base"
-                  >
-                    {printable(resume.skills.certifications)}
+                    >
+                    {printable(resume?.skills?.certifications)}
                   </p>
                 </div>
               ) : null}
@@ -642,7 +645,7 @@ const printable = (val: any) => {
             </div>
 
             {/* Projects */}
-            {resume.projects && resume.projects.length > 0 && (
+              {resume?.projects && resume?.projects.length > 0 && (
               <div className="flex flex-col gap-3">
                 <p className="font-bold text-xl">PROJECTS</p>
                 {resume.projects.map((proj, index) => {
@@ -691,7 +694,7 @@ const printable = (val: any) => {
             {/* Education */}
             <div className="flex flex-col gap-2">
               <p className="font-bold text-xl border-b-4 border-b-blue-950 text-blue-950">EDUCATION</p>
-              {resume.education?.map((edu, index) => (
+              {resume?.education?.map((edu, index) => (
                 <div key={index} className="flex flex-col gap-1 text-sm sm:text-base">
                   <p>
                     <span
@@ -743,11 +746,11 @@ const printable = (val: any) => {
             </div>
 
                         {/* Awards */}
-            {resume.awards && resume.awards.length > 0 && (
+            {resume?.awards && resume?.awards.length > 0 && (
               <div className="flex flex-col gap-2">
                 <p className="font-bold text-xl">AWARDS</p>
                 <ul className="list-disc pl-5 text-sm sm:text-base">
-                  {resume.awards.map((award, index) => (
+                  {resume?.awards?.map((award, index) => (
                     <li
                       key={index}
                       contentEditable

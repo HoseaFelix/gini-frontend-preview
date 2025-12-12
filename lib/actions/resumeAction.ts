@@ -115,6 +115,7 @@ async function rewriteResume(rawResume: ResumeType, description: string, keyword
 
     Instructions:
      - Use the exact job title as the headline.
+     - if certifications are provided, dont omit them.
 
     -  Write a strong executive summary with measurable impact and        leadership focus.
 

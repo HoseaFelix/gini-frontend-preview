@@ -12,6 +12,7 @@ import Amended from './amended'
 import { useRouter } from 'next/navigation'
 import ManualInput from './manualInput'
 import { useAuthStore } from '@/store/store'
+import { logActivity } from '@/lib/client/recentActivityClient'
 import LanguageDropdown from './LanguageDropdown'
 import TemplateCarousel from '@/components/generalComponents/carouselTemplates'
 // import { useResumeStore } from '@/store/resumeStore'
@@ -86,6 +87,7 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
             setAnalyzingDoc('done')
             setUploadStart(false)
             setOriginalResume(analyzeDoc.parsedResume)
+            try { void logActivity('Upload Resume', document?.name ?? 'uploaded file') } catch {}
             setCurrentView((prev)=> (prev + 1) % totalItems )
 
 
@@ -207,8 +209,8 @@ const setOptimizedResume = useOptimizedStore.getState().setParsedResume;
         index: ''
       }))
     }
-    
-    router.push(`/resumemanager/templates${templateIndex+1}`)
+        try { void logActivity('Apply Template', `Template ${templateIndex != null ? templateIndex + 1 : 'unknown'}`) } catch {}
+        router.push(`/resumemanager/templates${templateIndex+1}`)
 }
 
 // handle reject action: confirm twice and revert to previous view if confirmed
@@ -219,8 +221,12 @@ const onReject = () => {
 
         const secondConfirm = window.confirm('The resume can be edited in the editor in later stages. Do you still want to reject?');
         if (secondConfirm) {
-            setCurrentView(0);
+            localStorage.setItem('resume', JSON.stringify(originalResume))
+            localStorage.setItem('originalResume', JSON.stringify(originalResume))
             toast('Resume rejected');
+            
+            try { void logActivity('Apply Template', `Template ${templateIndex != null ? templateIndex + 1 : 'unknown'}`) } catch {}
+            router.push(`/resumemanager/templates${templateIndex+1}`)
         }
     } catch (err) {
         // fallback if window.confirm isn't available for some reason

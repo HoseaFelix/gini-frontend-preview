@@ -6,6 +6,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/store";
+import { logActivity } from '@/lib/client/recentActivityClient';
 
 
 const AuthForm = ({ type }: { type: authType }) => {
@@ -145,12 +146,14 @@ const AuthForm = ({ type }: { type: authType }) => {
 
       if(isSignUp) {
         toast.success('signed up successfully, please sign in')
+        try { void logActivity('Sign Up', `New user ${email} registered`) } catch {}
         router.push('/sign-in')
         setLoading(false)
       } else{
 
           useAuthStore.getState().setUser(data.user, data.token, rememberMe)
           toast.success(data.message)
+          try { void logActivity('Sign In', `User ${data.user?.email || email} signed in`) } catch {}
           router.push('/dashboard')
           setLoading(false)
       }
