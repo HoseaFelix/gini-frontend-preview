@@ -5,9 +5,10 @@ import { CoverLetter, ResumeType } from '@/lib/schemes/resumeSchema'
 import FormatButtons from '../../resumemanager/components/formatButtons';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { API_BASE } from '@/lib/config';
 import { handleSaveCoverletter } from '@/lib/constants/constants';
 import TitleOverlay from '@/components/TitleOverlay';
-import { logActivity } from '@/lib/client/recentActivityClient';
+import { createActivity } from '@/lib/client/recentActivityClient';
 // DOCX export is performed via a client-only module dynamically imported at runtime
 
 /**
@@ -16,7 +17,22 @@ import { logActivity } from '@/lib/client/recentActivityClient';
 const preventEnterBlur = (e: React.KeyboardEvent<HTMLElement>) => {
   if (e.key === 'Enter') {
     e.preventDefault()
-    ;(e.currentTarget as HTMLElement).blur()
+      ; (e.currentTarget as HTMLElement).blur()
+  }
+}
+
+// helper to place caret at end of a contentEditable element
+const placeCaretAtEnd = (el: HTMLElement) => {
+  try {
+    el.focus()
+    const range = document.createRange()
+    range.selectNodeContents(el)
+    range.collapse(false)
+    const sel = window.getSelection()
+    sel?.removeAllRanges()
+    sel?.addRange(range)
+  } catch (err) {
+    // ignore
   }
 }
 
@@ -41,34 +57,34 @@ const setByPath = (obj: any, path: Array<string | number>, value: any) => {
 const Page = () => {
   const [coverLetter, setCoverletter] = useState<CoverLetter | null>(null)
   const [resume, setResume] = useState<ResumeType | null>(null)
-   const [title,setTitle] = useState('')
-    const [isVisible, setVisibility]= useState(false)
+  const [title, setTitle] = useState('')
+  const [isVisible, setVisibility] = useState(false)
   useEffect(() => {
 
     const type = JSON.parse(localStorage.getItem('typeCoverLetter'))
 
     console.log(type)
-    if (type.type == 'old'){
-       const stored = localStorage.getItem('savedCoverLetters')
-       console.log(JSON.parse(stored)[type.index])
-            if (stored) {
-              setCoverletter(JSON.parse(stored)[type.index].data)
-            }
-    } else{
-    try {
-      const storedCover = localStorage.getItem('coverLetter')
-      const storedResume = localStorage.getItem('selectedResume')
-
-
-      if (!storedCover || !storedResume) {
-        console.warn('No stored cover letter or resume found')
-        return
+    if (type.type == 'old') {
+      const stored = localStorage.getItem('savedCoverLetters')
+      console.log(JSON.parse(stored)[type.index])
+      if (stored) {
+        setCoverletter(JSON.parse(stored)[type.index].data)
       }
-      
-      console.log(storedResume)
-      if (storedCover) setCoverletter(JSON.parse(storedCover))
-      if (storedResume) setResume(JSON.parse(storedResume))
-        if(storedCover && storedResume){
+    } else {
+      try {
+        const storedCover = localStorage.getItem('coverLetter')
+        const storedResume = localStorage.getItem('selectedResume')
+
+
+        if (!storedCover || !storedResume) {
+          console.warn('No stored cover letter or resume found')
+          return
+        }
+
+        console.log(storedResume)
+        if (storedCover) setCoverletter(JSON.parse(storedCover))
+        if (storedResume) setResume(JSON.parse(storedResume))
+        if (storedCover && storedResume) {
           const resume = JSON.parse(storedResume)
           console.log(resume)
           const cover = JSON.parse(storedCover)
@@ -83,9 +99,9 @@ const Page = () => {
           console.log(newCover)
           setCoverletter(newCover)
         }
-    } catch (err) {
-      console.warn('Failed to parse localStorage for coverLetter/resume', err)
-    }
+      } catch (err) {
+        console.warn('Failed to parse localStorage for coverLetter/resume', err)
+      }
     }
 
   }, [])
@@ -156,7 +172,12 @@ const Page = () => {
     next.letter = next.letter || []
     next.letter.push('')
     persistCover(next)
-    // Note: the new paragraph will be empty and editable — user can type and blur to save
+    // focus the newly added paragraph and place caret at end so Enter behaves normally
+    setTimeout(() => {
+      const els = document.querySelectorAll('[data-cover-paragraph]')
+      const last = els[els.length - 1] as HTMLElement | undefined
+      if (last) placeCaretAtEnd(last)
+    }, 50)
   }
 
   function getFullDate(date = new Date()) {
@@ -169,30 +190,30 @@ const Page = () => {
 
 
 
-    const collectTitle = (e)=>{
-      setTitle(e.target.value)
+  const collectTitle = (e) => {
+    setTitle(e.target.value)
+  }
+
+  const handleVisibility = () => {
+    setVisibility(prev => !prev)
+  }
+
+  const handleSave = async () => {
+    if (!title) {
+      toast('please enter a title')
     }
-  
-    const handleVisibility = ()=> {
-      setVisibility(prev => !prev)
+    const payload = {
+      title: title,
+      data: coverLetter
+
     }
-  
-    const handleSave = async ()=>{
-      if(!title){
-        toast('please enter a title')
-      }
-      const payload = {
-        title: title,
-        data: coverLetter
-  
-      }
-  
-      const data = await handleSaveCoverletter(payload)
-      if(data.success){
-        setVisibility(false)
-        try { void logActivity('Save Cover Letter', title || 'Untitled') } catch {}
-      }
+
+    const save = await handleSaveCoverletter(payload)
+    if (save.success) {
+      setVisibility(false)
+      try { void createActivity('Save Cover Letter', title || 'Untitled') } catch { }
     }
+  }
 
   const handleExport = async (type: string) => {
     if (type === 'PDF') {
@@ -211,7 +232,7 @@ const Page = () => {
         toast.error('Could not load cover DOCX exporter')
         return
       }
-      try { void logActivity('Export Cover Letter', 'Template 3') } catch {}
+      try { void createActivity('Export Cover Letter', 'Template 3') } catch { }
       await fn(coverLetter, resume)
     }
   }
@@ -222,12 +243,12 @@ const Page = () => {
   return (
     <section className="w-full h-full px-4 py-10 relative flex justify-center items-center flex-col print:py-0 print:px-0 ">
 
-      <TitleOverlay type='Letter' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave}/>
-    <FormatButtons/>
-     <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
-        <label  className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
+      <TitleOverlay type='Letter' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave} />
+      <FormatButtons />
+      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
+        <label className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
           <p>Export As</p>
-          <select name="" id="" onChange={(e)=>{
+          <select name="" id="" onChange={(e) => {
             handleExport(e.target.value)
           }} >
             <option > </option>
@@ -245,99 +266,99 @@ const Page = () => {
       </div>
 
       <main className="cover-container mt-10 print:mt-0 w-full max-w-[794px] h-max mx-auto bg-white overflow-hidden rounded-lg shadow-lg print:w-[794px] flex flex-col pb-10 relative print:mx-auto ">
-       
+
         <div className="cover-container w-full flex flex-col relative ">
-        <style>{`@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;  } }`}</style>
+          <style>{`@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;  } }`}</style>
 
-        
-            <div className='p-4 h-max'>
-                 <p
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={handleResumeFieldBlur(['name'])}
-                onKeyDown={preventEnterBlur}
-                className="text-3xl font-bold"
-              >
-                {resume?.name ?? 'Your name here'}
-              </p>
 
-            </div>
+          <div className='p-4 h-max'>
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={handleResumeFieldBlur(['name'])}
+              onKeyDown={preventEnterBlur}
+              className="text-3xl font-bold"
+            >
+              {resume?.name ?? 'Your name here'}
+            </p>
+
+          </div>
 
           <div className="w-full flex items-center h-max" style={{ backgroundColor: 'rgba(156,163,175,0.4)', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }} >
 
-             
+
 
             <div className="flex justify-between py-2 gap-3 h-max w-full px-4">
 
-                <div className='flex gap-2 items-center'>
-                    <div className='h-max p-2 rounded-full bg-white'>
-                        <Image
-                        src='/icons/email.png'
-                        width={15}
-                        height={15}
-                        alt='email icon'
-                        className=' '
-                        />
-                    </div>
-                    
-
-                     <p
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
-                        onKeyDown={preventEnterBlur}
-                    >
-                        {resume?.contactInfo?.email ?? 'you@example.com'}
-                    </p>
-
+              <div className='flex gap-2 items-center'>
+                <div className='h-max p-2 rounded-full bg-white'>
+                  <Image
+                    src='/icons/email.png'
+                    width={15}
+                    height={15}
+                    alt='email icon'
+                    className=' '
+                  />
                 </div>
 
-                <div className='flex gap-2 items-center'>
-                    <div className='h-max p-2 rounded-full bg-white'>
-                        <Image
-                        src='/icons/call.png'
-                        width={15}
-                        height={15}
-                        alt='email icon'
-                        className=' '
-                        />
-                    </div>
-                    
 
-                     <p
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={handleResumeFieldBlur(['contactInfo', 'phone'])}
-                        onKeyDown={preventEnterBlur}
-                    >
-                        {resume?.contactInfo?.phone ?? 'phone number'}
-                    </p>
+                <p
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
+                  onKeyDown={preventEnterBlur}
+                >
+                  {resume?.contactInfo?.email ?? 'you@example.com'}
+                </p>
 
+              </div>
+
+              <div className='flex gap-2 items-center'>
+                <div className='h-max p-2 rounded-full bg-white'>
+                  <Image
+                    src='/icons/call.png'
+                    width={15}
+                    height={15}
+                    alt='email icon'
+                    className=' '
+                  />
                 </div>
 
-                <div className='flex gap-2 items-center'>
-                    <div className='h-max p-2 rounded-full bg-white'>
-                        <Image
-                        src='/icons/location.png'
-                        width={15}
-                        height={15}
-                        alt='location icon'
-                        className=' '
-                        />
-                    </div>
-                    
 
-                     <p
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={handleResumeFieldBlur(['contactInfo', 'address'])}
-                        onKeyDown={preventEnterBlur}
-                    >
-                        {resume?.contactInfo?.address ?? 'your address'}
-                    </p>
+                <p
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={handleResumeFieldBlur(['contactInfo', 'phone'])}
+                  onKeyDown={preventEnterBlur}
+                >
+                  {resume?.contactInfo?.phone ?? 'phone number'}
+                </p>
 
+              </div>
+
+              <div className='flex gap-2 items-center'>
+                <div className='h-max p-2 rounded-full bg-white'>
+                  <Image
+                    src='/icons/location.png'
+                    width={15}
+                    height={15}
+                    alt='location icon'
+                    className=' '
+                  />
                 </div>
-             
+
+
+                <p
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={handleResumeFieldBlur(['contactInfo', 'address'])}
+                  onKeyDown={preventEnterBlur}
+                >
+                  {resume?.contactInfo?.address ?? 'your address'}
+                </p>
+
+              </div>
+
             </div>
           </div>
 
@@ -362,20 +383,20 @@ const Page = () => {
                 coverLetter?.letter?.map((p, i) => (
                   <p
                     key={i}
+                    data-cover-paragraph
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={handleCoverFieldBlur(['letter', i])}
-                    onKeyDown={preventEnterBlur}
                   >
                     {p}
                   </p>
                 ))
               ) : (
                 <p
+                  data-cover-paragraph
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={handleCoverFieldBlur(['letter', 0])}
-                  onKeyDown={preventEnterBlur}
                 >
                   {''}
                 </p>

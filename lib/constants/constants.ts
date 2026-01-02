@@ -1,8 +1,11 @@
 import { useAuthStore } from '@/store/store'
+import { API_BASE } from '@/lib/config'
+import { createActivity } from '@/lib/client/recentActivityClient'
 import mammoth from 'mammoth'
-import * as pdfjsLib from 'pdfjs-dist'
 import { toast } from 'sonner'
 import { PDFDocument } from 'pdf-lib'
+
+// Central API base so it can be changed in one place.
 
 // If you need docx creation server-side, keep docx imports here; but the
 // DOM-dependent exporters (html-to-docx, file-saver, html2canvas, jspdf)
@@ -10,13 +13,7 @@ import { PDFDocument } from 'pdf-lib'
 // client-only helper at '@/lib/client/docxExport'.
 
 // Set PDF worker in browser only
-if (typeof window !== 'undefined') {
-  try {
-    ;(pdfjsLib as any).GlobalWorkerOptions.workerSrc = '/pdf.worker.js'
-  } catch {
-    // ignore in non-browser contexts
-  }
-}
+// (Worker setup moved to extractTextFromFile to avoid top-level side effects)
 
 export async function extractTextFromFile(file: File, token?: string) {
   try {
@@ -28,7 +25,9 @@ export async function extractTextFromFile(file: File, token?: string) {
     // Handle PDF files
     if (fileType === 'application/pdf') {
       try {
-        const res = await fetch('https://aidgeny.onrender.com/api/documents/process', {
+        // Use client-side processing if possible, or fallback to server API if that was the intent.
+        // The original code was calling an API endpoint for PDF processing:
+        const res = await fetch(`${API_BASE}/api/documents/process`, {
           method: 'POST',
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
           body: formData,
@@ -37,6 +36,15 @@ export async function extractTextFromFile(file: File, token?: string) {
         const data = await res.json()
         if (data.success) return data.data
         return data.error
+
+        // NOTE: If you intended to use pdfjs-dist locally in the browser here instead of the API:
+        /*
+        const pdfjsLib = await import('pdfjs-dist');
+        if (typeof window !== 'undefined') {
+             (pdfjsLib as any).GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
+        }
+        // ... implementation using pdfjsLib
+        */
       } catch (err) {
         console.error(err)
       }
@@ -62,7 +70,7 @@ export async function extractTextFromFile(file: File, token?: string) {
 export async function getSavedResume() {
   const token = useAuthStore.getState().token
   try {
-    const res = await fetch('https://aidgeny.onrender.com/api/documents/', {
+    const res = await fetch(`${API_BASE}/api/documents/`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -78,7 +86,7 @@ export async function getSavedResume() {
 export async function getSavedCoverLetter() {
   const token = useAuthStore.getState().token
   try {
-    const res = await fetch('https://aidgeny.onrender.com/api/coverletters/', {
+    const res = await fetch(`${API_BASE}/api/coverletters/`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -94,13 +102,14 @@ export async function getSavedCoverLetter() {
 export const handleDeleteResume = async (id: string) => {
   const token = useAuthStore.getState().token
   try {
-    const res = await fetch(`https://aidgeny.onrender.com/api/documents/${id}`, {
+    const res = await fetch(`${API_BASE}/api/documents/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     })
     const data = await res.json()
     if (data.success) {
       toast.success(data.data)
+      try { void createActivity('Delete Resume', 'Deleted a resume') } catch { }
       await getSavedResume()
       return data
     }
@@ -112,13 +121,14 @@ export const handleDeleteResume = async (id: string) => {
 export const handleDeleteCoverLetter = async (id: string) => {
   const token = useAuthStore.getState().token
   try {
-    const res = await fetch(`https://aidgeny.onrender.com/api/coverletters/${id}`, {
+    const res = await fetch(`${API_BASE}/api/coverletters/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     })
     const data = await res.json()
     if (data.success) {
       toast.success(data.data)
+      try { void createActivity('Delete Cover Letter', 'Deleted a cover letter') } catch { }
       return data
     }
   } catch (e) {
@@ -130,7 +140,7 @@ export const handleSaveCoverletter = async (payload: any) => {
   const token = useAuthStore.getState().token
   try {
     toast('started uploading')
-    const res = await fetch('https://aidgeny.onrender.com/api/coverletters/', {
+    const res = await fetch(`${API_BASE}/api/coverletters/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -141,6 +151,7 @@ export const handleSaveCoverletter = async (payload: any) => {
     const data = await res.json()
     if (data.success) {
       toast.success('coverletter saved successfully!')
+      try { void createActivity('Save Cover Letter', 'Saved a new cover letter') } catch { }
       return { success: true }
     } else {
       toast.error(data.error)

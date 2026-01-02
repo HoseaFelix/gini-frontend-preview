@@ -3,11 +3,12 @@
 import React, { useEffect, useState } from 'react'
 import { CoverLetter, ResumeType } from '@/lib/schemes/resumeSchema'
 import FormatButtons from '../../resumemanager/components/formatButtons';
+import { API_BASE } from '@/lib/config';
 import { handleSaveCoverletter } from '@/lib/constants/constants';
 import { toast } from 'sonner';
 import TitleOverlay from '@/components/TitleOverlay';
 import BackButton from '@/components/backButton';
-import { logActivity } from '@/lib/client/recentActivityClient';
+import { createActivity } from '@/lib/client/recentActivityClient';
 
 // DOCX export is performed via a client-only module dynamically imported at runtime
 
@@ -17,7 +18,23 @@ import { logActivity } from '@/lib/client/recentActivityClient';
 const preventEnterBlur = (e: React.KeyboardEvent<HTMLElement>) => {
   if (e.key === 'Enter') {
     e.preventDefault()
-    ;(e.currentTarget as HTMLElement).blur()
+      ; (e.currentTarget as HTMLElement).blur()
+  }
+}
+
+// helper to place caret at end of a contentEditable element
+const placeCaretAtEnd = (el: HTMLElement) => {
+  try {
+    el.focus()
+    const range = document.createRange()
+    range.selectNodeContents(el)
+    range.collapse(false)
+    const sel = window.getSelection()
+    sel?.removeAllRanges()
+    sel?.addRange(range)
+  } catch (err) {
+    // ignore
+    console.log('error placing caret at end', err)
   }
 }
 
@@ -44,21 +61,21 @@ const setByPath = (obj: any, path: Array<string | number>, value: any) => {
 const Page = () => {
   const [coverLetter, setCoverletter] = useState<CoverLetter | null>(null)
   const [resume, setResume] = useState<ResumeType | null>(null)
-    const [title,setTitle] = useState('')
-    const [isVisible, setVisibility]= useState(false)
+  const [title, setTitle] = useState('')
+  const [isVisible, setVisibility] = useState(false)
 
 
-  
-  const collectTitle = (e)=>{
+
+  const collectTitle = (e) => {
     setTitle(e.target.value)
   }
 
-  const handleVisibility = ()=> {
+  const handleVisibility = () => {
     setVisibility(prev => !prev)
   }
 
-  const handleSave = async ()=>{
-    if(!title){
+  const handleSave = async () => {
+    if (!title) {
       toast('please enter a title')
     }
     const payload = {
@@ -67,40 +84,40 @@ const Page = () => {
 
     }
 
-    const data = await handleSaveCoverletter(payload)
-    if(data.success){
+    const save = await handleSaveCoverletter(payload)
+    if (save.success) {
       setVisibility(false)
-      try { void logActivity('Save Cover Letter', title || 'Untitled') } catch {}
+      try { void createActivity('Save Cover Letter', title || 'Untitled') } catch { }
     }
   }
 
-  
+
   useEffect(() => {
 
     const type = JSON.parse(localStorage.getItem('typeCoverLetter'))
 
     console.log(type)
-    if (type.type == 'old'){
-       const stored = localStorage.getItem('savedCoverLetters')
-       console.log(JSON.parse(stored)[type.index])
-            if (stored) {
-              setCoverletter(JSON.parse(stored)[type.index].data)
-            }
-    } else{
-    try {
-      const storedCover = localStorage.getItem('coverLetter')
-      const storedResume = localStorage.getItem('selectedResume')
-
-
-      if (!storedCover || !storedResume) {
-        console.warn('No stored cover letter or resume found')
-        return
+    if (type.type == 'old') {
+      const stored = localStorage.getItem('savedCoverLetters')
+      console.log(JSON.parse(stored)[type.index])
+      if (stored) {
+        setCoverletter(JSON.parse(stored)[type.index].data)
       }
-      
-      console.log(storedResume)
-      if (storedCover) setCoverletter(JSON.parse(storedCover))
-      if (storedResume) setResume(JSON.parse(storedResume))
-        if(storedCover && storedResume){
+    } else {
+      try {
+        const storedCover = localStorage.getItem('coverLetter')
+        const storedResume = localStorage.getItem('selectedResume')
+
+
+        if (!storedCover || !storedResume) {
+          console.warn('No stored cover letter or resume found')
+          return
+        }
+
+        console.log(storedResume)
+        if (storedCover) setCoverletter(JSON.parse(storedCover))
+        if (storedResume) setResume(JSON.parse(storedResume))
+        if (storedCover && storedResume) {
           const resume = JSON.parse(storedResume)
           console.log(resume)
           const cover = JSON.parse(storedCover)
@@ -115,9 +132,9 @@ const Page = () => {
           console.log(newCover)
           setCoverletter(newCover)
         }
-    } catch (err) {
-      console.warn('Failed to parse localStorage for coverLetter/resume', err)
-    }
+      } catch (err) {
+        console.warn('Failed to parse localStorage for coverLetter/resume', err)
+      }
     }
 
   }, [])
@@ -188,7 +205,12 @@ const Page = () => {
     next.letter = next.letter || []
     next.letter.push('')
     persistCover(next)
-    // Note: the new paragraph will be empty and editable — user can type and blur to save
+    // focus the newly added paragraph and place caret at end so Enter behaves normally
+    setTimeout(() => {
+      const els = document.querySelectorAll('[data-cover-paragraph]')
+      const last = els[els.length - 1] as HTMLElement | undefined
+      if (last) placeCaretAtEnd(last)
+    }, 50)
   }
 
   function getFullDate(date = new Date()) {
@@ -217,7 +239,7 @@ const Page = () => {
         toast.error('Could not load cover DOCX exporter')
         return
       }
-      try { void logActivity('Export Cover Letter', 'Template 2') } catch {}
+      try { void createActivity('Export Cover Letter', 'Template 2') } catch { }
       await fn(coverLetter, resume)
     }
   }
@@ -231,12 +253,12 @@ const Page = () => {
       {/* Back button (top-left) */}
       <BackButton />
 
-      <TitleOverlay type='Letter' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave}/>
-    <FormatButtons/>
-     <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
-        <label  className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
+      <TitleOverlay type='Letter' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={handleVisibility} handleSave={handleSave} />
+      <FormatButtons />
+      <div className=" print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
+        <label className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
           <p>Export As</p>
-          <select name="" id="" onChange={(e)=>{
+          <select name="" id="" onChange={(e) => {
             handleExport(e.target.value)
           }} >
             <option > </option>
@@ -254,73 +276,73 @@ const Page = () => {
       </div>
 
       <main className=" mt-10 print:mt-0 w-full max-w-[794px] h-max mx-auto bg-white overflow-hidden rounded-lg shadow-lg print:w-[794px] flex flex-col pb-10 relative print:mx-auto ">
-       
+
         <div className="cover-container w-full flex relative max-sm:flex-col gap-5 py-5 ">
-        <style>{`@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;  } }`}</style>
-         {/* LEFT COLUMN */}
-        <div className="w-full md:w-[28%] print:max-w-[28%] flex items-start h-auto">
-        <div className="flex flex-col gap-2 h-max pl-5 w-full">
-            {/* Name */}
-            <p
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={handleResumeFieldBlur(['name'])}
-            onKeyDown={preventEnterBlur}
-            className="text-3xl font-bold"
-            >
-            {resume?.name ?? 'Your name here'}
-            </p>
-
-            {/* Headline */}
-            <p
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={handleResumeFieldBlur(['headline'])}
-            onKeyDown={preventEnterBlur}
-            className="whitespace-normal"
-            >
-            {resume?.headline ?? 'Professional headline'}
-            </p>
-
-            {/* PHONE (label + editable content) */}
-            {resume?.contactInfo?.phone !== undefined && (
-            <>
-                <p className="font-bold">Phone</p>
-
-                <div
+          <style>{`@media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;  } }`}</style>
+          {/* LEFT COLUMN */}
+          <div className="w-full md:w-[28%] print:max-w-[28%] flex items-start h-auto">
+            <div className="flex flex-col gap-2 h-max pl-5 w-full">
+              {/* Name */}
+              <p
                 contentEditable
                 suppressContentEditableWarning
-                onBlur={handleResumeFieldBlur(['contactInfo', 'phone'])} // <-- fixed path
+                onBlur={handleResumeFieldBlur(['name'])}
                 onKeyDown={preventEnterBlur}
-                className="whitespace-normal wrap-break-word max-w-[220px] sm:max-w-[260px]"
-                >
-                {resume?.contactInfo?.phone ?? 'your phone number'}
-                </div>
-            </>
-            )}
+                className="text-3xl font-bold"
+              >
+                {resume?.name ?? 'Your name here'}
+              </p>
 
-            {/* EMAIL (label + editable content) */}
-            {resume?.contactInfo?.email !== undefined && (
-            <>
-                <p className="font-bold">E-mail</p>
-
-                <div
+              {/* Headline */}
+              <p
                 contentEditable
                 suppressContentEditableWarning
-                onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
+                onBlur={handleResumeFieldBlur(['headline'])}
                 onKeyDown={preventEnterBlur}
-                className="whitespace-normal wrap-break-word max-w-[220px] sm:max-w-[260px]"
-                >
-                {resume?.contactInfo?.email ?? 'your email address'}
-                </div>
-            </>
-            )}
-        </div>
-        </div>
+                className="whitespace-normal"
+              >
+                {resume?.headline ?? 'Professional headline'}
+              </p>
+
+              {/* PHONE (label + editable content) */}
+              {resume?.contactInfo?.phone !== undefined && (
+                <>
+                  <p className="font-bold">Phone</p>
+
+                  <div
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={handleResumeFieldBlur(['contactInfo', 'phone'])} // <-- fixed path
+                    onKeyDown={preventEnterBlur}
+                    className="whitespace-normal wrap-break-word max-w-[220px] sm:max-w-[260px]"
+                  >
+                    {resume?.contactInfo?.phone ?? 'your phone number'}
+                  </div>
+                </>
+              )}
+
+              {/* EMAIL (label + editable content) */}
+              {resume?.contactInfo?.email !== undefined && (
+                <>
+                  <p className="font-bold">E-mail</p>
+
+                  <div
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={handleResumeFieldBlur(['contactInfo', 'email'])}
+                    onKeyDown={preventEnterBlur}
+                    className="whitespace-normal wrap-break-word max-w-[220px] sm:max-w-[260px]"
+                  >
+                    {resume?.contactInfo?.email ?? 'your email address'}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
 
 
           <div className="w-full pt-10 px-5 flex flex-col">
-            
+
 
             <div className="mt-5 font-bold">{getFullDate()}</div>
 
@@ -341,20 +363,20 @@ const Page = () => {
                 coverLetter?.letter?.map((p, i) => (
                   <p
                     key={i}
+                    data-cover-paragraph
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={handleCoverFieldBlur(['letter', i])}
-                    onKeyDown={preventEnterBlur}
                   >
                     {p}
                   </p>
                 ))
               ) : (
                 <p
+                  data-cover-paragraph
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={handleCoverFieldBlur(['letter', 0])}
-                  onKeyDown={preventEnterBlur}
                 >
                   {''}
                 </p>

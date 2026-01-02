@@ -28,6 +28,8 @@ import { toast } from 'sonner'
 import { exportToDocx } from '@/lib/client/docxExport'
 import { logActivity } from '@/lib/client/recentActivityClient'
 import BackButton from '@/components/backButton'
+import { API_BASE } from '@/lib/config'
+import { createActivity } from '@/lib/client/recentActivityClient'
 
 // Note: Unused imports below - can be removed in cleanup:
 // import jsPDF from "jspdf";
@@ -89,12 +91,12 @@ const Template1Page = () => {
   const [isVisible, setIsvisible] = useState(false)
 
 
-  const collectTitle = (e)=>{
+  const collectTitle = (e) => {
     setTitle(e.target.value)
   }
 
-  const setVisiblity = ()=>{
-    setIsvisible((prev)=> !prev)
+  const setVisiblity = () => {
+    setIsvisible((prev) => !prev)
   }
 
   useEffect(() => {
@@ -134,45 +136,45 @@ const Template1Page = () => {
 
       try {
         if (originaResume && parsed) {
-            const formatedResume = {
-                  name: originaResume.name,
-                  headline:parsed.headline,
-                  contactInfo: originaResume.contactInfo,
-                  education: parsed.education,
-                  skills: parsed.skills,
-                  awards: parsed.awards,
-                  careerObjective: parsed.careerObjective,
-                  experience: parsed.experience,
-                  projects: parsed.projects
+          const formatedResume = {
+            name: originaResume.name,
+            headline: parsed.headline,
+            contactInfo: originaResume.contactInfo,
+            education: parsed.education,
+            skills: parsed.skills,
+            awards: parsed.awards,
+            careerObjective: parsed.careerObjective,
+            experience: parsed.experience,
+            projects: parsed.projects
 
-            }
+          }
 
           setResume(formatedResume)
           localStorage.setItem('resume', JSON.stringify(formatedResume))
           console.log(formatedResume)
-          
-      }else if (parsed) {
+
+        } else if (parsed) {
           setResume(parsed)
           localStorage.setItem('resume', JSON.stringify(parsed))
         }
       } finally {
         localStorage.removeItem('originalResume')
       }
-    } else{
+    } else {
       const fetchData = async () => {
-              const savedResume = JSON.parse(localStorage.getItem('currentResume'))
-              if (savedResume) {
-                setResume(savedResume)
-                console.log(savedResume)
-              }
-            };
-            
-            fetchData()
-      
-      
-      
+        const savedResume = JSON.parse(localStorage.getItem('currentResume'))
+        if (savedResume) {
+          setResume(savedResume)
+          console.log(savedResume)
+        }
+      };
+
+      fetchData()
+
+
+
     }
-   
+
 
     useCurrentNav.getState().setCurrentNav('Resume Manager')
   }, [])
@@ -217,118 +219,118 @@ const Template1Page = () => {
     }
 
   // Handler for editing an ITEM inside skills/awards/etc. (path points to array, last element is index)
- // Generic array item blur -> remove empty items instead of saving empty strings
-const handleArrayItemBlur =
-  (pathToArray: Array<string | number>, index: number) =>
-  (e: React.FocusEvent<HTMLElement>) => {
-    const text = (e.currentTarget as HTMLElement).innerText ?? ''
-    const trimmed = text.trim()
+  // Generic array item blur -> remove empty items instead of saving empty strings
+  const handleArrayItemBlur =
+    (pathToArray: Array<string | number>, index: number) =>
+      (e: React.FocusEvent<HTMLElement>) => {
+        const text = (e.currentTarget as HTMLElement).innerText ?? ''
+        const trimmed = text.trim()
 
-    updateAndPersist((prev) => {
-      const next: any = JSON.parse(JSON.stringify(prev))
-      // traverse to array
-      let curr: any = next
-      for (let i = 0; i < pathToArray.length; i++) {
-        curr = curr[pathToArray[i] as any]
+        updateAndPersist((prev) => {
+          const next: any = JSON.parse(JSON.stringify(prev))
+          // traverse to array
+          let curr: any = next
+          for (let i = 0; i < pathToArray.length; i++) {
+            curr = curr[pathToArray[i] as any]
+          }
+          if (!Array.isArray(curr)) return next
+
+          if (trimmed === '') {
+            // remove the item entirely
+            curr.splice(index, 1)
+          } else {
+            // save trimmed value
+            curr[index] = trimmed
+          }
+
+          return next
+        })
       }
-      if (!Array.isArray(curr)) return next
-
-      if (trimmed === '') {
-        // remove the item entirely
-        curr.splice(index, 1)
-      } else {
-        // save trimmed value
-        curr[index] = trimmed
-      }
-
-      return next
-    })
-  }
 
 
   // Experience: edit specific achievement sentence
-// Experience achievements: remove an achievement sentence when cleared
-const handleExperienceAchievementBlur =
-  (expIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
-    const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
+  // Experience achievements: remove an achievement sentence when cleared
+  const handleExperienceAchievementBlur =
+    (expIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
+      const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
 
-    updateAndPersist((prev) => {
-      const next: any = JSON.parse(JSON.stringify(prev))
-      const exp = next.experience[expIndex]
-      const arr = splitSentences(exp.achievements) // array of sentences
+      updateAndPersist((prev) => {
+        const next: any = JSON.parse(JSON.stringify(prev))
+        const exp = next.experience[expIndex]
+        const arr = splitSentences(exp.achievements) // array of sentences
 
-      if (text === '') {
-        // remove empty sentence
-        arr.splice(achIndex, 1)
-      } else {
-        arr[achIndex] = text
-      }
+        if (text === '') {
+          // remove empty sentence
+          arr.splice(achIndex, 1)
+        } else {
+          arr[achIndex] = text
+        }
 
-      exp.achievements = joinSentences(arr)
-      return next
-    })
-  }
+        exp.achievements = joinSentences(arr)
+        return next
+      })
+    }
 
 
   // Projects: edit specific achievement sentence
- // Project achievements: same logic as experience
-const handleProjectAchievementBlur =
-  (projIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
-    const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
+  // Project achievements: same logic as experience
+  const handleProjectAchievementBlur =
+    (projIndex: number, achIndex: number) => (e: React.FocusEvent<HTMLElement>) => {
+      const text = (e.currentTarget as HTMLElement).innerText.trim().replace(/\s+$/g, '')
 
-    updateAndPersist((prev) => {
-      const next: any = JSON.parse(JSON.stringify(prev))
-      const proj = next.projects[projIndex]
-      const arr = splitSentences(proj.achievements)
+      updateAndPersist((prev) => {
+        const next: any = JSON.parse(JSON.stringify(prev))
+        const proj = next.projects[projIndex]
+        const arr = splitSentences(proj.achievements)
 
-      if (text === '') {
-        arr.splice(achIndex, 1)
-      } else {
-        arr[achIndex] = text
-      }
+        if (text === '') {
+          arr.splice(achIndex, 1)
+        } else {
+          arr[achIndex] = text
+        }
 
-      proj.achievements = joinSentences(arr)
-      return next
-    })
-  }
+        proj.achievements = joinSentences(arr)
+        return next
+      })
+    }
 
 
   // const reportRef = useRef<HTMLDivElement | null>(null);
-const handleExport = async (type: string) => {
-  if (type === "PDF") {
-    window.print()
-    return;
-  }
+  const handleExport = async (type: string) => {
+    if (type === "PDF") {
+      window.print()
+      return;
+    }
 
-  if (type === "DOCX") {
+    if (type === "DOCX") {
+      try {
+        void createActivity('Export Resume', 'Template 1')
+      } catch { }
+      exportToDocx(resume)
+    }
+  };
+
+
+
+  const handleSave = async () => {
+    if (!title) {
+      toast.error('please enter title')
+      return;
+    }
+    const token = useAuthStore.getState().token;
+
     try {
-      void logActivity('Export Resume', 'Template 1')
-    } catch {}
-    exportToDocx(resume)
-  }
-};
-
-
-
-  const handleSave = async ()=>{
-    if(!title){
-        toast.error('please enter title')
-        return;
-      }
-      const token = useAuthStore.getState().token;
-
-    try{
       toast('uploading resume to cloud')
 
-      
-        const payload = {
-          file_name: title,
-          data: resume,
-        }
 
-      const res = await fetch("https://aidgeny.onrender.com/api/documents/json", {
+      const payload = {
+        file_name: title,
+        data: resume,
+      }
+
+      const res = await fetch(`${API_BASE}/api/documents/json`, {
         method: "POST",
-        headers:{
+        headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
 
@@ -340,19 +342,19 @@ const handleExport = async (type: string) => {
 
       })
 
-      
+
 
       const data = await res.json()
       console.log(data)
-      if(data.success){
+      if (data.success) {
         toast.success('resume saved successfully!')
-        try { void logActivity('Save Resume', title || 'Untitled') } catch {}
+        try { void createActivity('Save Resume', title || 'Untitled') } catch { }
       } else {
         toast.error(data.error)
         return
       }
 
-    } catch (e){
+    } catch (e) {
       console.error(e)
       toast.error(e.message)
     }
@@ -360,7 +362,7 @@ const handleExport = async (type: string) => {
 
     // const resumeArray = JSON.parse(localStorage.getItem('savedResume')) || []
 
-  
+
     // resumeArray.push({
     //   name: title,
     //   resume: resume
@@ -373,7 +375,7 @@ const handleExport = async (type: string) => {
     setVisiblity()
   }
 
-    if (!resume) {
+  if (!resume) {
     return (
       <section className="w-full h-screen flex items-center justify-center bg-gray-100 relative">
         <p className="text-lg text-gray-500">No resume data found.</p>
@@ -382,28 +384,28 @@ const handleExport = async (type: string) => {
   }
 
   const contactItems = [
-  resume?.contactInfo?.phone ?? 'phone number',
-  resume?.contactInfo?.email ?? 'email@example.com',
-  resume?.contactInfo?.address ?? 'your address',
-  resume?.contactInfo?.linkedIn ?? 'linkedin profile',
-];
+    resume?.contactInfo?.phone ?? 'phone number',
+    resume?.contactInfo?.email ?? 'email@example.com',
+    resume?.contactInfo?.address ?? 'your address',
+    resume?.contactInfo?.linkedIn ?? 'linkedin profile',
+  ];
 
-const printable = (val: any) => {
-  if (val == null) return '';
-  if (Array.isArray(val)) return val.join(', ');
-  // If it's an object (e.g. { js: true }) try reasonable conversions:
-  if (typeof val === 'object') {
-    try {
-      // flatten simple object into "k: v" pairs
-      const entries = Object.entries(val);
-      if (entries.length) return entries.map(([k, v]) => `${k}: ${v}`).join(', ');
-      return JSON.stringify(val);
-    } catch {
-      return String(val);
+  const printable = (val: any) => {
+    if (val == null) return '';
+    if (Array.isArray(val)) return val.join(', ');
+    // If it's an object (e.g. { js: true }) try reasonable conversions:
+    if (typeof val === 'object') {
+      try {
+        // flatten simple object into "k: v" pairs
+        const entries = Object.entries(val);
+        if (entries.length) return entries.map(([k, v]) => `${k}: ${v}`).join(', ');
+        return JSON.stringify(val);
+      } catch {
+        return String(val);
+      }
     }
-  }
-  return String(val);
-};
+    return String(val);
+  };
 
 
   return (
@@ -412,13 +414,13 @@ const printable = (val: any) => {
       {/* Back button (top-left) */}
       <BackButton />
 
-      <TitleOverlay type='Resume' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisiblity} handleSave={handleSave}/>
-     
+      <TitleOverlay type='Resume' isVisible={isVisible} collectTitle={collectTitle} setVisiblity={setVisiblity} handleSave={handleSave} />
+
       <FormatButtons />
       <div className="print:hidden absolute top-4 right-4 flex flex-wrap gap-2 mb-5">
-        <label  className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
+        <label className=' flex gap-3 w-max p-2 border border-foreground rounded-lg'>
           <p>Export As</p>
-          <select name="" id="" onChange={(e)=>{
+          <select name="" id="" onChange={(e) => {
             handleExport(e.target.value)
           }} >
             <option > </option>
@@ -439,7 +441,7 @@ const printable = (val: any) => {
 
       <div
         ref={resumeRef}
-        
+
         id="resume-div"
         className="resume-container bg-white shadow-lg rounded-lg p-4 sm:p-6 border border-text/70 w-full sm:max-w-[900px] print:w-[1100px] mx-auto "
       >
@@ -469,36 +471,36 @@ const printable = (val: any) => {
             </p>
           </div>
 
-            <div className="flex items-center justify-center text-text/70 gap-1 text-sm sm:text-base flex-wrap w-full print:items-center">
-                {contactItems
-                  .filter(Boolean) // remove empty or undefined fields
-                  .map((item, index, arr) => (
-                              <React.Fragment key={index}>
-                                  <p
-                                  contentEditable
-                                  suppressContentEditableWarning
-                                  onBlur={handleFieldBlur(['contactInfo', Object.keys(resume?.contactInfo ?? {})[index]])}
-                                  onKeyDown={preventEnterBlur}
-                                  >
-                                  {item}
-                                  </p>
-          
-                                  {/* Only show dot if not the last visible item */}
-                                  {index < arr.length - 1 && (
-                                  <div className="flex items-center justify-center h-6">
-                                      <p className="font-bold text-2xl leading-none">·</p>
-                                  </div>
-                                  )}
-                              </React.Fragment>
-                ))}
-            </div>
+          <div className="flex items-center justify-center text-text/70 gap-1 text-sm sm:text-base flex-wrap w-full print:items-center">
+            {contactItems
+              .filter(Boolean) // remove empty or undefined fields
+              .map((item, index, arr) => (
+                <React.Fragment key={index}>
+                  <p
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={handleFieldBlur(['contactInfo', Object.keys(resume?.contactInfo ?? {})[index]])}
+                    onKeyDown={preventEnterBlur}
+                  >
+                    {item}
+                  </p>
+
+                  {/* Only show dot if not the last visible item */}
+                  {index < arr.length - 1 && (
+                    <div className="flex items-center justify-center h-6">
+                      <p className="font-bold text-2xl leading-none">·</p>
+                    </div>
+                  )}
+                </React.Fragment>
+              ))}
+          </div>
         </div>
 
         {/* Main content */}
         <div
 
-        
-        className="flex flex-col md:flex-row gap-5 mt-6 print:flex-row print:gap-5">
+
+          className="flex flex-col md:flex-row gap-5 mt-6 print:flex-row print:gap-5">
 
           {/* Right column */}
           <div className="flex flex-col gap-5 flex-1">
@@ -606,7 +608,7 @@ const printable = (val: any) => {
               </div>
             )}
 
-                        {/*Skills*/}
+            {/*Skills*/}
             <div className="flex flex-col gap-4">
               <p className="font-bold text-xl">SKILLS</p>
 
@@ -734,7 +736,7 @@ const printable = (val: any) => {
                     onBlur={handleFieldBlur(['skills', 'certifications'])}
                     onKeyDown={preventEnterBlur}
                     className="pl-5 text-sm sm:text-base"
-                    >
+                  >
                     {printable(resume?.skills?.certifications)}
                   </p>
                 </div>
@@ -795,7 +797,7 @@ const printable = (val: any) => {
               ))}
             </div>
 
-                        {/* Awards */}
+            {/* Awards */}
             {resume?.awards && resume?.awards.length > 0 && (
               <div className="flex flex-col gap-2">
                 <p className="font-bold text-xl">AWARDS</p>

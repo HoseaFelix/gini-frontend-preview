@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import TemplateCarousel from '../../../../../components/generalComponents/carouselTemplates'
 import LoadingStatus from '@/components/generalComponents/loadingStatus'
+import { createActivity } from '@/lib/client/recentActivityClient'
 
 const Overlay = () => {
 
@@ -13,11 +14,11 @@ const Overlay = () => {
   const [description, setJobDescription] = useState("")
   const [canContinue, setCanContinue] = useState(false)
   const [resumeAvailable, setResumeAvailable] = useState(false)
-  const [resumeIndex, setResumeIndex] = useState<null|number>(null)
+  const [resumeIndex, setResumeIndex] = useState<null | number>(null)
   const [picker, setPicker] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState(false)
   const [finishedAnayzing, setFinishedAnalyzing] = useState(false)
-  const [loading, setLoading]= useState("")
+  const [loading, setLoading] = useState("")
   const [templateIndex, setSelectedTemplateIndex] = useState<number | null>(null)
   const [savedResume, setSavedResume] = useState<any[]>([])
 
@@ -33,36 +34,36 @@ const Overlay = () => {
   }, [])
 
 
-    useEffect(()=>{
-      if(resumeIndex !== null && description){
-        setCanContinue(true)
-      }
-    },[resumeIndex, description])
+  useEffect(() => {
+    if (resumeIndex !== null && description) {
+      setCanContinue(true)
+    }
+  }, [resumeIndex, description])
 
-  const handleFirstContinue = async ()=>{
+  const handleFirstContinue = async () => {
 
-    if(resumeIndex == null){
+    if (resumeIndex == null) {
       toast('please select a resume')
       return;
     }
 
-    if(!description){
+    if (!description) {
       toast('please add a description')
       return;
     }
 
 
     const rawResume = savedResume[resumeIndex].data
-   
+
     setCurrentView(1)
     localStorage.setItem('selectedResume', JSON.stringify(rawResume))
-     console.log(JSON.parse(localStorage.getItem('selectedResume')))
-    try{
+    console.log(JSON.parse(localStorage.getItem('selectedResume')))
+    try {
 
       setLoading('ready')
-      const data = await writeCoverLetter({description, rawResume, language})
+      const data = await writeCoverLetter({ description, rawResume, language })
 
-      if(data){
+      if (data) {
         localStorage.setItem("coverLetter", JSON.stringify(data))
 
         console.log("Saved cover letter:", localStorage.getItem("coverLetter"))
@@ -70,13 +71,14 @@ const Overlay = () => {
         toast('cover letter successfully generated')
         setLoading('done')
         setFinishedAnalyzing(true)
+        try { void createActivity('Generate Cover Letter', 'Generated a new cover letter') } catch { }
 
-       localStorage.setItem('templateIndex',JSON.stringify(templateIndex) )
+        localStorage.setItem('templateIndex', JSON.stringify(templateIndex))
       }
-      
 
 
-    } catch(e){
+
+    } catch (e) {
       console.error(e)
       toast("Failed to generate cover letter ❌");
       setFinishedAnalyzing(false)
@@ -88,87 +90,87 @@ const Overlay = () => {
 
 
   useEffect(() => {
-  if (savedResume.length > 0) {
-    setResumeAvailable(true);
-  } else {
-    setResumeAvailable(false);
-  }
-}, [savedResume]);
+    if (savedResume.length > 0) {
+      setResumeAvailable(true);
+    } else {
+      setResumeAvailable(false);
+    }
+  }, [savedResume]);
 
-  const redirectToresumemanager = ()=>{
+  const redirectToresumemanager = () => {
     router.push('/resumemanager')
   }
 
-  const togglePicker = ()=> setPicker((prev)=>!prev)
+  const togglePicker = () => setPicker((prev) => !prev)
 
-  const handleResumeIndex = (index)=>{
+  const handleResumeIndex = (index) => {
     setResumeIndex(index)
     togglePicker()
   }
-  
+
   const templates = [
     '/img/carouseltemplate1.png',
     '/img/carouseltemplate2.png',
     '/img/carouseltemplate3.jpg',
-    
+
   ]
 
-  const handleSelect= (index)=>{
+  const handleSelect = (index) => {
     setSelectedTemplateIndex(index)
   }
 
 
-  const handleLastContinue = ()=>{
-    if(finishedAnayzing){
-      
+  const handleLastContinue = () => {
+    if (finishedAnayzing) {
+
       setSelectedTemplate(true)
-    } else if(!finishedAnayzing){
+    } else if (!finishedAnayzing) {
       setSelectedTemplate(true)
-      
-      
-      
+
+
+
     }
   }
   const totalItems = 2
 
-  const collectJobDescription = (e : any)=>{
+  const collectJobDescription = (e: any) => {
     setJobDescription(e.target.value)
   }
 
   useEffect(() => {
-  if (selectedTemplate && finishedAnayzing) {
-     localStorage.setItem('typeCoverLetter',JSON.stringify({
+    if (selectedTemplate && finishedAnayzing) {
+      localStorage.setItem('typeCoverLetter', JSON.stringify({
         type: 'new',
         index: ''
       }))
-   
-    localStorage.setItem('templateIndex', JSON.stringify(templateIndex))
 
-    setTimeout(() => {
-      router.push(`/coverlettergenerator/covertemplate${templateIndex + 1}`)
-    }, 300)
-  }
-}, [selectedTemplate, finishedAnayzing, templateIndex, router])
+      localStorage.setItem('templateIndex', JSON.stringify(templateIndex))
+
+      setTimeout(() => {
+        router.push(`/coverlettergenerator/covertemplate${templateIndex + 1}`)
+      }, 300)
+    }
+  }, [selectedTemplate, finishedAnayzing, templateIndex, router])
 
 
-  
+
   return (
     <section className='w-full h-full p-4 overflow-hidden flex flex-col gap-5 relative'>
 
       {/* progres bars */}
       <div className="w-full overflow-x-hidden z-20 h-max max-w-2xl mx-auto">
         <div className=' h-fit w-full px-2 sm:px-4 mx-auto flex flex-nowrap gap-1 sm:gap-2 md:gap-5'>
-            <div className='h-2 flex-1 min-w-0 rounded-lg bg-blue-500'></div>
-            <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView >= 1 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
-            </div>
+          <div className='h-2 flex-1 min-w-0 rounded-lg bg-blue-500'></div>
+          <div className={`h-2 flex-1 min-w-0 rounded-lg ${currentView >= 1 ? 'bg-blue-500' : 'bg-text/60'}`}></div>
+        </div>
       </div>
 
       <div className='slide-containter w-full h-full relative overflow-x-hidden overflow-y-scroll'>
-        <div 
+        <div
           className='justify-between mt-10 grid-cols-2 grid transition-transform duration-500'
           style={{
-            width: `${totalItems*100}%`,
-            transform:` translateX(-${currentView * (100/totalItems)}%)`
+            width: `${totalItems * 100}%`,
+            transform: ` translateX(-${currentView * (100 / totalItems)}%)`
           }}
         >
           {/* slide 1 */}
@@ -180,26 +182,26 @@ const Overlay = () => {
                 <p>{resumeIndex !== null ? savedResume[resumeIndex].file_name : 'No resume seleted'}</p>
 
                 {resumeAvailable && (
-                  <div 
-                  onClick={togglePicker}
-                  className='opacity-70 h-fit w-fit hover:cursor-pointer'>
+                  <div
+                    onClick={togglePicker}
+                    className='opacity-70 h-fit w-fit hover:cursor-pointer'>
                     {resumeIndex !== null ? 'Change' : 'Select Resume'}
                   </div>
                 )}
 
                 {!resumeAvailable && (
                   <div
-                    onClick={redirectToresumemanager} 
+                    onClick={redirectToresumemanager}
                     className='opacity-70 h-fit w-fit hover:cursor-pointer'>Create resume
-                    
+
                   </div>
                 )}
-                
+
 
               </div>
 
               <div className='border rounded-lg p-4 border-black flex flex-col gap-5'>
-                <LanguageDropdown setLanguage={setLanguage}/>
+                <LanguageDropdown setLanguage={setLanguage} />
 
                 <textarea className='border border-text/50 px-4 py-2 min-h-[200px] rounded-lg w-full ' value={description} onChange={collectJobDescription} />
 
@@ -210,8 +212,8 @@ const Overlay = () => {
             <div className='w-full h-fit flex items-end justify-end gap-3 '>
               <button
                 onClick={handleFirstContinue}
-                className={`px-4 py-2 rounded ${canContinue? 'bg-blue-600': 'bg-text/50'} text-white`}
-              
+                className={`px-4 py-2 rounded ${canContinue ? 'bg-blue-600' : 'bg-text/50'} text-white`}
+
               >
                 Continue
 
@@ -219,7 +221,7 @@ const Overlay = () => {
 
             </div>
 
-            
+
 
           </div>
 
@@ -228,15 +230,15 @@ const Overlay = () => {
           <div className={`w-full h-full flex flex-col gap-5 max-w-full `}>
             {
               selectedTemplate && (
-              <div className='flex gap-2'>
-              <LoadingStatus loading={loading}/>
-              generating cover letter ...
+                <div className='flex gap-2'>
+                  <LoadingStatus loading={loading} />
+                  generating cover letter ...
 
-            </div>
+                </div>
 
               )
             }
-           
+
             <div className={`${selectedTemplate ? 'hidden' : ''} w-full min-h-[360px] relative`}>
               <TemplateCarousel images={templates} onSelect={handleSelect} />
 
@@ -245,8 +247,8 @@ const Overlay = () => {
             <div className={`${selectedTemplate ? 'hidden' : ''} w-full h-fit flex items-end justify-end gap-3 `}>
               <button
                 onClick={handleLastContinue}
-                className={`px-4 py-2 rounded ${canContinue? 'bg-blue-600': 'bg-text/50'} text-white`}
-              
+                className={`px-4 py-2 rounded ${canContinue ? 'bg-blue-600' : 'bg-text/50'} text-white`}
+
               >
                 Continue
 
@@ -265,16 +267,16 @@ const Overlay = () => {
       </div>
 
       {/* resume picker */}
-      <div className={`${picker ? '': 'hidden'} absolute bg-white border shadow-md rounded-lg backdrop:saturate-150 backdrop:blur-md inset-4 md:inset-10` }>
+      <div className={`${picker ? '' : 'hidden'} absolute bg-white border shadow-md rounded-lg backdrop:saturate-150 backdrop:blur-md inset-4 md:inset-10`}>
         <div className='w-full flex flex-col px-4 md:px-10 gap-3'>
           <p className='mx-auto font-bold mt-5 text-xl'>Select Resume</p>
 
-          {savedResume.length>0 && savedResume.map((resume, index)=>(
+          {savedResume.length > 0 && savedResume.map((resume, index) => (
 
-            <div 
-              onClick={()=>handleResumeIndex(index)}
-              key={index} 
-              className={`w-full p-4 border rounded-md hover:cursor-pointer ${resumeIndex == index ? 'border-foreground': ''}  `}>
+            <div
+              onClick={() => handleResumeIndex(index)}
+              key={index}
+              className={`w-full p-4 border rounded-md hover:cursor-pointer ${resumeIndex == index ? 'border-foreground' : ''}  `}>
               {resume.file_name}
 
             </div>
@@ -286,7 +288,7 @@ const Overlay = () => {
       </div>
 
 
-        
+
     </section>
   )
 }

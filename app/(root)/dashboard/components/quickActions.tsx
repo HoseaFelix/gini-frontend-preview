@@ -31,25 +31,23 @@ const QuickActions = () => {
 
     <div className='hidden md:flex gap-7 flex-wrap'>
         {quickactions.map((action, index)=>(
-            <div 
-            
-            
-            key={index} className='p-3 flex items-center gap-2 bg-white borer border-black border-1 rounded-lg shadow hover:cursor-pointer'>
-                <div className='w-fit h-fit hover:cursor-pointer' 
-                    onClick={action.action}
-                >
+            <button
+            type="button"
+            onClick={action.action}
+            key={index}
+            className='p-3 flex items-center gap-2 bg-white border-black border rounded-lg shadow hover:cursor-pointer text-left'
+            >
+                <div className='w-fit h-fit'>
                     <Image
-                        className=''
                         src={action.icon}
                         alt={`${action.name} icon`}
                         width={20}
                         height={20}
-
                     />
                 </div>
                 <p>{action.name}</p>
 
-            </div>
+            </button>
         ))}
       
     </div>

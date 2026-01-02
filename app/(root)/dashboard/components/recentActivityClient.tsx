@@ -5,16 +5,11 @@
  * Shows top 2 items by default and expands to full list when the user clicks.
  */
 import React, { useEffect, useState } from 'react'
-import { fetchRecentActivities } from '@/lib/client/recentActivityClient'
+import { getActivities, RecentActivity } from '@/lib/client/recentActivityClient'
 
-type Activity = {
-  id?: number | string
-  name?: string
-  content?: string
-  time?: string
-}
+type Activity = RecentActivity
 
-const RecentActivity = () => {
+const RecentActivities = () => {
   const [items, setItems] = useState<Activity[]>([])
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -23,11 +18,16 @@ const RecentActivity = () => {
     let cancelled = false
     const load = async () => {
       setLoading(true)
-      const data = await fetchRecentActivities(expanded ? 0 : 2)
-      if(!cancelled){
-        setItems(data)
+      try {
+        const data = await getActivities(expanded ? 0 : 2)
+        if (!cancelled) setItems(data)
+      } catch (err) {
+        // clear, descriptive console log for debugging
+        console.error('Failed to load recent activities (dashboard)', err)
+        if (!cancelled) setItems([])
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-      setLoading(false)
     }
     load()
     return ()=>{ cancelled = true }
@@ -44,7 +44,7 @@ const RecentActivity = () => {
 
       {loading ? (
         <p className='text-sm text-gray-500'>Loading...</p>
-      ) : items.length > 0 ? (
+      ) : items?.length > 0 ? (
         items.map((activity)=> (
           <div key={activity.id ?? activity.time} className='flex justify-between p-4 hover:border hover:border-blue-500 border rounded-lg transition-colors hover:cursor-pointer'>
             <div>
@@ -61,4 +61,4 @@ const RecentActivity = () => {
   )
 }
 
-export default RecentActivity
+export default RecentActivities

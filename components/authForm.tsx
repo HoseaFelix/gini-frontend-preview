@@ -3,15 +3,16 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/store";
-import { logActivity } from '@/lib/client/recentActivityClient';
+import { logActivity, createActivity } from '@/lib/client/recentActivityClient';
+import { API_BASE } from '@/lib/config';
 
 
 const AuthForm = ({ type }: { type: authType }) => {
 
-  
+
   const router = useRouter()
   const isSignUp = type === "signup";
   const isReset = type == 'reset-password';
@@ -50,7 +51,7 @@ const AuthForm = ({ type }: { type: authType }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true)
-    
+
 
     // Check again before submitting
     validateEmail(email);
@@ -62,14 +63,14 @@ const AuthForm = ({ type }: { type: authType }) => {
     }
 
     const payload = isSignUp
-    ? { firstName, email, password }
-    : { email, password };
+      ? { firstName, email, password }
+      : { email, password };
 
     let data;
 
     try {
-      if (type== 'signup' || type == 'login'){
-        const res = await fetch(`https://aidgeny.onrender.com/api/auth/${type}`, {
+      if (type == 'signup' || type == 'login') {
+        const res = await fetch(`${API_BASE}/api/auth/${type}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -78,10 +79,10 @@ const AuthForm = ({ type }: { type: authType }) => {
         data = await res.json();
 
 
-      } else{
+      } else {
 
-        try{
-          const exists = await fetch(`https://aidgeny.onrender.com/api/auth/exists/${email}`, {
+        try {
+          const exists = await fetch(`${API_BASE}/api/auth/exists/${email}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
           });
@@ -90,114 +91,114 @@ const AuthForm = ({ type }: { type: authType }) => {
           const exist = await exists.json()
           console.log(exist)
 
-          if(exist){
+          if (exist) {
             console.log(payload)
-            const res = await fetch(`https://aidgeny.onrender.com/api/auth/${type}`, {
+            const res = await fetch(`${API_BASE}/api/auth/${type}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 email: email,
-                newPassword:password
+                newPassword: password
               }),
             });
 
             data = await res.json()
 
             console.log(data)
-            if(data.success){
+            if (data.success) {
               toast.success('password changed successfully')
               router.push('/sign-in')
               setLoading(false)
               return
-            } else{
+            } else {
               toast.error('an error occurred')
               return
             }
 
-          } else{
+          } else {
             toast('user does not exist in our database')
           }
-        } catch(e){
+        } catch (e) {
           console.error(e)
         }
 
 
       }
 
-      
 
 
-      if(!data.success) {
 
-          if(data.error == 'User already exists'){
-           toast.error('user already have an account, redirecting to sign in')
-            router.push('/sign-in')
-            setLoading(false)
-            return
-          }
+      if (!data.success) {
 
-          toast.error(data.error)
-          console.log(data)
-
-
+        if (data.error == 'User already exists') {
+          toast.error('user already have an account, redirecting to sign in')
+          router.push('/sign-in')
           setLoading(false)
           return
+        }
+
+        toast.error(data.error)
+        console.log(data)
+
+
+        setLoading(false)
+        return
       }
 
-      if(isSignUp) {
+      if (isSignUp) {
         toast.success('signed up successfully, please sign in')
-        try { void logActivity('Sign Up', `New user ${email} registered`) } catch {}
+        try { void logActivity('Sign Up', `New user ${email} registered`) } catch { }
         router.push('/sign-in')
         setLoading(false)
-      } else{
+      } else {
 
-          useAuthStore.getState().setUser(data.user, data.token, rememberMe)
-          toast.success(data.message)
-          try { void logActivity('Sign In', `User ${data.user?.email || email} signed in`) } catch {}
-          router.push('/dashboard')
-          setLoading(false)
+        useAuthStore.getState().setUser(data.user, data.token, rememberMe)
+        toast.success(data.message)
+        try { void createActivity('Sign In', `User ${data.user?.email || email} signed in`) } catch { }
+        router.push('/dashboard')
+        setLoading(false)
       }
       setLoading(false)
 
 
     } catch (e) {
       console.error("Network error:", e);
-    } finally{
+    } finally {
       setLoading(false)
     }
-   
+
   };
 
-  const handleRemember = ()=>{
-    setRemember((prev)=>!prev)
+  const handleRemember = () => {
+    setRemember((prev) => !prev)
   }
 
-  const handleLinkedInAuth = async () =>{
+  const handleLinkedInAuth = async () => {
 
-    window.location.href=`https://aidgeny.onrender.com/api/linkedin/${isSignUp ? 'signup' : 'login'}`
+    window.location.href = `${API_BASE}/api/linkedin/${isSignUp ? 'signup' : 'login'}`
 
 
   }
-  const handleGoogleAuth = () =>{
-    window.location.href=`https://aidgeny.onrender.com/api/google/${isSignUp ? 'signup' : 'login'}`
+  const handleGoogleAuth = () => {
+    window.location.href = `${API_BASE}/api/google/${isSignUp ? 'signup' : 'login'}`
   }
 
   return (
     <div className=" w-full border-text border md:w-[524px] h-fit bg-white shadow-md py-10 px-4 md:px-20 rounded-md flex items-center justify-center flex-col mx-auto">
       <p className="font-bold text-xl md:text-xl">
-        {isSignUp ? "Fill out the form below to sign up" : isReset ? 'Reset Password' :  "Welcome back"}
+        {isSignUp ? "Fill out the form below to sign up" : isReset ? 'Reset Password' : "Welcome back"}
       </p>
 
       <form onSubmit={handleSubmit} className="w-full mt-5 auth-form flex flex-col gap-3">
         {isSignUp && (
           <>
             <label>First Name</label>
-            <input 
-                onChange={(e)=>{
-                  setName(e.target.value)
-                }}
-                type="text" name="firstName" 
-                className="auth-input focus:outline-none" />
+            <input
+              onChange={(e) => {
+                setName(e.target.value)
+              }}
+              type="text" name="firstName"
+              className="auth-input focus:outline-none" />
           </>
         )}
 
@@ -250,41 +251,40 @@ const AuthForm = ({ type }: { type: authType }) => {
 
         {isSignUp && (
           <>
-           <label>Confirm Password</label>
-                <div className="relative">
-                <input
-                    type={confirmPasswordVisible ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    validateConfirmPassword(e.target.value);
-                    }}
-                    className={`auth-input w-full border pr-10 ${
-                    confirmPassword && confirmPasswordError === null
-                        ? "border-green-500"
-                        : confirmPasswordError
-                        ? "border-red-500"
-                        : ""
-                    }`}
+            <label>Confirm Password</label>
+            <div className="relative">
+              <input
+                type={confirmPasswordVisible ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  validateConfirmPassword(e.target.value);
+                }}
+                className={`auth-input w-full border pr-10 ${confirmPassword && confirmPasswordError === null
+                  ? "border-green-500"
+                  : confirmPasswordError
+                    ? "border-red-500"
+                    : ""
+                  }`}
+              />
+              <span
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+              >
+                <Image
+                  src={confirmPasswordVisible ? "/icons/eye-open.png" : "/icons/eye-closed.png"}
+                  alt="toggle visibility"
+                  width={20}
+                  height={20}
                 />
-                <span
-                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
-                    onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
-                >
-                    <Image
-                    src={confirmPasswordVisible ? "/icons/eye-open.png" : "/icons/eye-closed.png"}
-                    alt="toggle visibility"
-                    width={20}
-                    height={20}
-                    />
-                </span>
-                </div>
-                {confirmPasswordError && (
-                <p className="text-sm text-red-600 flex items-center gap-2 mt-1">
-                    <span className="text-white bg-red-500 rounded-full h-4 w-4 flex items-center justify-center text-xs">×</span>
-                    {confirmPasswordError}
-                </p>
-                )}
+              </span>
+            </div>
+            {confirmPasswordError && (
+              <p className="text-sm text-red-600 flex items-center gap-2 mt-1">
+                <span className="text-white bg-red-500 rounded-full h-4 w-4 flex items-center justify-center text-xs">×</span>
+                {confirmPasswordError}
+              </p>
+            )}
 
           </>
         )}
@@ -296,7 +296,7 @@ const AuthForm = ({ type }: { type: authType }) => {
               <p>Remember me</p>
             </label>
             <div>
-               <Link href='/reset-password' className="hover:cursor-pointer hover:underline ">Forgot password?</Link>
+              <Link href='/reset-password' className="hover:cursor-pointer hover:underline ">Forgot password?</Link>
             </div>
           </div>
         )}
@@ -311,25 +311,25 @@ const AuthForm = ({ type }: { type: authType }) => {
         )}
 
         <button type="submit" className="w-full py-3 bg-foreground text-white rounded-lg font-bold mt-2 cursor-pointer">
-          {loading ? 'loading . . .' : isSignUp ? "Sign up" : isReset ? 'Reset Password' : "Sign in" }
-          
+          {loading ? 'loading . . .' : isSignUp ? "Sign up" : isReset ? 'Reset Password' : "Sign in"}
+
         </button>
       </form>
 
       {
         !isReset &&
         <>
-        
-        
-      
+
+
+
           <div className="flex gap-10 mt-10">
             {[
               { icon: "/icons/linkedin.png", label: "LinkedIn", onclick: handleLinkedInAuth },
-              { icon: "/icons/google.png", label: "Google", onclick:handleGoogleAuth },
-            ].map(({ icon, label,onclick }) => (
-              <div 
-              onClick={onclick}
-              key={label} className="flex flex-col items-center gap-3 cursor-pointer">
+              { icon: "/icons/google.png", label: "Google", onclick: handleGoogleAuth },
+            ].map(({ icon, label, onclick }) => (
+              <div
+                onClick={onclick}
+                key={label} className="flex flex-col items-center gap-3 cursor-pointer">
                 <Image width={32} height={32} src={icon} alt={`${label} icon`} />
                 <p className="text-sm font-bold">{label}</p>
               </div>
@@ -351,7 +351,7 @@ const AuthForm = ({ type }: { type: authType }) => {
       }
 
       {
-        isReset && 
+        isReset &&
         <div className="w-max m-auto mt-5 font-bold text-xl hover:text-foreground">
           <Link href='/sign-in'>Return</Link>
         </div>

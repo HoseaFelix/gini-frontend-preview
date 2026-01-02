@@ -5,11 +5,12 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/store';
 import { toast } from 'sonner';
+import { API_BASE } from '@/lib/config';
 
 // import TopBar from '@/components/userDashboardComponents/topbar';
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
-  const {token, setUser } = useAuthStore();
+  const { token, setUser } = useAuthStore();
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const router = useRouter();
 
@@ -18,32 +19,32 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
 
       console.log('checking auth')
 
-      const savedAuth =JSON.parse(localStorage.getItem('auth') || sessionStorage.getItem('auth') || 'null');
-    
-    if (savedAuth) {
-      useAuthStore.setState({
-        user: savedAuth.user,
-        token: savedAuth.token,
-        remember: savedAuth.remember,
-      });
-      setIsAuth(true)
-    } else{
+      const savedAuth = JSON.parse(localStorage.getItem('auth') || sessionStorage.getItem('auth') || 'null');
+
+      if (savedAuth) {
+        useAuthStore.setState({
+          user: savedAuth.user,
+          token: savedAuth.token,
+          remember: savedAuth.remember,
+        });
+        setIsAuth(true)
+      } else {
         try {
           let res;
-          
-  
+
+
           if (token) {
-            res = await fetch('https://aidgeny.onrender.com/api/auth/session', {
+            res = await fetch(`${API_BASE}/api/auth/session`, {
               headers: { Authorization: `Bearer ${token}` },
             });
           } else {
-            res = await fetch('https://aidgeny.onrender.com/api/auth/session', {
+            res = await fetch(`${API_BASE}/api/auth/session`, {
               credentials: 'include',
             });
           }
-  
+
           if (!res.ok) throw new Error('Unauthorized');
-  
+
           const user = await res.json();
           const remember = false
           setUser(user.user, user.token, remember);
@@ -56,7 +57,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         }
 
       }
-    
+
     };
 
     checkAuth();
@@ -74,18 +75,18 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   }
 
   if (!isAuth) {
-    return null; 
+    return null;
   }
 
   return <div className="root-layout pl-4 pr-4 md:pl-10 md:pr-10 lg:pl-[350px] pt-30 relative">
 
-          
-              
-              <DashSideNavbar/>
-              {/* <TopBar/> */}
-              {children}
-              
-          </div>;
+
+
+    <DashSideNavbar />
+    {/* <TopBar/> */}
+    {children}
+
+  </div>;
 };
 
 export default RootLayout;

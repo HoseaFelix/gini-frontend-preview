@@ -5,7 +5,11 @@ import { getSavedResume, handleDeleteResume } from "@/lib/constants/constants";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const Savedresume = () => {
+interface SavedResumeProps {
+  onReOptimize?: (resume: any) => void;
+}
+
+const Savedresume = ({ onReOptimize }: SavedResumeProps) => {
   const router = useRouter();
 
   const [savedResumes, setSavedResumes] = useState<any[]>([]);
@@ -87,26 +91,33 @@ const Savedresume = () => {
           savedResumes.map((resume, index) => (
             <div
               key={resume.id ?? index}
-              className="flex justify-between items-center text-text font-bold opacity-80 border border-text/50 rounded-sm px-4 py-3 hover:border-blue-400"
+              className="flex max-sm:flex-col sm:justify-between sm:items-center text-text font-bold opacity-80 border border-text/50 rounded-sm px-4 py-3 hover:border-blue-400 gap-3"
             >
               <p>{resume.file_name}</p>
 
-              <div className="flex gap-3">
-                <p
+              <div className="flex gap-3 text-sm sm:text-base">
+                <button
                   onClick={() => handleView(index)}
-                  className="hover:cursor-pointer"
+                  className="hover:cursor-pointer hover:text-blue-600 transition-colors"
                 >
                   View
-                </p>
+                </button>
 
-                <p
+                <button
+                  onClick={() => onReOptimize?.(resume)}
+                  className="hover:cursor-pointer hover:text-blue-600 transition-colors text-blue-500 whitespace-nowrap"
+                >
+                  Re-Optimize
+                </button>
+
+                <button
                   onClick={() =>
                     openDeleteModal(resume.id, resume.file_name)
                   }
-                  className="hover:cursor-pointer"
+                  className="hover:cursor-pointer hover:text-red-600 transition-colors"
                 >
                   Delete
-                </p>
+                </button>
               </div>
             </div>
           ))
