@@ -104,7 +104,16 @@ const DashSideNavbar = () => {
     
     <nav className='print:hidden z-100 fixed top-0 left-0 w-screen h-[80px] bg-foreground flex text-white'>
         
-          <div className='max-lg:pl-4 lg:w-[300px] lg:flex-shrink-0 flex items-center justify-center text-white font-bold text-xl md:text-2xl lg:text-4xl hover:cursor-pointer '><Link href='/dashboard'>AideGini</Link></div>
+          <div className='max-lg:pl-4 lg:w-[300px] lg:flex-shrink-0 flex items-center justify-center text-white font-bold text-xl md:text-2xl lg:text-4xl hover:cursor-pointer '>
+              <Link href='/dashboard' className='flex gap-2 align-center justify-center'>
+                    <div className='h-fit'>
+                        <Image width={30} height={30} alt='AideGini Logo' src='/img/aidginilogo.png' />
+                    </div>
+                    <h1 className='text-white text-2xl font-bold hover:cursor-pointer '>
+                        AideGini
+                    </h1>
+              </Link>
+            </div>
        
 
 

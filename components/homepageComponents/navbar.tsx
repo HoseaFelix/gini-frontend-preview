@@ -31,7 +31,10 @@ const router = useRouter()
     <>
            <nav className='z-100 fixed h-[72px] inset-x-0 top-0 bg-white/50  backdrop-blur-md backdrop-saturate-150 flex items-center justify-between px-4 md:px-10 py-5 font-bold overflow-hidden'>
 
-                <Link href='/' >
+                <Link href='/' className='flex gap-2 align-center justify-center'>
+                    <div className='h-fit'>
+                        <Image width={30} height={30} alt='AideGini Logo' src='/img/aidginilogo.png' />
+                    </div>
                     <h1 className='text-foreground text-2xl font-bold hover:cursor-pointer '>
                         AideGini
                     </h1>

@@ -25,7 +25,7 @@ const Pricing = () => {
                 <p className='font-bold text-lg mx-auto w-fit'>Pro</p>
                 <p className='font-bold text-lg mx-auto w-fit mt-2'>$19.99</p>
                 <div className='max-w-[70%] mx-auto h-max'>
-                     <p className='italic w-full  mx-auto'>Full access: BAsic features plus</p>
+                     <p className='italic w-full  mx-auto'>Full access: Basic features plus</p>
                     <ul className=' list-outside pl-5 list-disc font-bold mt-5 flex flex-col gap-2 '>
                         <li>Resume analysis</li>
                         <li>Job application tracking</li>
