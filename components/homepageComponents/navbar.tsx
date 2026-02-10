@@ -33,7 +33,7 @@ const router = useRouter()
 
                 <Link href='/' className='flex gap-2 align-center justify-center'>
                     <div className='h-fit'>
-                        <Image width={30} height={30} alt='AideGini Logo' src='/img/aidginilogo.png' />
+                        <Image width={30} height={30} alt='AideGini Logo' src='/img/aidgini-dark.png' />
                     </div>
                     <h1 className='text-foreground text-2xl font-bold hover:cursor-pointer '>
                         AideGini
