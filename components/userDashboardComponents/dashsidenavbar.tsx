@@ -87,12 +87,37 @@ const DashSideNavbar = () => {
 
   const setCurrentNavbar = useCurrentNav((state) => state.setCurrentNav);
 
+  const comingSoonRoutes = new Set([
+    '/applicationassistant',
+    '/interviewassistant',
+    '/presentationassistant',
+    '/examassistant',
+    '/linkedinoptimizer',
+  ]);
+
   const handleNavSwitch = (href: string, nav: string) => {
-  setCurrentNavbar(nav);
-  toggleNav();
-  setCurrentNav(useCurrentNav.getState().currentNav);
-  router.push(href); // ✅ use the absolute href from dashNavItem
-};
+    if (comingSoonRoutes.has(href.toLowerCase())) {
+      toast(
+        `${nav} is coming soon!`,
+        {
+          description: 'We are building this feature right now. Stay tuned.',
+          duration: 5000,
+          style: {
+            border: '1px solid #6b21a8',
+            background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)',
+            color: 'white',
+            fontWeight: 600,
+          },
+        }
+      );
+      return;
+    }
+
+    setCurrentNavbar(nav);
+    toggleNav();
+    setCurrentNav(useCurrentNav.getState().currentNav);
+    router.push(href); // ✅ use the absolute href from dashNavItem
+  };
 
 
   useEffect(()=>{

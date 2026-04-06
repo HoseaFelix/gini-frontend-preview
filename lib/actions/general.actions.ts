@@ -38,9 +38,7 @@ export async function formatTextWithAi(rawText: string) {
   try {
     // Call Gemini AI with resume schema to enforce structured output
     const { object } = await generateObject({
-      model: google('gemini-2.5-flash', {
-        structuredOutputs: false,
-      }),
+      model: google('gemini-2.5-flash'),
       schema: ResumeSchema,
       prompt: `
         You are a resume parsing assistant. Convert the following raw resume text into a structured JSON.
@@ -158,5 +156,4 @@ export async function answerUser(query: chatMessage[]) {
     };
   }
 }
-
 
