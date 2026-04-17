@@ -2,6 +2,18 @@ import { NextResponse } from "next/server";
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return NextResponse.json(null, {
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -10,7 +22,7 @@ export async function POST(request: Request) {
     if (!text) {
       return NextResponse.json(
         { success: false, error: "Missing request body. Send { text: string }." },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -34,12 +46,14 @@ Visible screen text:
 
     const answerText = result.text?.trim() ?? "";
 
-    return NextResponse.json({ success: true, answer: answerText });
+    return NextResponse.json({ success: true, answer: answerText }, {
+      headers: corsHeaders,
+    });
   } catch (error) {
     console.error("/api/answer error:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
